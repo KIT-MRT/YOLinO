@@ -1,0 +1,14 @@
+res/code_diagram.drawio filter=lfs diff=lfs merge=lfs -text
+res/code_diagram.pdf filter=lfs diff=lfs merge=lfs -text
+res/code_diagram.svg filter=lfs diff=lfs merge=lfs -text
+src/yolino/model/cfg/darknet19_448.weights filter=lfs diff=lfs merge=lfs -text
+res/distances_ang.png filter=lfs diff=lfs merge=lfs -text
+res/distances_len.png filter=lfs diff=lfs merge=lfs -text
+res/distances_mid.png filter=lfs diff=lfs merge=lfs -text
+res/distances_par.png filter=lfs diff=lfs merge=lfs -text
+res/distances_perp.png filter=lfs diff=lfs merge=lfs -text
+tmp/log/checkpoints/test_metrics_on_dublicate.pth filter=lfs diff=lfs merge=lfs -text
+tmp/log/checkpoints/tus_checkpoint.pth filter=lfs diff=lfs merge=lfs -text
+tmp/specs/tusimple_train_160x320_per_line_data.pkl filter=lfs diff=lfs merge=lfs -text
+/home/meyer/01_coding/diss_yolino/yolino/tmp/specs/tusimple_train_160x320_32cs_per_line_data.pkl filter=lfs diff=lfs merge=lfs -text
+tmp/specs/argo2_train_640x640_32cs_per_line_data.pkl filter=lfs diff=lfs merge=lfs -text

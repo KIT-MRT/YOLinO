@@ -1,0 +1,14 @@
+#cell_size: [100, 100]
+dataset: culane
+dvc: ../../../../../dvc_experiment_mgmt
+epoch: 10
+img_height: 320
+log_dir: culane_po_8p_dn19
+max_n: 100
+nondeterministic: true
+root: ../../../../
+split: train
+darknet_cfg: model/cfg/darknet19_448_d2.cfg # with dilation
+darknet_weights: model/cfg/darknet19_448.weights
+level: DEBUG
+batch_size: 1 # >=28 kills local machine even without upsampling; >=16 with upup

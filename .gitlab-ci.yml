@@ -1,0 +1,253 @@
+
+image: gitlab.mrt.kit.edu:21443/mrt/private/meyer/publications/diss/yolino:latest
+### Cache build results between building and testing
+cache:
+  paths:
+  - .cache/pip
+  - venv
+
+stages:
+  - default
+  - test
+
+# Prepare workspace and checkout the code. This will be executed before every stage
+before_script:
+  - export SHELL="/bin/bash"
+  - export RUNNING_IN=docker
+  - apt-get update && apt-get upgrade -y
+  - apt install git -y
+  - pip3 install virtualenv
+  - virtualenv venv --python=python3.8 --system-site-packages
+  - source venv/bin/activate
+  - pip3 install .
+  - pip3 show torch
+
+train:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_REF_NAME != "docker"
+  script:
+    - cd $CI_PROJECT_DIR
+    - ls $CI_PROJECT_DIR
+    - source venv/bin/activate
+    - cd test
+    - python3 -m unittest test_train.py
+  dependencies: 
+    - build_docker
+
+anchors:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_REF_NAME != "docker"
+  script:
+    - cd $CI_PROJECT_DIR
+    - ls $CI_PROJECT_DIR
+    - source venv/bin/activate
+    - cd test
+    - python3 -m unittest test_anchors.py
+  dependencies: 
+    - build_docker
+
+augment:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_REF_NAME != "docker"
+  script:
+    - cd $CI_PROJECT_DIR
+    - ls $CI_PROJECT_DIR
+    - source venv/bin/activate
+    - cd test
+    - python3 -m unittest test_augment.py
+  dependencies: 
+    - build_docker
+
+clyolo:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_REF_NAME != "docker"
+  script:
+    - cd $CI_PROJECT_DIR
+    - ls $CI_PROJECT_DIR
+    - source venv/bin/activate
+    - cd test
+    - python3 -m unittest test_clyolo.py
+  dependencies: 
+    - build_docker
+
+datasets:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_REF_NAME != "docker"
+  script:
+    - cd $CI_PROJECT_DIR
+    - ls $CI_PROJECT_DIR
+    - source venv/bin/activate
+    - cd test
+    - python3 -m unittest test_datasets.py
+  dependencies: 
+    - build_docker
+
+datasets_local:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_REF_NAME != "docker"
+  script:
+    - cd $CI_PROJECT_DIR
+    - ls $CI_PROJECT_DIR
+    - source venv/bin/activate
+    - cd test
+    - python3 -m unittest test_datasets_locally.py
+  dependencies: 
+    - build_docker
+
+distances:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_REF_NAME != "docker"
+  script:
+    - cd $CI_PROJECT_DIR
+    - ls $CI_PROJECT_DIR
+    - source venv/bin/activate
+    - cd test
+    - python3 -m unittest test_distances.py
+  dependencies: 
+    - build_docker
+
+grid:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_REF_NAME != "docker"
+  script:
+    - cd $CI_PROJECT_DIR
+    - ls $CI_PROJECT_DIR
+    - source venv/bin/activate
+    - cd test
+    - python3 -m unittest test_grid.py
+  dependencies: 
+    - build_docker
+
+kendall:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_REF_NAME != "docker"
+  script:
+    - cd $CI_PROJECT_DIR
+    - ls $CI_PROJECT_DIR
+    - source venv/bin/activate
+    - cd test
+    - python3 -m unittest test_kendall.py
+  dependencies:
+    - build_docker
+
+linerep:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_REF_NAME != "docker"
+  script:
+    - cd $CI_PROJECT_DIR
+    - ls $CI_PROJECT_DIR
+    - source venv/bin/activate
+    - cd test
+    - python3 -m unittest test_linerep.py
+  dependencies: 
+    - build_docker
+
+loss:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_REF_NAME != "docker"
+  script:
+    - cd $CI_PROJECT_DIR
+    - ls $CI_PROJECT_DIR
+    - source venv/bin/activate
+    - cd test
+    - python3 -m unittest test_loss.py
+  dependencies: 
+    - build_docker
+
+metrics:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_REF_NAME != "docker"
+  script:
+    - cd $CI_PROJECT_DIR
+    - ls $CI_PROJECT_DIR
+    - source venv/bin/activate
+    - cd test
+    - python3 -m unittest test_metrics.py
+  dependencies: 
+    - build_docker
+
+model:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_REF_NAME != "docker"
+  script:
+    - cd $CI_PROJECT_DIR
+    - ls $CI_PROJECT_DIR
+    - source venv/bin/activate
+    - cd test
+    - python3 -m unittest test_model.py
+  dependencies: 
+    - build_docker
+
+nms:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_REF_NAME != "docker"
+  script:
+    - cd $CI_PROJECT_DIR
+    - ls $CI_PROJECT_DIR
+    - source venv/bin/activate
+    - cd test
+    - python3 -m unittest test_nms.py
+  dependencies: 
+    - build_docker
+
+plot:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_REF_NAME != "docker"
+  script:
+    - cd $CI_PROJECT_DIR
+    - ls $CI_PROJECT_DIR
+    - source venv/bin/activate
+    - cd test
+    - python3 -m unittest test_plot.py
+  dependencies: 
+    - build_docker
+
+setup:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_REF_NAME != "docker"
+  script:
+    - cd $CI_PROJECT_DIR
+    - ls $CI_PROJECT_DIR
+    - source venv/bin/activate
+    - cd test
+    - python3 -m unittest test_setup.py
+  dependencies: 
+    - build_docker
+
+build_docker:
+  stage: default
+  image: docker:18.09
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "docker"
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+      changes:
+        - Dockerfile
+        - setup.cfg
+        - .gitlab-ci.yml
+      allow_failure: true
+  before_script: []
+  cache: {}
+  services:
+    - docker:18.09-dind
+  variables:
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE .
+    - if [ "$CI_COMMIT_REF_NAME" = "master" ]; then docker push $CI_REGISTRY_IMAGE; fi
