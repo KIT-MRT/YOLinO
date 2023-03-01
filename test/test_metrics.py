@@ -19,6 +19,7 @@
 # ----------------------------- COPYRIGHT ------------------------------------ #
 # ---------------------------------------------------------------------------- #
 import math
+import os
 import unittest
 from copy import copy
 
@@ -182,6 +183,8 @@ class MetricsTest(unittest.TestCase):
                                   fn=[0, 0, 0, 0, 0],
                                   tn=[1, 2, 2, 1, 2], accuracy=1)
 
+    @unittest.skipIf(not os.path.exists("tmp/log/checkpoints/test_metrics_on_dublicate.pth"),
+                     "no .pth file to be evaluated")
     def test_metrics_on_dublicate(self):
 
         args = test_setup(self._testMethodName, str(Dataset.CULANE),
@@ -257,7 +260,8 @@ class MetricsTest(unittest.TestCase):
                                   tp=num_lines_per_class, tn=torch.sum(num_lines_per_class) - num_lines_per_class,
                                   fp=[0, 0, 0, 0, 0], fn=[0, 0, 0, 0, 0])
 
-    # @unittest.skipIf(get_system_specs()["user"] == "mrtbuild", "not to be run on CI")
+    @unittest.skipIf(not os.path.exists("tmp/log/checkpoints/test_metrics_on_dublicate.pth"),
+                     "no .pth file to be evaluated")
     def test_metrics_matching_gate(self):
         self.args.matching_gate_px = 500
 
@@ -281,8 +285,9 @@ class MetricsTest(unittest.TestCase):
         self.assert_metrics(scores=evaluator.scores, prefix="uv_metrics",
                             confusion=[[[0], [total_num_predicted_lines], [0], [0]]])
 
+    @unittest.skipIf(not os.path.exists("tmp/log/checkpoints/test_metrics_on_dublicate.pth"),
+                     "no .pth file to be evaluated")
     def test_metrics_on_homogenous(self):
-        # self.args.matching_gate_px = 500 # no match
         self.args.matching_gate_px = 1000
 
         dataset, _ = DatasetFactory.get(dataset_enum=self.args.dataset, only_available=True, split=self.args.split,
