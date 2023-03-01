@@ -25,7 +25,6 @@ import os
 import numpy as np
 import torch
 from tqdm import tqdm
-
 from yolino.dataset.dataset_base import DatasetInfo
 from yolino.utils.duplicates import LineDuplicates
 from yolino.utils.enums import Dataset
@@ -60,9 +59,9 @@ class TusimpleDataset(DatasetInfo):
     def __init__(self, split, args, augment=False, sky_crop=80, side_crop=0, load_only_labels=False,
                  show=False, load_full_dataset=False, lazy=False, ignore_duplicates=False, store_lines=False):
         super().__init__(Dataset.TUSIMPLE, split, args, sky_crop=sky_crop, side_crop=side_crop, augment=augment,
-                         num_classes=0, train=2858 + 410, test=2782, val=358, 
+                         num_classes=0, train=2858 + 410, test=2782, val=358,
                          override_dataset_path="/mrtstorage/datasets/public/tusimple_lane_detection",
-                         load_only_labels=load_only_labels, show=show, load_sequences=load_full_dataset, lazy=lazy, 
+                         load_only_labels=load_only_labels, show=show, load_sequences=load_full_dataset, lazy=lazy,
                          ignore_duplicates=ignore_duplicates, store_lines=store_lines)
 
         self.lanes = []

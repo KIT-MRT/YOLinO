@@ -25,13 +25,11 @@ import numpy as np
 import wandb
 import yaml
 from tqdm import tqdm
-
 from yolino.dataset.dataset_factory import DatasetFactory
 from yolino.runner.evaluator import Evaluator
-from yolino.utils.argparser import setup_argparse, add_ignore_missing, add_split, add_dvc, add_batch_size, \
-    define_argparse
+from yolino.utils.argparser import define_argparse
 from yolino.utils.enums import TaskType, LINE, AnchorDistribution, AnchorVariables, ACTIVATION
-from yolino.utils.general_setup import general_setup, __set_cellsize__, __set_imgsize__, __set_seed__, __set_paths__, \
+from yolino.utils.general_setup import __set_cellsize__, __set_imgsize__, __set_seed__, __set_paths__, \
     __abs_paths__, set_progress_logger, __set_cmd_logger__, __set_hash__, __set_matching_gate__
 from yolino.utils.gpu import getCuda
 from yolino.utils.logger import Log
@@ -58,7 +56,6 @@ if __name__ == "__main__":
     __set_imgsize__(args)
     __set_cellsize__(args)
     __set_matching_gate__(args)
-
 
     # if args.ignore_missing:
     #     raise NotImplementedError("Please use the full dataset and not --ignore_missing")

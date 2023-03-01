@@ -26,7 +26,6 @@ import numpy as np
 import torch
 import yaml
 from matplotlib import pyplot as plt
-
 from yolino.grid.grid_factory import GridFactory
 from yolino.model.variable_structure import VariableStructure
 from yolino.utils.enums import CoordinateSystem, Dataset, Variables, LINE

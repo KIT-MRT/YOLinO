@@ -21,16 +21,14 @@
 import os
 
 import yaml
-
-from yolino.viz.translation import experiment_param_keys
-from yolino.utils.general_setup import general_setup
 from yolino.utils.logger import Log
+from yolino.viz.translation import experiment_param_keys
 
 
 def run():
     import wandb
     api = wandb.Api()
-    prefix = "annkit/trash" # argo_po_8p_dn19"
+    prefix = "annkit/trash"  # argo_po_8p_dn19"
     run_names = ["default", "oth7kag4", "7p637hyk", "qw0nc08x", "lam9onr9", "od4ik720", "fcxc8nu9"]
     if len(run_names) <= 1:
         raise ValueError("We need at least 2 runs!")
@@ -59,7 +57,7 @@ def run():
 
     print(BOLD + " ".ljust(justi) + " ".join([r.ljust(justi) for r in run_names]) + END)
     for key in experiment_param_keys:
-        ss = str(key).ljust(justi)  + "\t"
+        ss = str(key).ljust(justi) + "\t"
 
         for r, run_name in enumerate(run_names):
 
@@ -70,7 +68,7 @@ def run():
             test_value = configs[key]
 
             if type(test_value) == list:
-                portion = int(justi/len(test_value))
+                portion = int(justi / len(test_value))
                 joined = ",".join([str(v)[0:portion] for v in test_value])
                 test_value = joined
             test_value = str(test_value)[0:justi]

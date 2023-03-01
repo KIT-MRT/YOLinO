@@ -23,7 +23,6 @@ import unittest
 
 import numpy as np
 import torch
-
 from yolino.dataset.dataset_factory import DatasetFactory
 from yolino.grid.grid import Grid
 from yolino.grid.predictor import Predictor
@@ -221,7 +220,7 @@ class LineRepTest(unittest.TestCase):
         self.assertEqual(oned_point, expected_oned, oned_point)
         converted_point = OneDLines.to_cart(oned_point)
         self.assertEqual(converted_point, [0, 0.375, 1, 0.625], converted_point)
-        
+
         point = [0.8, 0.4, 0.9, 0.2]
         oned_point = OneDLines.from_cart(point[0:2], point[2:4], extrapolate=True)
         expected_oned = [0.375, 0.75]

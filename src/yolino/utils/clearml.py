@@ -25,7 +25,6 @@ from datetime import datetime
 
 import git
 import numpy as np
-
 from yolino.utils.clearml import Task
 from yolino.utils.logger import Log
 

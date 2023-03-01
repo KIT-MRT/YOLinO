@@ -32,7 +32,6 @@ import torch
 import torchvision
 from matplotlib import pyplot as plt
 from sklearn.metrics import ConfusionMatrixDisplay
-
 from yolino.utils.enums import ImageIdx, Level, Logger, TaskType
 from yolino.utils.system import get_system_specs
 
@@ -60,6 +59,7 @@ except:
     WANDB_EXIST = False
 
 version = "v3.0"
+
 
 class LoggerInfo():
     def __init__(self, name, class_type) -> None:

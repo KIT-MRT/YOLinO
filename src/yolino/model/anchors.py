@@ -24,7 +24,6 @@ import timeit
 from abc import abstractmethod
 
 import torch
-
 from yolino.model.line_representation import LineRepresentation
 from yolino.model.variable_structure import VariableStructure
 from yolino.tools.kmeans_anchor_fit import get_kmeans_cluster

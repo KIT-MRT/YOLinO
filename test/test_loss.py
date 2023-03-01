@@ -26,7 +26,6 @@ import unittest
 import numpy as np
 import torch
 from tqdm import tqdm
-
 from yolino.dataset.dataset_factory import DatasetFactory
 from yolino.eval.matcher_cell import CellMatcher
 from yolino.eval.matcher_uv import UVMatcher

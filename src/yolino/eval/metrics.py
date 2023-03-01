@@ -24,7 +24,6 @@ import numpy as np
 import torch
 from sklearn.exceptions import UndefinedMetricWarning
 from sklearn.metrics import confusion_matrix, accuracy_score, f1_score, mean_squared_error, mean_absolute_error
-
 from yolino.eval.distances import get_angular_distance, \
     get_perpendicular_distances, midpoints_distance
 from yolino.eval.matcher_uv import UVPointMatcher

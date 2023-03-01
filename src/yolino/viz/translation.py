@@ -224,7 +224,8 @@ experiment_param_keys = {"activations": "Aktivierung", "anchor_vars": "Ankervari
                          "loss_weight_strategy": "Kostenfunktion: Gewichtung",
                          "matching_gate": "Assoziationsradius", "num_predictors": "Anzahl Prädiktoren",
                          "optimizer": "Optimierer",
-                         "offset": "Anker-Offset", "rotation_range": "Augmentierung: Rotationsbereich", "scale": "Skale",
+                         "offset": "Anker-Offset", "rotation_range": "Augmentierung: Rotationsbereich",
+                         "scale": "Skale",
                          "training_variables": "Kosten", "weights": "Kostenfunktion: Gewichte je Variable"}
 
 local_german_wording[LONG].update(experiment_param_keys)

@@ -36,7 +36,7 @@ def run():
     for data in iter(loader):
         try:
             _, _, filenames, _, params = data
-            dataset.params_per_file.update({f: {k: v[i] for k,v in params.items()} for i, f in enumerate(filenames)})
+            dataset.params_per_file.update({f: {k: v[i] for k, v in params.items()} for i, f in enumerate(filenames)})
         except (Exception, BaseException) as e:
             Log.error("Error with file %s" % (str(filenames)))
             raise e
@@ -50,4 +50,3 @@ def run():
 
 if __name__ == '__main__':
     run()
-

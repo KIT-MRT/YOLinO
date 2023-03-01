@@ -22,7 +22,6 @@ import math
 
 import numpy as np
 import torch
-
 from yolino.eval.distances import get_midpoints
 from yolino.model.line_representation import MidLenDirLines, EulerLines, OneDLines, class_lookup, MidDirLines
 from yolino.model.variable_structure import VariableStructure

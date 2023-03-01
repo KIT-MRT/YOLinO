@@ -23,10 +23,8 @@ import unittest
 
 import numpy as np
 import torch
-
 from yolino.dataset.dataset_factory import DatasetFactory
 from yolino.grid.grid import Grid
-from yolino.postprocessing.nms import nms
 from yolino.runner.evaluator import Evaluator
 from yolino.utils.enums import Dataset, AnchorDistribution
 from yolino.utils.test_utils import test_setup, unsqueeze

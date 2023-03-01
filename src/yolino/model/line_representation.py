@@ -22,7 +22,6 @@ import math
 
 import numpy as np
 import torch
-
 from yolino.eval.distances import to_mld_cell_space, to_md_cell_space
 from yolino.utils.enums import LINE
 from yolino.utils.geometry import intersection_square, reformat2shapely

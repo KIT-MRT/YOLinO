@@ -23,7 +23,6 @@ import math
 import numpy as np
 import torch
 from shapely.geometry import Polygon, LineString
-
 from yolino.utils.logger import Log
 
 

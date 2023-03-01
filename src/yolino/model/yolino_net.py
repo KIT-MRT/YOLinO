@@ -22,7 +22,6 @@ import os
 
 import torch
 import torch.nn as nn
-
 from yolino.model.darknet import Darknet
 from yolino.utils.logger import Log
 
@@ -155,4 +154,3 @@ def get_test_input(shape, batch_size):
 
 def get_test_label(cells, batch_size):
     return torch.rand(batch_size, cells, 1, 1)
-

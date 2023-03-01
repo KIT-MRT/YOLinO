@@ -20,12 +20,11 @@
 # ---------------------------------------------------------------------------- #
 import math
 
-import torch
 import cv2
+import torch
 from torchvision.transforms import ColorJitter, RandomErasing, Normalize, RandomCrop, RandomRotation, Resize
 from torchvision.transforms import functional as F
 from torchvision.transforms.transforms import _setup_angle
-
 from yolino.utils.enums import Augmentation, CoordinateSystem, ColorStyle, ImageIdx
 from yolino.utils.geometry import t_cart2pol, t_pol2cart, intersection_segments, reformat2shapely
 from yolino.utils.logger import Log
@@ -322,7 +321,7 @@ class RandomCropWithLabels(torch.nn.Module):
 
         """
         min_crop_h = int(image.shape[1] * self.crop_portion)
-        crop_h = torch.randint(min_crop_h, image.shape[1]-1, size=(1,)).item()
+        crop_h = torch.randint(min_crop_h, image.shape[1] - 1, size=(1,)).item()
 
         min_crop_w = int(image.shape[2] * self.crop_portion)
         crop_w = int(min_crop_w * crop_h / min_crop_h)
@@ -352,7 +351,8 @@ class RandomCropWithLabels(torch.nn.Module):
                           "with target size %dx%d at (%d, %d) and instance %s" % (th, tw, i, j, instance))
                 continue
 
-            segments = intersection_segments((i, j), tw, th, reformat2shapely(non_nan_instance.numpy()), segments=segments)
+            segments = intersection_segments((i, j), tw, th, reformat2shapely(non_nan_instance.numpy()),
+                                             segments=segments)
 
         if removals > 0:
             Log.debug("RandomCrop: %d polylines have been erased from the labels with target size %dx%d at (%d, %d)"

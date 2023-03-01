@@ -22,7 +22,6 @@ import os
 
 import torchvision
 import torchvision.transforms as transforms
-
 from yolino.dataset.dataset_base import DatasetInfo
 from yolino.utils.enums import Dataset
 

@@ -23,7 +23,6 @@ import os
 
 import torch
 import torch.nn as nn
-
 from yolino.eval.distances import linesegment_euclidean_distance
 from yolino.eval.matcher_cell import CellMatcher
 from yolino.model.activations import get_activations
@@ -155,7 +154,6 @@ class AbstractLoss:
 
         matched_loss = torch.tensor(0, dtype=grid_tensor.dtype, device=grid_tensor.device)
         unmatched_loss = torch.tensor(0, dtype=grid_tensor.dtype, device=grid_tensor.device)
-
 
         # handle only not nan labels
         if not torch.all(grid_tensor.isnan()):

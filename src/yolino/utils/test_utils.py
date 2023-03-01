@@ -22,7 +22,6 @@ import os
 
 import torch
 import yaml
-
 from yolino.utils.enums import Network, Dataset, LINE, AnchorDistribution
 from yolino.utils.general_setup import general_setup
 from yolino.utils.logger import Log
@@ -82,7 +81,6 @@ def get_param_vals(level=None, dataset=str(Dataset.CULANE)):
 
 def test_setup(name, dataset, log_dir=None, level=None, additional_vals=None,
                show_params=False, config_file=None):
-
     params = {}
 
     params.update(get_param_vals(level, dataset))
@@ -111,7 +109,6 @@ def test_setup(name, dataset, log_dir=None, level=None, additional_vals=None,
 
     params["dataset"] = dataset
     params["log_dir"] = log_dir + "_po_8p_dn19"
-
 
     dumpdata(params)
 

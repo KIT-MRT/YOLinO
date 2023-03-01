@@ -36,7 +36,7 @@ import torch
 
 from yolino.utils.argparser import generate_argparse
 from yolino.viz.translation import experiment_param_keys
-from yolino.utils.enums import TaskType, Logger, AnchorDistribution, LINE, AnchorVariables, ACTIVATION
+from yolino.utils.enums import TaskType, Logger, AnchorDistribution, LINE, AnchorVariables
 from yolino.utils.gpu import getCuda
 from yolino.utils.logger import Log
 from yolino.utils.paths import Paths

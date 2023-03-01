@@ -22,7 +22,6 @@ import math
 from abc import abstractmethod
 
 import torch
-
 from yolino.model.variable_structure import VariableStructure
 from yolino.utils.enums import ACTIVATION, LINE, Variables
 from yolino.utils.logger import Log

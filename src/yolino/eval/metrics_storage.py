@@ -23,7 +23,6 @@ import os
 from datetime import datetime
 
 import numpy as np
-
 from yolino.utils.enums import ImageIdx
 from yolino.utils.logger import Log
 

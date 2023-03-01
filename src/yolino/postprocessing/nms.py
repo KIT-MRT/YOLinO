@@ -25,7 +25,6 @@ import numpy as np
 import torch
 from matplotlib import pyplot as plt
 from sklearn.cluster import DBSCAN
-
 from yolino.eval.distances import to_nms_space
 from yolino.grid.coordinates import validate_input_structure
 from yolino.utils.enums import CoordinateSystem, ImageIdx

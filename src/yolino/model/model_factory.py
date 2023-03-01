@@ -22,7 +22,6 @@ from copy import copy
 from datetime import datetime
 
 import torch
-
 from yolino.model.yolino_net import YolinoNet
 from yolino.utils.enums import Network
 from yolino.utils.logger import Log

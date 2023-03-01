@@ -22,7 +22,6 @@ import os
 from unittest import TestCase
 
 import numpy as np
-
 from yolino.dataset.dataset_factory import DatasetFactory
 from yolino.grid.cell import Cell
 from yolino.grid.grid import Grid

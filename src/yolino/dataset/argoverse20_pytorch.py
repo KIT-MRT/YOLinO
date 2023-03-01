@@ -20,18 +20,16 @@
 # ---------------------------------------------------------------------------- #
 import math
 import os.path
-import random
 
 import numpy as np
 import torch
 from tqdm import tqdm
-
 from yolino.dataset.dataset_base import DatasetInfo
 from yolino.utils.duplicates import LineDuplicates
 from yolino.utils.enums import ColorStyle
 from yolino.utils.enums import Dataset, Variables, ImageIdx, CoordinateSystem
 from yolino.utils.logger import Log
-from yolino.viz.plot import convert_torch_to_plt_style, plot
+from yolino.viz.plot import plot
 
 
 class Argoverse2Dataset(DatasetInfo):
@@ -190,7 +188,7 @@ class Argoverse2Dataset(DatasetInfo):
             plot(torch.unsqueeze(lines, 0), name, image, show_grid=True, coords=self.coords,
                  colorstyle=ColorStyle.ORIENTATION,  # could also be ID
                  coordinates=CoordinateSystem.UV_CONTINUOUS, epoch=-1, tag="raw",
-                 imageidx=ImageIdx.LABEL, cell_size=[self.args.cell_size[0]*2, self.args.cell_size[1]*2])
+                 imageidx=ImageIdx.LABEL, cell_size=[self.args.cell_size[0] * 2, self.args.cell_size[1] * 2])
 
         image, lines, params = self.__augment__(idx, image, lines)
 

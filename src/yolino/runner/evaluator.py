@@ -24,7 +24,6 @@ import warnings
 
 import numpy as np
 import torch
-
 from yolino.dataset.dataset_factory import DatasetFactory
 from yolino.eval.iccv_metrics import iccv_f1
 from yolino.eval.matcher_cell import CellMatcher

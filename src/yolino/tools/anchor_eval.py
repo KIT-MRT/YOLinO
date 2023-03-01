@@ -23,10 +23,9 @@ import torch
 import yaml
 from tqdm import tqdm
 
-from yolino.model.line_representation import MidDirLines, LineRepresentation
+from yolino.model.line_representation import LineRepresentation
 from yolino.utils.enums import TaskType, LINE
 from yolino.utils.logger import Log
-from yolino.utils.test_utils import unsqueeze
 
 
 def run():
@@ -41,7 +40,9 @@ def run():
     # -------- Plot anchors -----
     from yolino.tools.kmeans_anchor_fit import plot_anchor
     if args.linerep != LINE.POINTS:
-        cart_anchors = np.stack([[*LineRepresentation.get(args.linerep).to_cart(anchor), anchor[0], anchor[1], anchor[2], anchor[3]] for anchor in anchors])
+        cart_anchors = np.stack(
+            [[*LineRepresentation.get(args.linerep).to_cart(anchor), anchor[0], anchor[1], anchor[2], anchor[3]] for
+             anchor in anchors])
     else:
         cart_anchors = anchors
 
@@ -119,4 +120,3 @@ def evaluate(args, only_viz=False):
 
 if __name__ == '__main__':
     run()
-

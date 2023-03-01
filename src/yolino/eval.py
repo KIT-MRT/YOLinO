@@ -18,12 +18,11 @@
 # ---------------------------------------------------------------------------- #
 # ----------------------------- COPYRIGHT ------------------------------------ #
 # ---------------------------------------------------------------------------- #
-import torch
 from tqdm import tqdm
 
 from yolino.dataset.dataset_factory import DatasetFactory
 from yolino.runner.evaluator import Evaluator
-from yolino.utils.enums import TaskType, CoordinateSystem
+from yolino.utils.enums import TaskType
 from yolino.utils.general_setup import general_setup
 
 if __name__ == "__main__":

@@ -21,7 +21,6 @@
 import os
 
 import torch
-
 from yolino.utils.logger import Log
 
 
@@ -29,7 +28,7 @@ def getCuda(args):
     if args.gpu:
         if not torch.cuda.is_available() or not torch.cuda.device_count() > 0:
             Log.warning("CUDA is%s available and we have only %d gpus" % (
-            "not " if torch.cuda.is_available() else "", torch.cuda.device_count()))
+                "not " if torch.cuda.is_available() else "", torch.cuda.device_count()))
             args.gpu = False
 
     if args.gpu:

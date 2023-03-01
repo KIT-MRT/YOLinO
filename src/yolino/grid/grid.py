@@ -24,17 +24,18 @@ import csv
 import math
 import os
 import pickle
+
 import numpy as np
 # from yolino.utils.distances_for_eval import line_segment_to_sampled_points
 import torch
 from matplotlib import pyplot as plt
 from shapely.geometry import Polygon
-
 from yolino.grid.cell import Cell
 from yolino.grid.coordinates import validate_input_structure
 from yolino.grid.predictor import Predictor
 from yolino.model.anchors import Anchor
 from yolino.model.line_representation import LineRepresentation
+from yolino.model.line_representation import MidDirLines
 from yolino.model.variable_structure import VariableStructure
 from yolino.utils.duplicates import LineDuplicates
 from yolino.utils.enums import CoordinateSystem, LINE, Variables, ColorStyle, ImageIdx
@@ -42,8 +43,6 @@ from yolino.utils.geometry import line_segment_to_sampled_points, reformat2shape
     max_polyline_2_line_distance
 from yolino.utils.logger import Log
 from yolino.viz.plot import plot_debug_geometry, finish_plot_debug_geometry, plot_debug_geometry_area, get_color
-
-from yolino.model.line_representation import MidDirLines
 
 
 class Grid:
@@ -160,7 +159,7 @@ class Grid:
 
         if len(segments) > 3:
             Log.error(f"You should only have two segments in a cell, "
-                             f"but {int(r / 32)}x{int(c / 32)} / {int(r)}x{int(c)} has {len(segments)}")
+                      f"but {int(r / 32)}x{int(c / 32)} / {int(r)}x{int(c)} has {len(segments)}")
 
         return segments, geom_box
 
@@ -710,4 +709,3 @@ class Grid:
 
     def clear(self, r, c):
         self.cells[r, c] = None
-

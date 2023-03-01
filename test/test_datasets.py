@@ -22,14 +22,11 @@ import os
 import unittest
 
 import yaml
-
 from yolino.dataset.dataset_factory import Dataset, DatasetFactory
 from yolino.utils.enums import LINE
 from yolino.utils.general_setup import general_setup
 from yolino.utils.logger import Level, Log
 from yolino.utils.system import get_system_specs
-
-
 # @unittest.skipIf(get_system_specs()["user"] == "mrtbuild", "not to be run on CI")
 from yolino.utils.test_utils import get_default_param_path
 
@@ -72,7 +69,7 @@ class DatasetTestEnum(unittest.TestCase):
         tmp["dataset"] = dataset
         tmp["log_dir"] = log_dir + "_po_8p_dn19"
         tmp["dvc"] = "tmp"
-        
+
         with open(DatasetTestEnum.path, "w") as f:
             yaml.dump(tmp, f)
 

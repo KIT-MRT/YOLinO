@@ -25,12 +25,11 @@ from copy import deepcopy
 import numpy as np
 import pandas as pd
 import yaml
+import yolino.tools.vonMisesMixtures.mixture as vonmises
+import yolino.tools.vonMisesMixtures.tools as vonmisestools
 from matplotlib import pyplot as plt
 from sklearn.cluster import KMeans
 from tqdm import tqdm
-
-import yolino.tools.vonMisesMixtures.mixture as vonmises
-import yolino.tools.vonMisesMixtures.tools as vonmisestools
 from yolino.utils.enums import TaskType
 from yolino.utils.general_setup import general_setup
 from yolino.utils.logger import Log
@@ -166,7 +165,6 @@ def run():
         file = os.path.join(cells_folder, file)
         per_cell_data = pd.read_pickle(file)
         if len(per_cell_data) <= args.num_predictors:
-
             text_kwargs = dict(ha='center', va='center', fontsize=28)
             axes[r, c].text(0.5, 0.5, '%d' % len(per_cell_data), **text_kwargs)
             continue

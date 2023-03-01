@@ -44,7 +44,6 @@ def generate_argparse(name):
 
 
 def genVideo(path, videoFile, end_pattern, height):
-
     images = []
     if not os.path.isdir(path):
         print("Invalid path: " + str(path))
@@ -69,13 +68,13 @@ def genVideo(path, videoFile, end_pattern, height):
     cvImg = cv2.resize(cvImg, (height, width))
     size = cvImg.shape[:2]
     print("use %s as size" % str(size))
-#    fourcc = cv2.VideoWriter_fourcc(*'h264')
-#     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+    #    fourcc = cv2.VideoWriter_fourcc(*'h264')
+    #     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
     fourcc = cv2.VideoWriter_fourcc(*"mjpg")
     # fourcc = cv2.VideoWriter_fourcc(*"x264")
     # fourcc = cv2.VideoWriter_fourcc(*'XVID')
 
-#    fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+    #    fourcc = cv2.VideoWriter_fourcc(*'DIVX')
     videoOut = cv2.VideoWriter(videoFile, fourcc, 15.0, (size[1], size[0]))  # 4096 2048
     print("Press ENTER to start video generation")
     input()
@@ -116,10 +115,10 @@ if __name__ == '__main__':
                            "-vcodec libx264 " +
                            "-vf scale=-1:%s " % args.height +
                            output_path + " -y > /dev/null 2>&1")
-                
-            if ok == 0: 
+
+            if ok == 0:
                 print("vlc %s" % (output_path))
-            elif ok == 256: 
+            elif ok == 256:
                 print("No data found for %s" % id)
             else:
                 print("Unknown error %s for %s" % (ok, id))

@@ -21,7 +21,6 @@
 import math
 
 import numpy as np
-
 from yolino.grid.cell import Cell
 from yolino.grid.coordinates import validate_input_structure
 from yolino.grid.grid import Grid
@@ -143,8 +142,8 @@ class GridFactory:
 
                 if "area_removed" in grid.errors and len(grid.errors["area_removed"]) > 0:
                     summary["area_removed"] = {"median": np.median(grid.errors["area_removed"]),
-                        "sum": np.sum(grid.errors["area_removed"]),
-                        "max": np.max(grid.errors["area_removed"])}
+                                               "sum": np.sum(grid.errors["area_removed"]),
+                                               "max": np.max(grid.errors["area_removed"])}
 
                     if summary["area_removed"]["max"] > 16 * 16:
                         Log.info("Straighten the lines to the grid induced the following unusual errors:\n%s" % summary)
@@ -152,10 +151,10 @@ class GridFactory:
 
                 if "max_distance" in grid.errors and len(grid.errors["max_distance"]) > 0:
                     summary["max_distance"] = {
-                            "median": np.median([np.median(d) for d in grid.errors["max_distance"].values()]),
-                            "sum": np.sum([np.sum(d) for d in grid.errors["max_distance"].values()]),
-                            "max": np.max([np.max(d) for d in grid.errors["max_distance"].values()])
-                        }
+                        "median": np.median([np.median(d) for d in grid.errors["max_distance"].values()]),
+                        "sum": np.sum([np.sum(d) for d in grid.errors["max_distance"].values()]),
+                        "max": np.max([np.max(d) for d in grid.errors["max_distance"].values()])
+                    }
 
                     if summary["max_distance"]["max"] > 16:
                         Log.info(

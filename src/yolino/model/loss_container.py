@@ -22,7 +22,6 @@ import os
 
 import numpy as np
 import torch
-
 from yolino.utils.logger import Log
 
 
@@ -116,7 +115,3 @@ class LossContainer:
         Log.warning('%s sum losses (sum over images): %s' % (tag.capitalize(), self.sum(epoch)), level=1)
         Log.warning('%s mean losses (mean over images): %s' % (tag.capitalize(), self.mean(epoch)), level=1)
         Log.warning("\n", level=1)
-
-
-
-

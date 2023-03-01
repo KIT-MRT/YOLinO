@@ -22,7 +22,6 @@ import timeit
 
 import torch
 from tqdm import tqdm
-
 from yolino.runner.trainer import TrainHandler
 from yolino.utils.general_setup import general_setup
 from yolino.utils.logger import Log
@@ -100,7 +99,8 @@ if __name__ == "__main__":
                             for k, v in params.items():
                                 trainer.val_dataset.params_per_file[f].update({k: v[j].item()})
 
-                        _, preds = trainer(fileinfo, images, grid_tensor, epoch=epoch, image_idx_in_batch=i, is_train=False)
+                        _, preds = trainer(fileinfo, images, grid_tensor, epoch=epoch, image_idx_in_batch=i,
+                                           is_train=False)
 
                         num_duplicates = int(sum(duplicate_info["total_duplicates_in_image"]).item())
                         trainer.on_images_finished(preds=preds.detach().cpu(), grid_tensor=grid_tensor, epoch=epoch,

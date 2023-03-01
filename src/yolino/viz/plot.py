@@ -654,7 +654,6 @@ def plot_debug_geometry(geom_box, geom_line, line_segment):
 
 
 def finish_plot_debug_geometry(suffix=""):
-
     if not os.path.exists("tmp"):
         os.makedirs("tmp")
 

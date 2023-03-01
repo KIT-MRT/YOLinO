@@ -22,7 +22,6 @@ import timeit
 
 import numpy as np
 import torch
-
 from yolino.eval.matcher import Matcher
 from yolino.grid.coordinates import validate_input_structure
 from yolino.model.line_representation import PointsLines
@@ -93,7 +92,7 @@ class UVMatcher(Matcher):
 
                 matched_gt[b_idx][0:len(grid_tensor[b_idx])] = torch.tensor(
                     [ids[i] if i >= 0 else torch.tensor(self.no_match_index)
-                    for i in g])
+                     for i in g])
                 matched_preds[b_idx, ids] = p
 
             if torch.any(matched_gt[b_idx, 0:len(grid_tensor[b_idx])] == self.no_match_index):

@@ -22,11 +22,8 @@ from copy import deepcopy
 
 import numpy as np
 from scipy import interpolate
-
-from yolino.dataset.tusimple_pytorch import TusimpleDataset
 from yolino.grid.coordinates import validate_input_structure
 from yolino.model.variable_structure import VariableStructure
-from yolino.tools.tusimple_benchmark import LaneEval
 from yolino.utils.enums import CoordinateSystem, Variables, ImageIdx, ColorStyle, LINE
 from yolino.viz.plot import plot, get_color
 
@@ -248,7 +245,8 @@ def get_connected_components(confidences, file_name, image, min_segments_for_pol
         c = get_color(ColorStyle.ID, idx=i_idx)
         img, ok = plot(np.asarray(instance).reshape((1, -1, 4)), name, img, coords=plot_coords,
                        colorstyle=ColorStyle.UNIFORM,
-                       color=c, #(int(instance[0][0][1]) % 255, int(instance[0][0][0]) % 255, int(instance[0][1][0]) % 255),
+                       color=c,
+                       # (int(instance[0][0][1]) % 255, int(instance[0][0][0]) % 255, int(instance[0][1][0]) % 255),
                        coordinates=CoordinateSystem.UV_SPLIT, imageidx=ImageIdx.PRED, training_vars_only=True)
     return polylines, polylines_as_segment_ids
 

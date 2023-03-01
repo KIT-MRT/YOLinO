@@ -24,7 +24,6 @@ import unittest
 import numpy as np
 import torch
 from matplotlib import pyplot as plt
-
 from yolino.dataset.augmentation import RandomCropWithLabels
 from yolino.dataset.dataset_base import DatasetInfo
 from yolino.dataset.dataset_factory import DatasetFactory
@@ -44,7 +43,6 @@ class TestAugmentation(unittest.TestCase):
     def test_normalization(self):
 
         args = test_setup(name=self._testMethodName, dataset=str(Dataset.ARGOVERSE2))
-
 
         if os.path.isdir("/mrtstorage/datasets"):
             os.environ["DATASET_CULANE"] = "/mrtstorage/datasets/public/CULane"
@@ -89,8 +87,9 @@ class TestAugmentation(unittest.TestCase):
 
         expected_norm_img = torch.stack([((img_raw[i] - ds.augmentor.norm_mean[i]) / ds.augmentor.norm_std[i])
                                          for i in [0, 1, 2]])
-        expected_mean = torch.tensor([torch.mean((img_raw[i] - ds.augmentor.norm_mean[i]) / ds.augmentor.norm_std[i]).item()
-                         for i in [0, 1, 2]])
+        expected_mean = torch.tensor(
+            [torch.mean((img_raw[i] - ds.augmentor.norm_mean[i]) / ds.augmentor.norm_std[i]).item()
+             for i in [0, 1, 2]])
         means = torch.mean(img, dim=[1, 2])
         ds: DatasetInfo
         self.assertTrue(torch.all(abs(expected_mean - means) < 0.001), torch.stack([expected_mean, means]))

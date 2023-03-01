@@ -21,7 +21,6 @@
 import timeit
 
 import torch
-
 from yolino.eval.matcher import Matcher
 from yolino.grid.coordinates import validate_input_structure
 from yolino.model.variable_structure import VariableStructure
@@ -171,4 +170,3 @@ class CellMatcher(Matcher):
 
         Log.time(key="matching_cell", value=timeit.default_timer() - start)
         return matched_preds, matched_gt
-

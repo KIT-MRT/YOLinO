@@ -25,12 +25,11 @@ import logging
 from pathlib import Path
 from typing import Final, List, Optional, Tuple
 
-import numpy as np
-import pandas as pd
-
 import av2.geometry.geometry as geometry_utils
 import av2.utils.dense_grid_interpolation as dense_grid_interpolation
 import av2.utils.io as io_utils
+import numpy as np
+import pandas as pd
 from av2.datasets.sensor.constants import RingCameras
 from av2.geometry.camera.pinhole_camera import PinholeCamera
 from av2.geometry.se3 import SE3
@@ -303,12 +302,12 @@ class AV2SensorDataLoader:
         return CuboidList(cuboids=cuboids)
 
     def project_ego_to_img_motion_compensated(
-        self,
-        points_lidar_time: NDArrayFloat,
-        cam_name: str,
-        cam_timestamp_ns: int,
-        lidar_timestamp_ns: int,
-        log_id: str,
+            self,
+            points_lidar_time: NDArrayFloat,
+            cam_name: str,
+            cam_timestamp_ns: int,
+            lidar_timestamp_ns: int,
+            log_id: str,
     ) -> Tuple[NDArrayFloat, NDArrayFloat, NDArrayBool]:
         """Project points in the ego frame to the image with motion compensation.
 
@@ -391,13 +390,13 @@ class AV2SensorDataLoader:
         return sweep_rgb
 
     def get_depth_map_from_lidar(
-        self,
-        lidar_points: NDArrayFloat,
-        cam_name: str,
-        log_id: str,
-        cam_timestamp_ns: int,
-        lidar_timestamp_ns: int,
-        interp_depth_map: bool = True,
+            self,
+            lidar_points: NDArrayFloat,
+            cam_name: str,
+            log_id: str,
+            cam_timestamp_ns: int,
+            lidar_timestamp_ns: int,
+            interp_depth_map: bool = True,
     ) -> Optional[NDArrayFloat]:
         """Create a sparse or dense depth map, with height & width equivalent to the corresponding camera image.
 

@@ -25,7 +25,6 @@ import unittest
 
 import numpy as np
 import torch
-
 from yolino.dataset.culane_pytorch import CULaneDataSet
 from yolino.model.model_factory import get_model
 from yolino.utils.enums import Network

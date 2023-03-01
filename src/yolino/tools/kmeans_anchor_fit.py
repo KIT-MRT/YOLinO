@@ -20,18 +20,14 @@
 # ---------------------------------------------------------------------------- #
 import os
 import sys
-import random
 
 import numpy as np
-import tikzplotlib
 import yaml
 from matplotlib import pyplot as plt
 from sklearn.cluster import KMeans
-
-from yolino.utils.enums import TaskType, AnchorDistribution, AnchorVariables, ColorStyle
+from yolino.utils.enums import TaskType, AnchorDistribution, AnchorVariables
 from yolino.utils.logger import Log
 from yolino.viz.colors import COLOR
-from yolino.viz.plot import get_color
 
 
 def run():
@@ -73,7 +69,8 @@ def get_kmeans_cluster(args, force=False):
 
     if os.path.exists(pkl_file):
         per_line_data = pd.read_pickle(pkl_file).astype(float)
-        Log.warning(f"We calculate the anchors as there is no yaml file... Read {len(per_line_data)} dataset lines from %s" % pkl_file)
+        Log.warning(
+            f"We calculate the anchors as there is no yaml file... Read {len(per_line_data)} dataset lines from %s" % pkl_file)
     else:
         Log.error(
             f"Please run line extraction first with kmeans_preparation.py (same usage as this). We expect {pkl_file}")
@@ -108,7 +105,7 @@ def plot_anchor(args, anchors):
     Log.warning("\n------------------ PLOT -------------------")
     Log.warning("Plot %d-means" % (args.num_predictors))
 
-    plt.figure(figsize=(5,5))
+    plt.figure(figsize=(5, 5))
     scale = 1
 
     colors = COLOR(root=args.root)

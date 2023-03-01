@@ -22,7 +22,6 @@ import os.path
 
 import numpy as np
 import seaborn as sns
-
 #
 # COLOR = {
 #     "darkgreen": _Color_(0, 176, 109),
@@ -39,7 +38,6 @@ from yolino.utils.logger import Log
 
 
 class COLOR:
-
     class _Color_:
         def __init__(self, r, g, b):
             self.r = float(r)

@@ -24,7 +24,6 @@ from copy import copy
 
 import numpy as np
 import torch
-
 from yolino.model.variable_structure import VariableStructure
 from yolino.utils.enums import Distance, Variables, LINE
 from yolino.utils.logger import Log

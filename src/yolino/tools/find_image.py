@@ -52,5 +52,3 @@ for root, dirs, files in os.walk("/mrtstorage/datasets/public/tusimple_lane_dete
                                                                                               abs_diff))
 
 print("The closest image is file://%s" % diff_path)
-
-

@@ -29,7 +29,6 @@ from matplotlib import pyplot as plt
 from pandas import MultiIndex
 from tabulate import tabulate
 from tqdm import tqdm
-
 from yolino.utils.logger import Log
 from yolino.viz.translation import local_german_wording, SHORT, LONG
 

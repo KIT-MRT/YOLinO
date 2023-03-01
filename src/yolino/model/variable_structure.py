@@ -21,7 +21,6 @@
 from copy import deepcopy
 
 import numpy as np
-
 from yolino.utils.enums import Variables, LINE, AnchorVariables
 from yolino.utils.logger import Log
 

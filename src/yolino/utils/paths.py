@@ -214,7 +214,8 @@ class Paths:
     def generate_rec_field_image_file_path(self, file_name, cfg_name):
 
         path = os.path.join(self.prediction,
-                            "%s_rf_%s.png" % ("-".join(self.generate_file_stub(file_name).split("/")), os.path.basename(cfg_name)))
+                            "%s_rf_%s.png" % (
+                            "-".join(self.generate_file_stub(file_name).split("/")), os.path.basename(cfg_name)))
         if not os.path.exists(os.path.dirname(path)):
             os.makedirs(os.path.dirname(path))
         return path
@@ -237,7 +238,7 @@ class Paths:
     def generate_anchors_image_file_path(self, dataset, anchor_vars, num_predictors, anchors, scale):
         anchor_str = '_'.join([str(a) for a in anchor_vars])
         return os.path.join(self.specs_folder, f"{dataset}_{anchor_str}_"
-                                               # "{scale}x{scale}_" # we do not need different anchors per scale 
+        # "{scale}x{scale}_" # we do not need different anchors per scale 
                                                f"{num_predictors}_{anchors}_{scale}cs_anchors.png")
 
     def generate_anchor_image_file_path(self, file_name, anchors, anchor_vars, num_predictors, scale, **kwargs):

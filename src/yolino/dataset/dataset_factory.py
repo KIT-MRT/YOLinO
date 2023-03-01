@@ -18,13 +18,12 @@
 # ---------------------------------------------------------------------------- #
 # ----------------------------- COPYRIGHT ------------------------------------ #
 # ---------------------------------------------------------------------------- #
-import os
 
 from torch.utils.data import DataLoader
 
 from yolino.dataset.argoverse20_pytorch import Argoverse2Dataset
 from yolino.dataset.dataset_base import DatasetInfo
-from yolino.utils.enums import Dataset, Network, LINE
+from yolino.utils.enums import Dataset
 from yolino.utils.logger import Log
 
 

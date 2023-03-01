@@ -22,7 +22,6 @@ import math
 import unittest
 
 import numpy as np
-
 from yolino.model.loss import get_actual_weight
 from yolino.runner.trainer import TrainHandler
 from yolino.utils.enums import Dataset, LossWeighting

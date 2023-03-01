@@ -27,7 +27,6 @@ import torch
 from matplotlib import pyplot as plt
 from matplotlib.lines import Line2D
 from tqdm import tqdm
-
 from yolino.eval.distances import get_points_distances, get_hungarian_match
 from yolino.grid.coordinates import validate_input_structure
 from yolino.model.variable_structure import VariableStructure
@@ -126,7 +125,8 @@ class Matcher:
                 or len(cost_matrix) == 0:
             return False, [], []
 
-        gt_isnan_flags = torch.cat([gt_subset[:, 0].isnan(), torch.ones(len(pred_subset), dtype=bool, device=cost_matrix.device)])
+        gt_isnan_flags = torch.cat(
+            [gt_subset[:, 0].isnan(), torch.ones(len(pred_subset), dtype=bool, device=cost_matrix.device)])
         if sum(~gt_isnan_flags) == 1:
             try:
                 match_pred_id = torch.argmin(cost_matrix[:, 0])
@@ -137,7 +137,7 @@ class Matcher:
                     gt_id_match = torch.where(~gt_isnan_flags)[0].item()
                     out_pred_matches[match_pred_id] = gt_id_match
                     out_gt_matches[gt_id_match] = match_pred_id
-            except IndexError as e: 
+            except IndexError as e:
                 Log.error("Distance Metric: %s" % distance_metric)
                 Log.error("Pred %s\n%s" % (pred_subset.shape, pred_subset))
                 Log.error("GT %s\n%s" % (gt_subset.shape, gt_subset))
@@ -274,15 +274,15 @@ class Matcher:
                                                     anchors=anchors)
 
                 grid, _ = GridFactory.get(grid_tensor[[i]].cpu(), [],
-                                               coordinate=coordinates, anchors=anchors,
-                                               args=self.args, input_coords=self.coords)
+                                          coordinate=coordinates, anchors=anchors,
+                                          args=self.args, input_coords=self.coords)
 
                 # set all predictions to nan that have no match in the GT (= nan in GT)
                 tmp_preds[torch.sum(torch.isnan(grid_tensor[:, :, :, 0:4]), dim=-1) == 4] = torch.nan
 
                 pred_grid, _ = GridFactory.get(tmp_preds[[i]], [],
-                                                    coordinate=coordinates, anchors=anchors,
-                                                    args=self.args, input_coords=self.coords, only_train_vars=True)
+                                               coordinate=coordinates, anchors=anchors,
+                                               args=self.args, input_coords=self.coords, only_train_vars=True)
 
                 points_coords = self.coords.clone(LINE.POINTS)
                 full_pred_uv_lines = full_pred_grid.get_image_lines(coords=points_coords,

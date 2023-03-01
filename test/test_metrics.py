@@ -24,7 +24,6 @@ from copy import copy
 
 import numpy as np
 import torch
-
 from yolino.dataset.dataset_factory import DatasetFactory
 from yolino.eval.distances import get_midpoints, point_to_line_distance
 from yolino.eval.iccv_metrics import iccv_f1
@@ -266,7 +265,7 @@ class MetricsTest(unittest.TestCase):
                                         args=self.args, shuffle=False, augment=False)
         evaluator = Evaluator(self.args, load_best_model=False, anchors=None)  # we only push model.pth to git
         images, grid_tensors, fileinfo, dupl, params = unsqueeze(dataset.__getitem__(0),
-                                                              dataset.__getitem__(0))
+                                                                 dataset.__getitem__(0))
 
         predictions = torch.cat([dataset.full_grid().unsqueeze(0), dataset.full_grid().unsqueeze(0)])
         total_num_predicted_lines = self.args.batch_size * np.prod(self.args.grid_shape) * self.args.num_predictors
@@ -291,7 +290,7 @@ class MetricsTest(unittest.TestCase):
         evaluator = Evaluator(self.args, load_best_model=False, anchors=None)
         # prevent debug tracemalloc
         images, grid_tensors, fileinfo, dupl, params = unsqueeze(dataset.__getitem__(0),
-                                                              dataset.__getitem__(0))
+                                                                 dataset.__getitem__(0))
 
         predictions = torch.cat(
             [dataset.full_grid().unsqueeze(0), dataset.full_grid().unsqueeze(0)])

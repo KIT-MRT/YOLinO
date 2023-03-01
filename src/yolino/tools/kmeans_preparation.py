@@ -20,11 +20,9 @@
 # ---------------------------------------------------------------------------- #
 import os
 from copy import copy
-from multiprocessing import Lock
 
 import torch
 from tqdm import tqdm
-
 from yolino.model.line_representation import MidDirLines
 from yolino.utils.enums import AnchorDistribution, LINE, Variables, TaskType
 from yolino.utils.general_setup import general_setup
@@ -32,7 +30,6 @@ from yolino.utils.logger import Log
 
 
 def run():
-
     args = general_setup("Kmeans Preparation", show_params=False, task_type=TaskType.PARAM_OPTIMIZATION,
                          project_suffix="_kmeans_prep", setup_logging=True)
 

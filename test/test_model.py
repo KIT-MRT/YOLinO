@@ -26,7 +26,6 @@ import unittest
 import numpy as np
 import torch
 from tqdm import tqdm
-
 from yolino.dataset.dataset_factory import DatasetFactory
 from yolino.grid.grid_factory import GridFactory
 from yolino.model.activations import Softmax, get_activations, MidLenDirActivation, Sigmoid
@@ -128,9 +127,9 @@ class TestYoloClassification(unittest.TestCase):
         self.assert_model_equal_model(model, eval.forward.model,
                                       msg="Evaluator model is not equal to stored model.")
         self.assertEqual(eval.forward.start_epoch, epoch, msg="The evaluator model does not have the correct epoch "
-                                                                  "(expected %d, got %d) and thus probably not the "
-                                                                  "correct best_checkpoint." % (epoch + 1,
-                                                                                                eval.forward.start_epoch))
+                                                              "(expected %d, got %d) and thus probably not the "
+                                                              "correct best_checkpoint." % (epoch + 1,
+                                                                                            eval.forward.start_epoch))
 
     def viz(self, epoch, preds, images, grid_tensors, path, coords, args):
         grid, _ = GridFactory.get(data=torch.unsqueeze(preds[0].detach(), dim=0), variables=[],

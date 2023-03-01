@@ -18,15 +18,15 @@
 # ---------------------------------------------------------------------------- #
 # ----------------------------- COPYRIGHT ------------------------------------ #
 # ---------------------------------------------------------------------------- #
+import os
+
+import numpy as np
+from tqdm import tqdm
 from yolino.tools.prepare_argoverse2 import define_arguments
-from yolino.utils.enums import TaskType, ImageIdx
+from yolino.utils.enums import TaskType
 from yolino.utils.general_setup import __push_commit__
 from yolino.utils.general_setup import __set_hash__, __set_cmd_logger__, set_progress_logger, __set_paths__
 from yolino.utils.logger import Log
-from yolino.utils.system import get_system_specs
-import os 
-from tqdm import tqdm
-import numpy as np
 
 if __name__ == '__main__':
 
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     parser = define_arguments(name)
     parser.add_argument("-i", "--input", nargs="+", required=True, help="Provide path to generated dataset")
     args, unknown = parser.parse_known_args()
-    
+
     args.log_dir = "argo2_prep"
     args.resume_log = False
     args.split = "none"
@@ -57,17 +57,16 @@ if __name__ == '__main__':
         raise ValueError("We need at least two input folders")
     Log.warning(f"We take {args.input[0]} as iterator.")
 
-
     for folder in args.input:
         if not os.path.exists(folder):
             Log.error("Nothing to prepare for %s. Path not found. " % folder)
             continue
 
     for r, dirs, files in tqdm(os.walk(args.input[0]), total=2607):
-        for f in files: 
+        for f in files:
             if f.endswith(".npy"):
                 for i in range(1, len(args.input)):
-                    absfile = os.path.join(r,f)
+                    absfile = os.path.join(r, f)
                     relfile = os.path.relpath(absfile, args.input[0])
                     checkfile = os.path.join(args.input[i], relfile)
 
@@ -81,16 +80,14 @@ if __name__ == '__main__':
 
                     abs_shape = np.load(absfile).shape
                     check_shape = np.load(checkfile).shape
-                    
-                    ljust = max(len(absfile),len(checkfile))
 
-                    if abs_shape[0] != check_shape[0]: 
-                        Log.warning(f"{absfile}".ljust(ljust) + "\t\t" + f"{int(abs_size)} KB" + "\t\t" + f"{abs_shape}")
-                        Log.warning(f"{checkfile}".ljust(ljust) + "\t\t" + f"{int(check_size)} KB" + "\t\t" + f"{check_shape}")                    
+                    ljust = max(len(absfile), len(checkfile))
+
+                    if abs_shape[0] != check_shape[0]:
+                        Log.warning(
+                            f"{absfile}".ljust(ljust) + "\t\t" + f"{int(abs_size)} KB" + "\t\t" + f"{abs_shape}")
+                        Log.warning(
+                            f"{checkfile}".ljust(ljust) + "\t\t" + f"{int(check_size)} KB" + "\t\t" + f"{check_shape}")
                         Log.error("Shape is different!")
                         Log.warning("---------------------------")
                         continue
-
-                    
-
-

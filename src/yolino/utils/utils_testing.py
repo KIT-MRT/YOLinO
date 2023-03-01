@@ -26,7 +26,6 @@ import shutil
 import cv2
 import numpy as np
 import torch
-
 from yolino.utils.logger import Log
 from yolino.utils.paths import Paths
 from yolino.viz.plot import plot_style_grid

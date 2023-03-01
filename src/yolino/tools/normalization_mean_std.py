@@ -19,14 +19,8 @@
 # ----------------------------- COPYRIGHT ------------------------------------ #
 # ---------------------------------------------------------------------------- #
 import os
-from argparse import Namespace
-from time import sleep
 
-import cv2
-import numpy as np
 import torch
-from tqdm import tqdm
-
 from yolino.dataset.dataset_factory import DatasetFactory
 from yolino.utils import enums
 from yolino.utils.general_setup import general_setup
@@ -58,4 +52,3 @@ for data in loader:
 
 print("----- TOTAL -----")
 get_them(psum, psum_sq)
-

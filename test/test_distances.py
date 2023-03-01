@@ -23,7 +23,6 @@ import unittest
 
 import numpy as np
 import torch
-
 from yolino.eval.distances import get_angular_distance, get_perpendicular_sum_distance, get_parallel_distance, \
     linesegment_pauls_distance
 
@@ -111,7 +110,6 @@ class DistanceTest(unittest.TestCase):
             self.assertAlmostEqual(linesegment_pauls_distance(l1, perp).item(),
                                    math.sqrt(math.pow(1 * factor / len_l1 + 1 * factor / len_l1, 2) +
                                              math.pow(1 * factor / len_l1 - 1 * factor / len_l1, 2)), places=2)
-
 
 
 if __name__ == '__main__':

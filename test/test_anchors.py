@@ -19,13 +19,12 @@
 # ----------------------------- COPYRIGHT ------------------------------------ #
 # ---------------------------------------------------------------------------- #
 import unittest
-from copy import deepcopy, copy
+from copy import copy
 
 import cv2
 import numpy as np
 import torch
 from matplotlib import pyplot as plt
-
 from yolino.dataset.dataset_factory import DatasetFactory
 from yolino.grid.grid_factory import GridFactory
 from yolino.model.anchors import Anchor

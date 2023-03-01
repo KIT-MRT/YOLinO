@@ -24,7 +24,6 @@ import numpy as np
 import torch
 from matplotlib import pyplot as plt
 from tqdm import tqdm
-
 from yolino.dataset.dataset_factory import DatasetFactory
 from yolino.grid.grid_factory import GridFactory
 from yolino.model.activations import get_activations
@@ -170,7 +169,7 @@ class TrainHandler:
 
             Log.warning(f"Final trainable weights s={train_weights.numpy()} "
                         f"with strategy {loss_weighting}")
-            Log.warning(f"Final weight factor w=(1 / (2*s^2))={(1 / (2 * (train_weights**2))).numpy()} "
+            Log.warning(f"Final weight factor w=(1 / (2*s^2))={(1 / (2 * (train_weights ** 2))).numpy()} "
                         f"with strategy {loss_weighting}")
         else:
             raise NotImplementedError(f"We do not know {loss_weighting}")
@@ -201,7 +200,7 @@ class TrainHandler:
     def __call__(self, filenames, images, grid_tensor, epoch, image_idx_in_batch, is_train=True, first_run=False):
         if is_train:
             self.optimizer.zero_grad()
-            
+
         outputs = self.forward(images, is_train=is_train, epoch=epoch, first_run=first_run)
 
         if image_idx_in_batch == 0 and epoch == 0:

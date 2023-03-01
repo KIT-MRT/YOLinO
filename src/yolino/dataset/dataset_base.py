@@ -25,7 +25,6 @@ from abc import ABCMeta, abstractmethod
 import numpy as np
 import torch
 from torch.utils.data import Dataset as torchDataset
-
 from yolino.dataset.augmentation import DatasetTransformer
 from yolino.grid.grid import Grid
 from yolino.grid.grid_factory import GridFactory
