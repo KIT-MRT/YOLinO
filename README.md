@@ -93,9 +93,11 @@ So far a second folder is necessary next to the acutal yolino package, where we 
   ```
   ├── tus_md_8p_dn19
   │   ├── params.yaml
+  │   ├── default_params.yaml
   │   ├── ...
   ├── tus_po_8p_dn19
   │   ├── params.yaml
+  │   ├── default_params.yaml
   │   ├── ...
   ├── yolino
     ├── setup.py
@@ -140,7 +142,7 @@ specified. It is recommended to use only weights and biases. File logging slows 
 
 ### Training
 
-1. Your configuration is already set with the given `params.yaml` from your configuration folder.
+1. Your configuration is set with the given `params.yaml` from your configuration folder. Use `res/default_params.yaml` as inspiration. 
 4. Use proper virtual environment with `workon <virtualenv-name>` or conda with `conda activate <conda-name>`.
 2. Set your dataset paths properly to e.g. `$DATASET_TUSIMPLE`.
 5. `cd tus_po_8p_dn19`

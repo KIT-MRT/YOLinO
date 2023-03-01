@@ -168,7 +168,6 @@ sbatch_logs
 wandb
 test/log/latest_params.yaml
 test/log
-res/*params.yaml
 res/*params.tex
 res/*.tex
 res/*.tex_.png

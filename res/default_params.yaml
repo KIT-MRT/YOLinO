@@ -1,0 +1,54 @@
+
+# command line > environment variables > config file values > defaults
+activations: linear,sigmoid
+adjacency_threshold: 768 # 0.75 * 32 * 32
+anchor_vars: midpoint,direction
+anchors: none
+argo_style: border
+association_metric: euclidean
+augment: crop,rotation,jitter,erasing
+batch_size: 64
+best_mean_loss: false
+checkpoint_iteration: 10
+conf_match_weight: 1,10
+confidence: 0.5
+config: params.yaml
+crop_range: 0.17
+darknet_cfg: model/cfg/darknet19_448_d1.cfg
+dataset: argo2
+decay_rate: 0.0001
+earliest_stop: 5
+epoch: 80
+eps: 40
+eval_iteration: 3
+full_eval: false
+img_height: 640
+learning_rate: 0.0001
+level: WARN
+linerep: md
+loading_workers: 9
+log_dir: argo_po_8p_dn19
+loggers: [ wb ]
+loss_weight_strategy: fixed_norm
+loss: norm_mean,mse_mean
+lw: 1
+match_by_conf_first: False
+matching_gate: 1
+min_samples: 1
+min_segments_for_polyline: 5
+model: yolo_class
+momentum: 0.9
+mpxw: 3
+nondeterministic: false
+num_predictors: 8
+nxw: 2
+offset: True
+optimizer: adam
+patience: 5
+rotation_range: 0.01
+scale: 32
+split: train
+subsample_dataset_rhythm: -1
+training_variables: geom,confidence
+use_conf_in_loss_matching: true
+weights: 1,2
