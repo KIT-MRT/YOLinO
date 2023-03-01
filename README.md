@@ -1,6 +1,6 @@
 # YOLinO: Polyline Estimation
 
-The repository contains code to train and evaluate our network YOLinO network for polyline estimation from RGB images. The code was developed for a PhD thesis and is target towards evaluating rather productive use.
+The repository contains code to train and evaluate our YOLinO network for polyline estimation from RGB images. The code was developed for a PhD thesis and is target towards evaluating rather productive use.
 
 ## Open Issues
 There are some issues we want to tackle in the future:
