@@ -40,9 +40,6 @@ class LineDuplicates:
     def __len__(self):
         return self.__total_in_image__
 
-    # def __getitem__(self, item):
-    #     return self.__total_per_cell__.__getitem__(item)
-
     def summarize(self, grid_rows=20):
         if len(self) == 0:
             Log.info("No duplicates")

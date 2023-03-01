@@ -32,7 +32,7 @@ from yolino.utils.logger import Log
 
 
 def __strip_geometry__(lines, coordinate: CoordinateSystem):
-    if coordinate == CoordinateSystem.UV_CONTINUOUS:  # "(batch, instances, control points, ?)"
+    if coordinate == CoordinateSystem.UV_CONTINUOUS:
         return lines[:, :, :, 0:2], lines[:, :, :, 2:]
     else:
         raise NotImplementedError
@@ -53,7 +53,6 @@ class GridFactory:
                                         plot_image=plot_image)
         elif coordinate == CoordinateSystem.UV_SPLIT:
             raise NotImplementedError
-            # return cls.__grid_from_uv__(data, args.cell_size, args.num_predictors, args.grid_shape)
         elif coordinate == CoordinateSystem.CELL_SPLIT:
             if len(variables) > 0:
                 Log.warning(
@@ -80,8 +79,6 @@ class GridFactory:
             Log.warning("No lines found. Created empty grid.")
             return Grid(img_height=args.img_size[0], args=args), errors
 
-        # TODO: do we need to handle class labels here?
-        # geometry = deepcopy(geometry)
         grid = Grid(img_height=args.img_size[0], args=args)
 
         if len(geometry) > args.num_predictors:
@@ -90,7 +87,6 @@ class GridFactory:
                             len(geometry)) +
                         "predictors per cell (%s)!" % (args.num_predictors))
 
-        import matplotlib.pyplot as plt
         points_coords = coords.clone(LINE.POINTS)
         for b_idx, batch in enumerate(geometry):
             for instance_id, instance in enumerate(batch):
@@ -103,7 +99,6 @@ class GridFactory:
                 if len(line) == 1:
                     Log.info("A GT line only has a single valid point. We remove the point %s in image of size %s"
                              % (line, args.img_size[0]))
-                    # errors.append([b_idx, instance_id])
                     continue
 
                 if len(np.unique(line)) == 2:
@@ -173,7 +168,6 @@ class GridFactory:
                 Log.scalars(tag="unknown_tag", dict=summary, epoch=None)
         return grid, errors
 
-    # CoordinateSystem.CELL_SPLIT with (batch, cells, <=predictors, 2 * 2 + ?)
     @classmethod
     def __grid_from_prediction__(cls, prediction, img_height, args,
                                  coords: VariableStructure, confidence_threshold=0, scale=1, allow_nan=False,
@@ -189,7 +183,6 @@ class GridFactory:
             conf_idx = coords.get_position_of(Variables.CONF)
 
         for b_idx, batch in enumerate(prediction):
-            # for c_idx, cell in enumerate(batch):
             for i, grid_cell in enumerate(batch):
                 row = math.floor(i / shape[1])
                 col = i % shape[1]
@@ -198,13 +191,11 @@ class GridFactory:
                     Log.warning("Expected to add %s predictors, but we have set num_predictors=%s" % (
                         len(grid_cell), args.num_predictors))
                 for p_idx, predictor in enumerate(grid_cell):
-                    # try:
                     predictor = np.asarray(predictor)
                     if np.any(np.isnan(predictor)):
                         continue
 
                     if use_conf and confidence_threshold > 0 and predictor[conf_idx] < confidence_threshold:
-                        # Log.debug("Skip cause conf=%f < %f" % (predictor[conf_idx], confidence_threshold))
                         continue
 
                     try:

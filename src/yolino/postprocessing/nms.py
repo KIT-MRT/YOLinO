@@ -59,20 +59,7 @@ def nms(preds_uv, grid_shape, cell_size, confidence_threshold, orientation_weigh
 
     # Weight dimensions
     weights = np.asarray([midpoint_weight, midpoint_weight, length_weight, orientation_weight, orientation_weight])
-    # we want the sum to be 5 => eps stays within integer ranges
-    # weights = weights / sum(weights) * sum(weights > 0)
-    # Log.warning("Summed weights %s" % weights)
-    # Log.warning("Example line %s" % pauls_lines[np.where(interesting)[0][0]])
     pauls_lines[interesting] *= weights
-
-    # Log.warning("Example line weighted %s" % pauls_lines[np.where(interesting)[0][0]])
-    # pauls_lines = np.hstack((midpoints, lengths, norm_xdiffs, norm_ydiffs))
-
-    # if True:
-    #     for entry in pauls_lines[interesting]:
-    #         distances = np.linalg.norm(entry - pauls_lines[interesting], axis=1)
-    #         print("From %s\nto all others the distances with min=%.2f, max=%.2f" % (entry, min(distances), max(distances)))
-    #         print(np.histogram(distances, bins=range(0, 400, 20))[0])
 
     ticDBSCAN = timeit.default_timer()
     db = DBSCAN(float(epsilon), min_samples=int(min_samples))
@@ -84,7 +71,6 @@ def nms(preds_uv, grid_shape, cell_size, confidence_threshold, orientation_weigh
 
     tocDBSCAN = timeit.default_timer()
     Log.debug("Sklearn:  %s" % (tocDBSCAN - ticDBSCAN))
-    # Log.time(key="nms_sklearn", value=(tocDBSCAN - ticDBSCAN))
 
     labels = np.full((lines_uv.shape[0]), -1)
     labels[interesting] = db.labels_
@@ -106,9 +92,7 @@ def nms(preds_uv, grid_shape, cell_size, confidence_threshold, orientation_weigh
     for label in np.unique(labels):
         if label < 0:
             continue
-        # print(label)
         with_this_label = np.argwhere(labels == label)[:, 0]
-        # print(with_this_label,with_this_label.size)
         lines_with_this_label = lines_uv[with_this_label, :]
         m = np.average(lines_with_this_label, axis=0, weights=np.power(lines_with_this_label[:, -1], 10))
         m[-1] = np.max(lines_with_this_label[:, -1])
@@ -129,10 +113,8 @@ def nms(preds_uv, grid_shape, cell_size, confidence_threshold, orientation_weigh
                             coordinates=CoordinateSystem.UV_SPLIT,
                             tag="nms", imageidx=ImageIdx.NMS, color=np.asarray(scalarMap.to_rgba(label))[0:3] * 255.)
 
-    # toc = timeit.default_timer()
     Log.debug("Sklearn with postproc: %s" % (tocDBSCAN - ticDBSCAN))
 
     toc = timeit.default_timer()
     Log.debug("Total NMS: %s" % (toc - tic))
-    # Log.time(key="nms_total", value=(toc - tic))
     return np.expand_dims(lines_uv, axis=0), reduced

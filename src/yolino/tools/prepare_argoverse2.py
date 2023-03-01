@@ -19,7 +19,6 @@
 # ----------------------------- COPYRIGHT ------------------------------------ #
 # ---------------------------------------------------------------------------- #
 import math
-import math
 import os
 import random
 import shutil
@@ -28,20 +27,19 @@ from pathlib import Path
 from time import sleep
 from typing import List, Union
 
+import av2.utils.io as io_utils
 import matplotlib
 import numpy as np
 import yaml
 from av2.datasets.sensor.constants import RingCameras, StereoCameras
-import av2.utils.io as io_utils
 from rdp import rdp
 from shapely.geometry import Polygon, Point
 from tqdm import tqdm
-
 from yolino.dataset.dataset_factory import DatasetFactory
 from yolino.utils.argparser import add_level, add_dataset, add_explicit, add_max_n, add_root, \
     add_ignore_missing, add_plot, add_tags, add_loggers, add_dvc, add_subsample, add_loading_workers, add_keep
 from yolino.utils.enums import TaskType, ImageIdx
-from yolino.utils.general_setup import __push_commit__, __set_imgsize__
+from yolino.utils.general_setup import __push_commit__
 from yolino.utils.general_setup import __set_hash__, __set_cmd_logger__, set_progress_logger, __set_paths__
 from yolino.utils.logger import Log
 from yolino.utils.system import get_system_specs
@@ -101,8 +99,6 @@ def enrich_args(args, name, unknown):
 
 
 def define_arguments(name):
-
-    # _, parser = setup_argparse(name=name)
     try:
         # Test if configargparse is available (not avail on unittests in CI)
         import configargparse
@@ -126,17 +122,13 @@ def define_arguments(name):
         from av2.datasets.sensor.constants import StereoCameras
         parser.add_argument("-cam", "--camera", help="Choose the camera image",
                             choices=[*list(RingCameras), *list(StereoCameras)], default=RingCameras.RING_FRONT_CENTER)
-    except ModuleNotFoundError as ex: 
-        parser.add_argument("-cam", "--camera", help="Choose the camera image",
-                            #choices=[*list(RingCameras), *list(StereoCameras)], 
-                            default="ring_front_center")
-    # default="/mrtstorage/datasets/public/argoverse20")
+    except ModuleNotFoundError as ex:
+        parser.add_argument("-cam", "--camera", help="Choose the camera image", default="ring_front_center")
     parser.add_argument("-y", "--yes", action="store_true", help="Just run and delete all old files without asking.")
     parser.add_argument("--dry_run", action="store_true", help="Do nothing for now. Only count images.")
     parser.add_argument("--enhance", action="store_true", help="Do not delete anything. Only add missing files.")
     add_dataset(parser)
     add_level(parser)
-    # add_split(parser)
     add_max_n(parser)
     add_root(parser)
     add_explicit(parser)
@@ -213,24 +205,20 @@ def get_lane(polyline, ego_SE3_city, pinhole_cam, depth_map, img):
         not_occluded_block_indices = np.arange(occlusion_break_points[occ_idx], occlusion_break_points[occ_idx + 1])
         line_segments_arr: NDArrayInt = np.hstack([u[not_occluded_block_indices].reshape(-1, 1),
                                                    v[not_occluded_block_indices].reshape(-1, 1)])
-        # occluded_arr: NDArrayInt = is_valid_not_occluded[not_occluded_block_indices]
 
         if not_occluded_block_indices[0] > 0 and len(line_segments_arr) > 1:
             last_invalid_index = not_occluded_block_indices[0] - 1
             last_invalid_uv = np.asarray([u[last_invalid_index], v[last_invalid_index]])
             if outside_image(last_invalid_uv, img):
                 line_segments_arr = np.concatenate([[last_invalid_uv], line_segments_arr])
-                # occluded_arr = np.concatenate([True, *occluded_arr])
 
         if not_occluded_block_indices[-1] < len(uv) - 1 and len(line_segments_arr) > 1:
             next_invalid_index = not_occluded_block_indices[-1] + 1
             next_invalid_uv = np.asarray([u[next_invalid_index], v[next_invalid_index]])
             if outside_image(next_invalid_uv, img):
                 line_segments_arr = np.concatenate([line_segments_arr, [next_invalid_uv]])
-                # occluded_arr = np.concatenate([*occluded_arr, True])
 
         line_segments_arrays.append(line_segments_arr)
-        # occluded_arrays.append(occluded_arr)
 
         if False:
             plt.clf()
@@ -315,7 +303,8 @@ def add_centerline(id, instance_id, ids, avm, im_pose, city_SE3_ego, lanes, pinh
                 Log.debug("New instance id (%s) for successor" % instance_id)
                 lanes[instance_id] = []
             ids[successors[s]] = []
-            add_centerline(id=successors[s], instance_id=instance_id, num_valid_in_log=num_valid_in_log, ids=ids, lanes=lanes, avm=avm, img=img,
+            add_centerline(id=successors[s], instance_id=instance_id, num_valid_in_log=num_valid_in_log, ids=ids,
+                           lanes=lanes, avm=avm, img=img,
                            im_pose=im_pose, city_SE3_ego=city_SE3_ego, pinhole_cam=pinhole_cam, axs=axs,
                            depth_map=depth_map)
 
@@ -337,7 +326,8 @@ def process_uv_coords(id, initial_instance_id, uv_cs, lanes, axs, start_is_occlu
             line = uv_c[i:i + 2]
             tmp_instance_id, label_is_written = process_line(id=id, instance_id=instance_id,
                                                              label_is_written=label_is_written, line=line,
-                                                             marker=marker, only_viz=only_viz, num_valid_in_log=overall_i,
+                                                             marker=marker, only_viz=only_viz,
+                                                             num_valid_in_log=overall_i,
                                                              lanes=lanes, axs=axs)
             if tmp_instance_id == -1:
                 continue
@@ -459,7 +449,6 @@ def finish_plot(axs, fig, img_height=None):
 
     fig.tight_layout()
     fig.gca().set_aspect('equal', adjustable='box')
-    # fig.legend()
 
 
 def skip_log(log_id, explicit):
@@ -521,7 +510,6 @@ def process_log(log_ids: np.ndarray, thread_index, subsample_factor, max_n_in_lo
             pinhole_cam = loader.get_log_pinhole_camera(log_id, cam_name)
         except FileNotFoundError as e:
             if args.ignore_missing:
-                # pbar.update(1)
                 continue
             else:
                 raise e
@@ -533,7 +521,6 @@ def process_log(log_ids: np.ndarray, thread_index, subsample_factor, max_n_in_lo
             del loader
             del pinhole_cam
             del cam_im_fpaths
-            # pbar.update(1)
             continue
 
         log_map_dirpath = os.path.join(dataset_input_path, log_id, "map")
@@ -545,7 +532,6 @@ def process_log(log_ids: np.ndarray, thread_index, subsample_factor, max_n_in_lo
         successfully_finished = 0
         for i, img_fpath in enumerate(cam_im_fpaths):
 
-            # TODO this is not the correct max_n
             if abort(i, max_n_in_log):
                 Log.warning(f"Abort on counter {i} and thread max_n={max_n_in_log}.")
                 break
@@ -581,7 +567,6 @@ def process_log(log_ids: np.ndarray, thread_index, subsample_factor, max_n_in_lo
                 # without depth map, can't do this accurately
                 continue
 
-            # pbar.update(1)
             lidar_points = io_utils.read_lidar_sweep(lidar_fpath, attrib_spec="xyz")
             lidar_timestamp_ns = int(lidar_fpath.stem)
             depth_map = loader.get_depth_map_from_lidar(
@@ -604,17 +589,15 @@ def process_log(log_ids: np.ndarray, thread_index, subsample_factor, max_n_in_lo
                         break
 
             if is_intersection:
-                # with _lock:
                 with open(intersections_file_path, "a") as f:
                     f.write(str(img_fpath) + "\n")
 
-            # plt.clf()
             if args.plot and successfully_finished == 1:
                 img, axs, fig = plt_add_image(img_fpath)
             else:
-                img = np.zeros((2048, 1550, 3)) 
+                img = np.zeros((2048, 1550, 3))
                 axs = None
-                fig = None 
+                fig = None
 
             lanes = {}
             ids = {}
@@ -624,8 +607,10 @@ def process_log(log_ids: np.ndarray, thread_index, subsample_factor, max_n_in_lo
                     continue
 
                 cl = avm.get_lane_segment_centerline(lane_segment.id)
-                uv_c, start_is_occluded, end_is_occluded = get_lane(cl, ego_SE3_city=city_SE3_ego.inverse(),  # , ok, start_out, end_out
-                                pinhole_cam=pinhole_cam, depth_map=depth_map, img=img)
+                uv_c, start_is_occluded, end_is_occluded = get_lane(cl, ego_SE3_city=city_SE3_ego.inverse(),
+                                                                    # , ok, start_out, end_out
+                                                                    pinhole_cam=pinhole_cam, depth_map=depth_map,
+                                                                    img=img)
 
                 if args.plot and successfully_finished == 1 and len(uv_c) > 0:
                     process_uv_coords(id=lane_segment.id, initial_instance_id=-1, uv_cs=uv_c, lanes=lanes, axs=axs,
@@ -661,11 +646,11 @@ def process_log(log_ids: np.ndarray, thread_index, subsample_factor, max_n_in_lo
 
                 lanes[instance_id] = []
                 ids[lane_segment.id] = []
-                add_centerline(id=lane_segment.id, instance_id=instance_id, num_valid_in_log=successfully_finished, ids=ids, lanes=lanes, avm=avm,
+                add_centerline(id=lane_segment.id, instance_id=instance_id, num_valid_in_log=successfully_finished,
+                               ids=ids, lanes=lanes, avm=avm,
                                im_pose=im_pose, city_SE3_ego=city_SE3_ego, pinhole_cam=pinhole_cam,
                                depth_map=depth_map, img=img, axs=axs)
 
-            # with _lock:
             if not os.path.exists(os.path.dirname(npy_path)):
                 os.makedirs(os.path.dirname(npy_path))
 
@@ -687,10 +672,8 @@ def process_log(log_ids: np.ndarray, thread_index, subsample_factor, max_n_in_lo
 
                 nonzero_diffs = np.asarray([d for d in diff if not np.all(d == 0)])
                 line_length = np.sum(np.linalg.norm(nonzero_diffs, axis=1))
-                # num_non_zero_segments = np.count_nonzero(np.sum(diff, axis=1))
                 num_samples = max(20, int(line_length / 30))
 
-                # num_samples = min(100, num_samples)
                 l = interp_utils.interp_arc(t=num_samples, points=l)
                 l = rdp(l, epsilon=0.1)
 
@@ -734,7 +717,6 @@ def process_log(log_ids: np.ndarray, thread_index, subsample_factor, max_n_in_lo
 
     if counter < min(max_n_in_log, 300) and not args.ignore_missing and args.explicit is None:
         Log.error(f"We only found {counter} files in thread {thread_index}. That is not enough.")
-        # exit(-1)
     else:
         Log.warning(f"Thread {thread_index} is finished with {counter} files..")
     return counter
@@ -773,7 +755,7 @@ if __name__ == '__main__':
                                     f"but found only {len(log_dirs)}. If this is on purpose set --ignore_missing.")
 
         # ----------- PARAMS ---------------
-        max_dist = 80  # TODO: put in diss
+        max_dist = 80
         LAST_INSTANCE_ID = -1
         COLORS = {
             -1: (1, 0, 0)

@@ -81,7 +81,7 @@ def get_param_vals(level=None, dataset=str(Dataset.CULANE)):
 
 
 def test_setup(name, dataset, log_dir=None, level=None, additional_vals=None,
-               show_params=False, config_file=None):  # name = self._testMethodName + "_setup"
+               show_params=False, config_file=None):
 
     params = {}
 

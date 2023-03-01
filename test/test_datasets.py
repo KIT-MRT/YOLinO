@@ -44,10 +44,6 @@ class DatasetTestEnum(unittest.TestCase):
     params["linerep"] = str(LINE.POINTS)
     params["num_predictors"] = 8
     params["learning_rate"] = 0.001
-    # params["conf"] = 0.99
-    # params["lw"] = 0.016
-    # params["mpxw"] = 1.5
-    # params["cell_size"] = "[100, 100]"
     params["root"] = "../"
     params["split"] = "train"
 
@@ -130,28 +126,3 @@ class DatasetTestEnum(unittest.TestCase):
                                              shuffle=True, augment=False)
         self.assertEqual(dataset.enum, Dataset.CULANE)
         self.assertIsNotNone(loader)
-
-    # def testRays(self):
-    #     args = test_setUp(self._testMethodName, str(Dataset.CULANE),
-    #                       # level=Level.DEBUG
-    #                       )
-    #
-    #     dataset, loader = DatasetFactory.get(args.dataset, only_available=True, split=args.split, args=args,
-    #                                          shuffle=True, augment=False)
-    #
-    #     from yolino.dataset.dataset_base import DatasetInfo
-    #     dataset: DatasetInfo
-    #     angle_tensor = dataset.full_grid(train_vars=False)
-    #     angle_grid, _ = GridFactory.get(angle_tensor.unsqueeze(0), variables=[], coordinate=CoordinateSystem.CELL_SPLIT,
-    #                                     args=args,
-    #                                     coords=dataset.coords)
-    #     angle_grid: Grid
-    #     from yolino.viz.plot import plot
-    #     img, ok = plot(angle_grid.get_image_lines(args.img_size[0]), "/tmp/ray_img.png", image=None,
-    #                    coords=dataset.coords,
-    #                    show_grid=True, cell_size=args.cell_size, coordinates=CoordinateSystem.UV_SPLIT,
-    #                    training_vars_only=False)
-    #     cs = args.cell_size
-    #     for px, py in zip(range((cs[0] // 2) + 4, cs[0] - 4), range(4, cs[1] - 4)):
-    #         self.assertTrue(np.all(np.equal(img[px, py], (255, 255, 255))),
-    #                         msg="Pixel %d, %d of a cell should be white, but it is %s" % (px, py, img[px, py]))

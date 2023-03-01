@@ -122,9 +122,6 @@ class TestYoloClassification(unittest.TestCase):
         self.viz(epoch, reloaded_train_preds, new_images, grid_tensor, path_train, coords, args_retrain)
 
         self.assertTrue(torch.equal(images, new_images))
-        # self.assertTrue(torch.equal(reloaded_train_preds, train_preds),
-        #                 msg="Prediction of stored checkpoint model is not the same as "
-        #                     "the actual model's prediction in train mode, loaded from trainer.")
 
         # Load model from best_checkpoint
         eval = Evaluator(args=args_retrain, prepare_forward=True, load_best_model=True, anchors=None)
@@ -134,19 +131,6 @@ class TestYoloClassification(unittest.TestCase):
                                                                   "(expected %d, got %d) and thus probably not the "
                                                                   "correct best_checkpoint." % (epoch + 1,
                                                                                                 eval.forward.start_epoch))
-        # # test eval prediction
-        # num_duplicates = int(sum(dupl["total_duplicates_in_image"]))
-        # reloaded_evaluator_preds, _ = eval(images=images, grid_tensor=grid_tensor, idx=i, filenames=fileinfo,
-        #                                    tag="unittest_eval", apply_nms=False,
-        #                                    epoch=epoch, num_duplicates=num_duplicates)
-        # path_train = "/tmp/last_new_eval_pred.png"
-        # print("file://%s" % path_train)
-        # self.viz(epoch, reloaded_evaluator_preds, images, grid_tensor, path_train, coords, args_retrain)
-        #
-        # self.assertTrue(torch.equal(images, new_images))
-        # self.assertTrue(torch.equal(reloaded_evaluator_preds, reloaded_train_preds),
-        #                 msg="Prediction of stored best_checkpoint model is not the same as "
-        #                     "the actual model's prediction")
 
     def viz(self, epoch, preds, images, grid_tensors, path, coords, args):
         grid, _ = GridFactory.get(data=torch.unsqueeze(preds[0].detach(), dim=0), variables=[],
@@ -169,7 +153,6 @@ class TestYoloClassification(unittest.TestCase):
             model_entry = model.get_parameter(checkpoint_key)
             checkpoint_entry = checkpoint["model_state_dict"][checkpoint_key]
             self.assertTrue(torch.all(torch.abs(checkpoint_entry - model_entry) < 0.00001),
-                            # self.assertTrue(torch.equal(checkpoint_entry, model_entry),
                             msg="%s\n%s\n%s"
                                 % (msg,
                                    checkpoint_entry[
@@ -282,7 +265,6 @@ class TestYoloClassification(unittest.TestCase):
         for j in [0, 5, 20, 41]:
             for i in range(0, 2):
                 self.assertAlmostEqual(sigmoid(logits[0, j, 0, i]), probs[0, j, 0, i].item(), places=5)
-            # self.assertAlmostEqual(sigmoid(logits[0, j, 0, 2]) * math.sqrt(2), probs[0, j, 0, 2].item(), places=6)
             self.assertAlmostEqual(sigmoid(logits[0, j, 0, 2]) * 2 - 1, probs[0, j, 0, 2].item(), places=5)
             self.assertAlmostEqual(sigmoid(logits[0, j, 0, 3]) * 2 - 1, probs[0, j, 0, 3].item(), places=5)
 
@@ -328,7 +310,6 @@ class TestYoloClassification(unittest.TestCase):
         for j in [0, 5, 20, 41]:
             for i in range(0, 2):
                 self.assertAlmostEqual(sigmoid(logits[0, j, 0, i]) * 2 - 1, probs[0, j, 0, i].item(), places=6)
-            # self.assertAlmostEqual(sigmoid(logits[0, j, 0, 2]) * math.sqrt(2), probs[0, j, 0, 2].item(), places=6)
             self.assertAlmostEqual(sigmoid(logits[0, j, 0, 2]) * 4 - 2, probs[0, j, 0, 2].item(), places=6)
             self.assertAlmostEqual(sigmoid(logits[0, j, 0, 3]) * 4 - 2, probs[0, j, 0, 3].item(), places=6)
 
@@ -345,24 +326,13 @@ class TestYoloClassification(unittest.TestCase):
                           )
 
         coords = DatasetFactory.get_coords(split="train", args=args)
-        # VariableStructure(LINE.POINT, num_classes=0, num_conf=0)
         net = YolinoNet(args, coords)
-
-        # liny = torch.linspace(0,256,20)
-        # input = torch.tile(liny, [1, 1, 10, 1])
-        # liny = torch.linspace(0,256,args.grid_shape[0])
-        # input = torch.stack([torch.unsqueeze(liny, 1) for i in range(0, args.grid_shape[1])], dim=1).squeeze(2)
-        # input = torch.tile(input, [args.batch_size, args.num_predictors, 1, 1])
 
         input = torch.linspace(0, 256, args.grid_shape[0] * args.grid_shape[1]).reshape(
             [args.grid_shape[0], args.grid_shape[1]])
         input = torch.tile(input, [args.batch_size, args.num_predictors, 1, 1])
 
-        # Log.warning(input.shape)
-        # Log.warning(input)
         output = net.reshape_prediction(input)
-        # Log.warning(output.shape)
-        # Log.warning(output)
 
         if args.plot:
             import matplotlib.pyplot as plt

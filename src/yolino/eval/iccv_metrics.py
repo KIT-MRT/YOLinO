@@ -82,8 +82,6 @@ def get_captured_from_to(source_points, target_points, threshold, weights=[1, 1,
     for source_point in source_points:
         # xy distances
         xy_distances = np.abs(target_points[:, :2] - source_point[:2])
-        # xy_distances[:, 0] *= weights[0]
-        # xy_distances[:, 1] *= weights[1]
 
         # angular distances
         a = np.abs(target_points[:, 2] - source_point[2])
@@ -122,22 +120,17 @@ def iccv_f1(preds_uv, gt_uv, img_size, sample_distance=1, threshold=0.5, conf_id
     else:
         unbound_pred_lines = []
     # convert label and pred to points
-    # args.sample_distance = 1
     pred_points = polylines_to_points([unbound_pred_lines], sample_distance)
     # calculate precision and recall
     width = img_size[0]
-    threshold = width / 50  # TODO: threshold eval; abhaengig von Zeile?!
+    threshold = width / 50  # TODO: threshold eval depending on image row
     height = img_size[1]
     aspect_ratio = width / height
     weights = [1.0, aspect_ratio, 1.0]
-    # precision, TP_P, p_distances = get_captured_from_to(pred_points, gt_points, threshold, weights)
     recall, precision, TP, r_distances, TP_pred = get_captured_from_to(gt_points, pred_points, threshold, weights)
 
     # tp/fp/fn/tn image
     if False:
-        # fig = plt.figure(figsize=(5*aspect_ratio,5))
-        # ax = fig.add_subplot(111)
-
         fig, axs = plt.subplots(3, 1, sharey=True, sharex=True, figsize=(5 * aspect_ratio, 10))
         fig.suptitle("%s: Precision %.2f, Recall %.2f." % ("test.png", precision, recall))
 
@@ -147,7 +140,6 @@ def iccv_f1(preds_uv, gt_uv, img_size, sample_distance=1, threshold=0.5, conf_id
         gt_patch = mpatches.Patch(color=(1, 0, 0, 1), label='FN Ground Truth')
         axs[0].legend(handles=[tp_pred_patch, tp_gt_patch])
         axs[1].legend(handles=[pred_patch, gt_patch])
-        # ax.legend(handles=[tp_pred_patch, tp_gt_patch, pred_patch, gt_patch])
 
         for i, (m, out, tp) in enumerate([('o', pred_points, TP_pred), ('^', gt_points, TP)]):
             xs = out[:, 1]

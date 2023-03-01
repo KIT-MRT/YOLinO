@@ -48,10 +48,6 @@ def get_optimizer(args, net, loss_weights):
     else:
         raise NotImplementedError("Unknown optimizer %s" % args.optimizer)
 
-    # if args.scheduler == Scheduler.EXPONENTIAL:
-    #     scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)
-    #     scheduler.load_state_dict(scheduler_checkpoint)
-    # el
     if args.scheduler == Scheduler.NONE:
         scheduler = None
     else:

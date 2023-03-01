@@ -136,10 +136,7 @@ class TestLoss(unittest.TestCase):
                 loss_fct = get_loss(losses=[loss], args=args, coords=dataset.coords, weights=loss_weights,
                                     anchors=dataset.anchors, conf_weights=conf_loss_weights)
 
-            # dummy_labels = grid_tensor.permute((0, 3, 1, 2))
-
             dummy_preds = dummy_labels[:, :, :, dataset.coords.get_position_of(Variables.CLASS, one_hot=True)]
-            # dummy_preds = dummy_preds.permute((0, 3, 1, 2))
 
             print(dummy_preds.shape)
             print(dummy_labels.shape)
@@ -211,7 +208,6 @@ class TestLoss(unittest.TestCase):
         loss_fct = get_loss(losses=losses, args=args, coords=dataset.coords, weights=loss_weights,
                             anchors=dataset.anchors, conf_weights=conf_loss_weights)
 
-        # TODO predictions can not be filled with nan!
         idx = 0
         for item in dataset.coords.items():
             variable, count = item
@@ -244,17 +240,6 @@ class TestLoss(unittest.TestCase):
                     self.assertGreater(sum_losses[i].item(), 0,
                                        msg="We applied %s to not identical tensors, but received loss=%.3f"
                                            % (losses[i], sum_losses[i]))
-                    # if variable == Variables.GEOMETRY:
-                    #     expected_mean = (0.5 ** 2) / 2
-                    #     self.assertAlmostEqual(mean_losses[i].item(), expected_mean,
-                    #                            msg="We expect the geom loss to be 0.5 on each coord of the endpoint "
-                    #                                "and 0 on each of the startpoint. "
-                    #                                f"Thus, the mean is {expected_mean}")
-                    #
-                    #     expected_sum = 52 * 2 * (0.5 ** 2)
-                    #     self.assertAlmostEqual(sum_losses[i].item(), expected_sum,
-                    #                            msg="We expect the geom loss to be 0.5 on each coord of the endpoint."
-                    #                                f"Thus, the sum is {expected_sum}")
 
                     if variable == Variables.CONF:
                         self.assertAlmostEqual(mean_losses[i].item(), 0.5 * ((1 - conf_val) ** 2 + conf_val ** 2),
@@ -324,9 +309,6 @@ class TestLoss(unittest.TestCase):
             images, grid_tensors, filenames, _, _ = next(iter(loader))
             outputs = forward(images, is_train=True, epoch=model_epoch)
 
-            # use 10x the label for dublicate check
-            # grid_tensors = torch.tile(grid_tensors[:, :, [0], :], [1, 1, args.num_predictors, 1])
-
             loss_weights = TrainHandler.__init_loss_weights__(
                 num_train_vars=len(dataset.coords.train_vars()),
                 cuda=args.cuda,
@@ -352,8 +334,6 @@ class TestLoss(unittest.TestCase):
         matcher = CellMatcher(coords, args)
 
         grid_shape = (2, 5)
-        # gt_line = torch.tensor([0, 0, 1, 1, 1, 0, 1], dtype=torch.float32)
-        # grid_tensor = torch.tile(gt_line, dims=[1, np.prod(grid_shape), args.num_predictors, 1])
         grid_tensor = torch.ones(
             size=(int(args.batch_size), int(np.prod(grid_shape)), int(args.num_predictors), coords.get_length()),
             dtype=torch.float)
@@ -591,10 +571,6 @@ class TestLoss(unittest.TestCase):
         self.assertTrue(torch.all(matched_predictions[:, 1] == 1), matched_predictions[0:3])
         self.assertTrue(torch.all(matched_predictions[:, 2] == 0), matched_predictions[0:3])
         self.assertTrue(torch.all(matched_predictions[:, 0] == -100), matched_predictions[0:3])
-
-        # self.assertTrue(torch.all(matched_gt[:, 0] == 2), matched_gt[0:3])
-        # self.assertTrue(torch.all(matched_gt[:, 1] == 1), matched_gt[0:3])
-        # self.assertTrue(torch.all(matched_gt[:, 2] == -100), matched_gt[0:3])
 
     def test_loss_single_cell(self):
         args = test_setup(self._testMethodName, str(Dataset.CULANE),

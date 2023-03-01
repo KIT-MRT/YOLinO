@@ -38,16 +38,13 @@ class Network(BaseEnum):
 
 class AnchorVariables(BaseEnum):
     DIRECTION = "direction"
-    # MIDPOINT_DIRECTION = "md"
     MIDPOINT = "midpoint"
-    # MIDPOINT_LENGTH_DIRECTION = "mld"
     POINTS = "points"
 
 
 class AnchorDistribution(BaseEnum):
     NONE = "none"
     EQUAL = "equal"
-    # SIGMOID = "sigmoid"
     KMEANS = "k-means"
 
 
@@ -173,9 +170,9 @@ class TaskType(BaseEnum):
 
 
 class Logger(BaseEnum):
-    TENSORBOARD = "tb"  # LoggerInfo("tb", None)
-    CLEARML = "clearml"  # LoggerInfo("trains", None)
-    WEIGHTSBIASES = "wb"  # LoggerInfo("wb", None)
+    TENSORBOARD = "tb"
+    CLEARML = "clearml"
+    WEIGHTSBIASES = "wb"
     FILE = "file"
 
 

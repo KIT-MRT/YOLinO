@@ -58,7 +58,6 @@ class Evaluator:
         self.cell_matcher = CellMatcher(self.points_coords, self.args)
 
         if prepare_forward:
-            # args.batch_size = 1
             args.retrain = False
             Log.warning("We set retrain==False")
             self.forward = ForwardRunner(args, coords=self.coords, load_best=load_best_model)
@@ -85,7 +84,6 @@ class Evaluator:
         grid, errors = GridFactory.get(np.expand_dims(grid_tensor, axis=0), [], CoordinateSystem.CELL_SPLIT, self.args,
                                        input_coords=self.coords, threshold=0.5, anchors=self.anchors)
 
-        # grid_lines = grid.get_image_lines(image_height=image.shape[1])
         path = self.args.paths.generate_eval_label_file_path(filename, idx=ImageIdx.GRID)
         plot_style_grid(grid.get_image_lines(coords=self.points_coords, image_height=image.shape[1]), path, image,
                         show_grid=True,
@@ -97,7 +95,7 @@ class Evaluator:
 
     def __call__(self, images, grid_tensor, idx, filenames, epoch, num_duplicates, tag="dummy_eval", do_in_uv=True,
                  apply_nms=False, fit_line=False):
-        # TODO: this is a weird quick fix with eval in train mode; something is wrong with batch norm I guess
+
         preds = self.forward(images, epoch=epoch, is_train=False)
         preds = preds.detach()
         if self.args.gpu:
@@ -199,9 +197,8 @@ class Evaluator:
         num_batch, num_cells, num_preds, num_train_vars = preds.shape
         _, _, _, num_vars = grid_tensors.shape
 
-        # (batch, line_segments, 2 * 2 + ?)
-        preds_uv = []  # torch.empty((num_batch, 0, num_train_vars))
-        gt_uv = []  # torch.empty((num_batch, 0, num_vars))
+        preds_uv = []
+        gt_uv = []
 
         for batch in range(num_batch):
             pred_grid, _ = GridFactory.get(preds[[batch]], [], CoordinateSystem.CELL_SPLIT, args=self.args,
@@ -224,12 +221,6 @@ class Evaluator:
                     torch.tensor(grid.get_image_lines(coords=self.points_coords, image_height=images[batch].shape[1]),
                                  dtype=torch.float32), dim=0))
 
-            # path = self.args.paths.generate_eval_image_file_path(filenames[batch], idx=ImageIdx.PRED)
-            # plot_style_grid(preds_uv[batch], path, images[batch], show_grid=True,
-            #                 cell_size=grid.get_cell_size(images[batch].shape[1]),
-            #                 coordinates=CoordinateSystem.UV_SPLIT, tag="eval", imageidx=ImageIdx.PRED,
-            #                 coords=self.points_coords.coords, epoch=epoch, gt=torch.unsqueeze(gt_uv[batch], dim=0),
-            #                 threshold=self.args.confidence, training_vars_only=True)
         return torch.cat(preds_uv), gt_uv
 
     def get_scores_in_cell(self, grid_tensor, preds, epoch, filenames, num_duplicates, tag="dummy_eval",
@@ -318,8 +309,6 @@ class Evaluator:
         # matched_preds_indices contains at the prediction position the matching GT ID
         # matched_gt_indices contains at the GT position the matching prediction ID
         if do_matching:
-            # matched_preds_indices, _ = self.matcher.match(preds=preds_uv, grid_tensor=gt_uv, filenames=filenames,
-            #                                               confidence_threshold=self.args.confidence)
             preds_uv, gt_uv, matched_preds_indices = self.matcher.sort_lines_by_geometric_match(preds=preds_uv,
                                                                                                 grid_tensor=gt_uv,
                                                                                                 epoch=epoch,
@@ -451,41 +440,15 @@ class Evaluator:
                 tp_mse_metrics_end = timeit.default_timer()
                 Log.time(key="all_conf_metrics", value=timeit.default_timer() - tp_mse_metrics_end)
 
-        #     from yolino.runner.trainer import TRAIN_TAG
-        #     if not torch.all(gt_uv[:, 0].isnan()) and tag == TRAIN_TAG and epoch > 10:
-        #         Log.glitch(self.args, preds_uv)
-        #         raise Exception("We have a glitch")
         return scores, torch.any(tp_flags)
 
     def publish_scores(self, epoch, tag):
         scores = {}
         for k in self.scores:
             # we want to build the average on all epochs but not on the classes
-
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore", category=RuntimeWarning)
                 scores[k] = np.nanmean(self.scores[k], axis=0).tolist()
-
-            if k == "confusion":
-                # Log.info(self.scores[k].shape)
-                matrix = np.sum(self.scores[k], axis=-1)
-                # matrix[0] = -1  # ignore class 0
-                # matrix[:, 0] = -1  # ignore class 0
-
-                # # for j in range(0,len(self.scores[k]), 5):
-                # #     matrix = self.scores[k][j:j+5]
-                # #     Log.info(matrix)
-                # disp = ConfusionMatrixDisplay(
-                #     confusion_matrix=matrix)  # , display_labels=range(0,self.num_classes))
-                # conf_plot = disp.plot()
-                #
-                # # path = self.args.paths.generate_confusion_matrix_img_path(epoch=epoch, tag=tag, idx=ImageIdx.PRED)
-                # # Log.info("Export confusion matrix to file://%s" % path)
-                # # plt.savefig(path)
-
-                # Log.confusion(matrix, name=k, epoch=epoch, tag=tag, imageidx=ImageIdx.PRED)
-                # plt.close('all')
-                # del conf_plot
 
         if "confusion" in scores:
             del scores["confusion"]

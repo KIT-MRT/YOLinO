@@ -135,10 +135,6 @@ def intersection_segments(top_left, width, height, geom_line: np.ndarray, segmen
     geom_intersection, geom_box = intersection_box(top_left, width, height, geom_line)
     if lib == "shapely":
         segments = handle_shapely_intersection(geom_intersection, segments, offset_h=r, offset_w=c)
-    # elif lib == "sympy":
-    #     segments = handle_sympy_intersection(geom_intersection, segments, offset_h=r, offset_w=c)
-    # elif lib == "pyvista":
-    #     segments = handle_pyvista_intersection(geom_intersection, segments, offset_h=r, offset_w=c)
     else:
         raise NotImplementedError(lib)
 
@@ -169,10 +165,8 @@ def getExtrapoledLine(p1, p2):
     'Creates a line extrapoled in p1->p2 direction'
 
     length = (math.pow(p2[1] - p1[1], 2) + math.pow(p2[0] - p1[0], 2))
-    # EXTRAPOL_RATIO = 1 / math.sqrt(length) # result will be extrapolated by length 1
     EXTRAPOL_RATIO = 10
     a = p1
-    # a = (p1[0]-EXTRAPOL_RATIO*(p2[0]-p1[0]), p1[1]-EXTRAPOL_RATIO*(p2[1]-p1[1]) )    # extrapolate in both directions
     b = (p1[0] + EXTRAPOL_RATIO * (p2[0] - p1[0]), p1[1] + EXTRAPOL_RATIO * (p2[1] - p1[1]))
     return LineString([a, b])
 
@@ -226,7 +220,6 @@ def line_segment_to_sampled_points(line_segment, variables, sample_distance):
     return points
 
 
-# TODO: from skudlik
 def t_cart2pol(point):
     """
     angle is in range of 0 to PI
@@ -244,7 +237,6 @@ def t_cart2pol(point):
     return torch.stack((rho, phi))
 
 
-# TODO: from skudlik
 def t_pol2cart(polar):
     """converts a tansor of [rhos, phis] to [x_values, y_values]"""
     x = polar[0] * torch.cos(polar[1])

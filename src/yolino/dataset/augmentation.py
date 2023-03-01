@@ -48,7 +48,6 @@ class Compose:
             if use_label:
                 img, label, ok = t(img, label, params=params)
                 if not ok:
-                    # Log.warning("error in %s" % t)
                     errors.append(t)
             else:
                 if isinstance(t, ColorJitter) or isinstance(t, RandomErasing) or isinstance(t, Normalize):
@@ -271,7 +270,6 @@ class RandomRotationWithLabels(torch.nn.Module):
         _, h, w = image.shape
         for i_idx, instance in enumerate(uv_lines):
             for p_idx, point in enumerate(instance):
-                # TODO: from skudlik
                 point[0] = point[0] - h / 2
                 point[1] = point[1] - w / 2
 

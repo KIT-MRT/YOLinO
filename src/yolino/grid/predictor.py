@@ -57,7 +57,6 @@ class Predictor:
         if len(self.label) > 0 and max(self.label) > 1:  # we store one_hot!
             raise ValueError("%s is not one_hot" % self.label)
 
-        # self.idx = idx.item() if type(idx) == torch.Tensor else idx
         self.linerep = linerep
 
         # for labels this is the polyline ID!
@@ -135,18 +134,6 @@ class Predictor:
         self.start = np.array(values[0:2], dtype=float)
         self.end = np.array(values[2:4], dtype=float)
         return True
-
-    # def as_euler(self, extrapolate=True):
-    #     return EulerLines.from_cart(self.start, self.end, extrapolate=extrapolate)
-    #
-    # def as_oned(self, extrapolate=True):
-    #     return OneDLines.from_cart(self.start, self.end, extrapolate=extrapolate)
-    #
-    # def as_dml(self):
-    #     return MidLenDirLines.from_cart(self.start, self.end)
-    #
-    # def as_dm(self):
-    #     return MidDirLines.from_cart(self.start, self.end)
 
     def validate(self):
         if type(self.start) == np.ndarray and type(self.end) == np.ndarray:

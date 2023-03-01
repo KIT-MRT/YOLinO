@@ -35,7 +35,7 @@ class NmsHandler:
 
     def __call__(self, images, preds, labels, filenames, epoch):
 
-        np_preds_uv = preds.numpy()  # .detach().cpu().numpy()
+        np_preds_uv = preds.numpy()
 
         if self.do_plot:
             path = self.args.paths.generate_debug_image_file_path(file_name=filenames[0], idx=ImageIdx.PRED,

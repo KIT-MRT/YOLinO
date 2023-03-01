@@ -77,8 +77,6 @@ def __push_commit__(root, ignore_dirty=False):
             input("Your repo has uncommited changes, please commit first or ignore this warning and press any key.")
         else:
             raise ValueError("Git repo is dirty!")
-    # Log.upload_params(params)
-    # Log.debug(params)
     return params
 
 
@@ -280,11 +278,6 @@ def __abs_paths__(args):
         Log.debug("Model: '%s' -> '%s'" % (args.explicit_model, os.path.join(args.dvc, args.explicit_model)))
         args.explicit_model = os.path.join(args.dvc, args.explicit_model)
 
-    # if not args.specs:
-    #     args.specs = args.paths.generate_specs_file_name()
-    # Log.debug("Specs: '%s' -> '%s'" % (args.specs, os.path.join(args.dvc, args.specs)))
-    # args.specs = os.path.join(args.dvc, args.specs)
-
     if not os.path.isfile(args.darknet_cfg):
         Log.debug("We did not find the darknet config at %s. We try to find it in --root." % args.darknet_cfg)
         args.darknet_cfg = os.path.join(args.root, "src", "yolino", args.darknet_cfg)
@@ -313,5 +306,4 @@ def set_progress_logger(args, task_type, project_suffix=""):
     if args.loggers is None:
         args.loggers = []
 
-    # TODO: get is_train from somewhere better 
     Log.setup(args, task_type, project_suffix)

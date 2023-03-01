@@ -135,7 +135,6 @@ class Darknet(nn.Module):
 
 def get_test_input(shape=(448, 960, 3)):
     img = np.zeros(shape)
-    # img = cv2.resize(img, (448,448))          #Resize to the input dimension
     img_ = img[:, :, ::-1].transpose((2, 0, 1))  # BGR -> RGB | H X W C -> C X H X W
     img_ = img_[np.newaxis, :, :, :] / 255.0  # Add a channel at 0 (for batch) | Normalise
     img_ = torch.from_numpy(img_).float()  # Convert to float

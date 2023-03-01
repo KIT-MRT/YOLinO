@@ -309,9 +309,7 @@ class MetricsTest(unittest.TestCase):
         # conf as cols, match as rows
         expected_confusion = [[[0], [total_num_predicted_lines - 12]], [[0], [12]]]
 
-        # mae = (12 * 0 + total_num_predicted_lines - 12) / total_num_predicted_lines
         mae = (total_num_predicted_lines - 12) / total_num_predicted_lines
-        # rmse = math.sqrt((12 * math.pow(0, 2) + (total_num_predicted_lines - 12) * math.pow(1,2)) / total_num_predicted_lines)
         rmse = math.sqrt(mae)
 
         rmse_x = 0
@@ -387,8 +385,6 @@ class MetricsTest(unittest.TestCase):
                             geom_midpoint_rmse=rmse_mp, geom_midpoint_mae=mae_mp,
                             geom_ang_rmse=rmse_ang, geom_ang_mae=mae_ang,
                             geom_length_rmse=rmse_l, geom_length_mae=mae_l,
-                            # sample_ang_rmse=0, sample_x_rmse=0, sample_y_rmse=0,
-                            # sample_ang_mae=0, sample_x_mae=0, sample_y_mae=0
                             )
 
         self.assert_class_metrics(scores=evaluator.scores, accuracy=0, recall=[None, 0, None, None, None],

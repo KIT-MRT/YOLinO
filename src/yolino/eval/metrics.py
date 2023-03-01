@@ -53,8 +53,6 @@ class DetectionMetrics:
         except ValueError as e:
             Log.error("\n%s\n%s" % (self._labels_, self._predictions_))
             raise e
-        # return math.sqrt(mean_squared_error(self._labels_, self._predictions_))
-        # return np.sqrt(((self._predictions_ - self._labels_) ** 2).mean())
 
     def mae(self):
         return mean_absolute_error(self._labels_, self._predictions_)
@@ -70,7 +68,6 @@ class DetectionMetrics:
         self._filenames_ = filenames
 
         result = {}
-        # Log.debug(self.__metric_selection__)
         for method in [Metric.RMSE, Metric.MAE]:
             if not method in self.__metric_selection__:
                 continue
@@ -139,18 +136,13 @@ class GeometryMetrics(DetectionMetrics):
         # length
         len_pred = np.linalg.norm(preds[:, 0:2] - preds[:, 2:4], axis=1)
         len_gt = np.linalg.norm(labels[:, 0:2] - labels[:, 2:4], axis=1)
-        # gt_p = len_gt / len_pred
-        # p_gt = len_pred / len_gt
         len_dist = len_pred - len_gt
         result.update(super().get(len_dist, np.zeros_like(len_dist), filenames=filenames, num_duplicates=-1,
                                   prefix=prefix + "_length", geom_px_scale=geom_px_scale))
 
         # perpendicular
-        # Log.warning(labels)
-        # Log.warning(preds)
         perpendicular_distances = np.stack([get_perpendicular_distances(labels[i], len_gt[i], preds[i], len_pred[i])
                                             for i in range(len(labels))])[:, [0, 2]]  # prediction points to GT only
-        # Log.warning(perpendicular_distances)
         result.update(super().get(perpendicular_distances, np.zeros_like(perpendicular_distances), filenames=filenames,
                                   num_duplicates=-1, prefix=prefix + "_perp", geom_px_scale=geom_px_scale))
 
@@ -281,15 +273,6 @@ class ClassificationMetrics:
                         "Labels %s, Predictions %s" % (self.max_class + 1, matrix.shape,
                                                        np.unique(self._labels_), np.unique(self._predictions_)))
 
-        # disp = ConfusionMatrixDisplay(confusion_matrix=matrix)#, display_labels=range(0,self.dataset.num_classes))
-        # disp.plot()
-        # # import matplotlib.pyplot as plt
-        # # path = self.args.paths.generate_confusion_matrix_img_path(file_name=j, idx=ImageIdx.PRED)
-        # path = "tmp/confusion.png"
-        # Log.debug("Export confusion matrix to file://%s" % path)
-        # import matplotlib.pyplot as plt
-        # plt.savefig(path)
-        # plt.close()
         return matrix
 
     def accuracy(self):
@@ -339,7 +322,6 @@ class ClassificationMetrics:
         self._confusion_ = self.confusion()
 
         result = {}
-        # Log.debug(self.__metric_selection__)
         for enum in self.__metric_selection__:
             prefixed_enum = prefix + str(enum)
 

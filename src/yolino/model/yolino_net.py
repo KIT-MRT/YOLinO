@@ -148,6 +148,7 @@ class YolinoNet(nn.Module):
         from torch_receptive_field import receptive_field
         return receptive_field(self, input_size=input_size)
 
+
 def get_test_input(shape, batch_size):
     return torch.rand(batch_size, shape[2], shape[0], shape[1])
 
@@ -155,22 +156,3 @@ def get_test_input(shape, batch_size):
 def get_test_label(cells, batch_size):
     return torch.rand(batch_size, cells, 1, 1)
 
-
-if __name__ == "__main__":
-    from yolino.utils.general_setup import general_setup
-    from yolino.runner.trainer import TrainHandler
-
-    args = general_setup(name="YOLOv1", config_file="skudlik/darknet_params.yaml",
-                         default_config=os.path.abspath("../../../res/default_params.yaml"), setup_logging=False,
-                         ignore_cmd_args=True,
-                         alternative_args=["--model", "yolo_class", "--root", "../../../",
-                                           "--dvc", "../../../../dvc_experiment_mgmt", "--level", "DEBUG",
-                                           "--ignore_missing", "--retrain", "--linerep", "class"])
-    trainer = TrainHandler(args)
-    inp = get_test_input((args.img_size[0], args.img_size[1], 3),
-                         args.batch_size)  # torch.Size([8, 200, 8, 5]) => 10x20
-    out = get_test_label(200, args.batch_size)
-    # inp = get_test_input((640, 1280, 3), args.batch_size)  # torch.Size([8, 800, 8, 5]) => 20x40
-
-    _, pred, _ = trainer.__call__(inp, out, [], first_run=False, is_train=True)
-    # Log.debug(pred.shape)

@@ -64,7 +64,6 @@ class Tanh(AbstractActivation):
         return True
 
     def __init__(self, variable, coords: VariableStructure):
-        # TODO this is euler activation!?
         super().__init__(variable=variable, coords=coords, function=torch.nn.Tanh())
 
 
@@ -94,6 +93,7 @@ class Linear(AbstractActivation):
 
     def __init__(self, variable, coords: VariableStructure):
         super().__init__(variable=variable, coords=coords, function=lambda logits: logits)
+
 
 class MidLenDirActivation(AbstractActivation):
     def __init__(self, fct, variable, coords: VariableStructure):

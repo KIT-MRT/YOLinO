@@ -46,7 +46,7 @@ class TrainHandler:
     def __init__(self, args) -> None:
         self.args = args
 
-        # Load data 
+        # Load data
         self.dataset, self.loader = DatasetFactory.get(args.dataset, only_available=True, split="train", args=args,
                                                        shuffle=True, augment=True, ignore_duplicates=False)
         self.val_dataset, self.val_loader = DatasetFactory.get(args.dataset, only_available=True, split="val",
@@ -199,16 +199,10 @@ class TrainHandler:
                                                         is_exponential=is_exponential)
 
     def __call__(self, filenames, images, grid_tensor, epoch, image_idx_in_batch, is_train=True, first_run=False):
-        # zero the parameter gradients
         if is_train:
             self.optimizer.zero_grad()
-        # else:
-        #     raise ValueError("Do not use is_train=False\n%s" % Log.get_pretty_stack())  # TODO: why not?!
-
-        # Run
-        # Log.debug("Start forward pass")
+            
         outputs = self.forward(images, is_train=is_train, epoch=epoch, first_run=first_run)
-        # Log.debug("Forward done")
 
         if image_idx_in_batch == 0 and epoch == 0:
             self.on_data_loaded(filenames[0], images[0], grid_tensor[0], outputs[0].detach().cpu(), is_train=is_train)
@@ -221,7 +215,6 @@ class TrainHandler:
 
         if self.args.cuda not in str(grid_tensor.device):
             grid_tensor = grid_tensor.to(self.args.cuda)
-            # Log.debug("Moved GT to %s" % self.args.cuda)
 
         if False:
             for b in range(len(grid_tensor)):
@@ -243,13 +236,10 @@ class TrainHandler:
 
         loss_weight_dict = {}
         try:
-            # Log.debug("Start Loss")
             losses, sum_loss, mean_losses = self.loss(grid_tensor, outputs, epoch=epoch, filenames=filenames,
                                                       tag=TRAIN_TAG if is_train else VAL_TAG)  # input shape [batch, cells, preds, vars]
             if is_train:
-                # Log.debug("Start backward")
                 self.backward(sum_loss)
-                # Log.debug("Backward finished")
 
                 for j, v in enumerate(self.dataset.coords.train_vars()):
                     std_1 = torch.exp(self.loss_weights[j]) ** 0.5
@@ -298,11 +288,6 @@ class TrainHandler:
             self.losses[TRAIN_TAG if is_train else VAL_TAG].add(epoch, mean_losses=mean_losses, config_losses=losses,
                                                                 i=image_idx_in_batch)
 
-        # loss_weight_dict["loss/backprop"] = sum_loss
-        # loss_weight_dict["loss/sum_of_mean"] = mean_loss
-        # Log.scalars(tag=TRAIN_TAG if is_train else VAL_TAG, dict=loss_weight_dict, epoch=epoch)
-        # Log.debug("Loss %s" % str([str(v) + ": " + str(l) for l, v in
-        #                            zip(epoch_losses, self.dataset.coords.train_vars())]))
         return images, outputs
 
     def on_indef(self, epoch, filenames, exception, batch_index, is_train=True):
@@ -354,25 +339,13 @@ class TrainHandler:
                                         imageidx=ImageIdx.GRID,
                                         coordinates=CoordinateSystem.UV_SPLIT,
                                         cell_size=grid.get_cell_size(full_size_img.shape[1]))
-        # if Variables.CLASS in self.dataset.coords.train_vars():
-        #    ok = self.plot_debug_class_image(filename, image, grid=grid, epoch=epoch,
-        #                                     tag="preview_" + (TRAIN_TAG if is_train else VAL_TAG), imageidx=ImageIdx.CLASS,
-        #                                     ignore_classes=[0])
-        #    if preds is not None:
-        #        ok = self.plot_debug_class_image(filename, image, grid=pred_grid, epoch=epoch,
-        #                                         tag="preview_" + (TRAIN_TAG if is_train else VAL_TAG), imageidx=ImageIdx.PRED,
-        #                                         ignore_classes=[0])
-
-        #        del pred_grid
-        # if not ok:
-        #     raise ValueError("Not all labels could be plotted properly!")
 
         del grid
 
     def on_train_epoch_finished(self, epoch, filenames, images, preds, grid_tensors):
         if self.args.gpu:
-            preds = preds.to("cpu")  # TODO: is this the intended handling?!
-            images = images.to("cpu")  # TODO: is this the intended handling?!
+            preds = preds.to("cpu")
+            images = images.to("cpu")
 
         if self.losses[TRAIN_TAG].current_epoch == epoch:
             self.losses[TRAIN_TAG].log(epoch=epoch, tag=TRAIN_TAG)
@@ -466,7 +439,7 @@ class TrainHandler:
                                                                 filenames=filenames,
                                                                 images=images)
                 except ValueError as ex:
-                    if epoch <= 5:  # and not is_train:
+                    if epoch <= 5:
                         Log.error("We ran in to nan - continue for now")
                         return
                     else:
@@ -485,8 +458,8 @@ class TrainHandler:
 
     def plot_val_summary(self, epoch, filenames, grid_tensor, images, preds):
         if self.args.gpu:
-            preds = preds.to("cpu")  # TODO: is this the intended handling?!
-            images = images.to("cpu")  # TODO: is this the intended handling?!
+            preds = preds.to("cpu")
+            images = images.to("cpu")
         viz_files = [
             "val/a33a44fb-6008-3dc2-b7c5-2d27b70741e8/sensors/cameras/ring_front_center/315967270349927216.jpg",
             "val/42f92807-0c5e-3397-bd45-9d5303b4db2a/sensors/cameras/ring_front_center/315976319849927222.jpg",
@@ -669,7 +642,6 @@ class TrainHandler:
             plot_images.append(convert_to_torch_image(img))
 
         name = self.args.paths.generate_debug_image_file_path("class", imageidx)
-        # ((3, self.args.img_size[0], self.args.img_size[1]), dtype=torch.float32)  # as BGR
         Log.grid(name=name, images=plot_images, epoch=epoch, imageidx=imageidx, tag=tag + "_class")
 
     def is_time_for_image(self, epoch):

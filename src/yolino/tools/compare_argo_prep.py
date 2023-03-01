@@ -84,13 +84,6 @@ if __name__ == '__main__':
                     
                     ljust = max(len(absfile),len(checkfile))
 
-#                    if abs_size != check_size: 
-#                        Log.warning(f"{absfile}".ljust(ljust) + "\t\t" + f"{int(abs_size)} KB" + "\t\t" + f"{abs_shape}")
-#                        Log.warning(f"{checkfile}".ljust(ljust) + "\t\t" + f"{int(check_size)} KB" + "\t\t" + f"{check_shape}")
-#                        Log.error("Size is different!")
-#                        Log.warning("---------------------------")
-#                        continue
-
                     if abs_shape[0] != check_shape[0]: 
                         Log.warning(f"{absfile}".ljust(ljust) + "\t\t" + f"{int(abs_size)} KB" + "\t\t" + f"{abs_shape}")
                         Log.warning(f"{checkfile}".ljust(ljust) + "\t\t" + f"{int(check_size)} KB" + "\t\t" + f"{check_shape}")                    

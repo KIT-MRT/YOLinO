@@ -114,12 +114,8 @@ class Matcher:
         out_gt_matches = torch.ones(len(gt_subset), dtype=torch.int64, device=pred_subset.device) * self.no_match_index
 
         # get ids of valid subset; preds is always valid
-        # gt_is_not_nan = 
-        # gt_not_nan_indices = 
-        # Log.debug("Use GT %s" % gt_not_nan_indices)
         # get distances for subset (result matrix is preds x gt)
         # everything > max value is inf
-
         # Cost matrix with preds x gt (rowsxcols)
         cost_matrix = get_points_distances(p_cell=pred_subset.detach(), gt_cell=gt_subset,
                                            distance_metric=distance_metric, coords=self.coords,
@@ -176,7 +172,6 @@ class Matcher:
                 Log.error("%s: Tried CPU match, but did not work" % filename)
                 raise e2
 
-        # # Log.debug("Plot done")
         return True, out_gt_matches, out_pred_matches
 
     def _debug_single_match_plot_(self, gt, pred, p_match, suffix=""):
@@ -212,8 +207,6 @@ class Matcher:
             axs[0].plot(ys, xs, label="gt_" + str(gt_idx), color=gt_color)
             axs[1].plot(ys, xs, label="gt_" + str(gt_idx), color=gt_color)
             axs[2].plot(ys, xs, label="gt_" + str(gt_idx), color=gt_color_full)
-            # plt.scatter(gt[int(gt_idx), 0], gt[int(gt_idx), 1], marker="x", color=gt_color)
-            # plt.scatter(gt[int(gt_idx), 2], gt[int(gt_idx), 3], marker="^", color=gt_color)
 
         # plot false positives next
         for p_idx, gt_idx in tqdm(enumerate(p_match)):
@@ -246,7 +239,6 @@ class Matcher:
                     color = fn_color
                     axs[1].plot(ys, xs, label="pred_" + str(p_idx), color=color)
 
-        # ax.legend()
         legend_elements = [Line2D([0], [0], color=tp_color, lw=4, label='TP'),
                            Line2D([0], [0], color=fp_color, lw=4, label='FP'),
                            Line2D([0], [0], color=fn_color, lw=4, label='FN')]
@@ -258,8 +250,6 @@ class Matcher:
 
         path = os.path.join(self.args.paths.debug_folder, "pred_gt_match_%s.png" % suffix)
         Log.warning("Store prediction gt match debug image file://%s" % path, level=1)
-        # plt.show()
-        # input()
         plt.savefig(path)
         plt.close(fig)
 
@@ -288,7 +278,6 @@ class Matcher:
                                                args=self.args, input_coords=self.coords)
 
                 # set all predictions to nan that have no match in the GT (= nan in GT)
-                # tmp_preds = deepcopy(preds)
                 tmp_preds[torch.sum(torch.isnan(grid_tensor[:, :, :, 0:4]), dim=-1) == 4] = torch.nan
 
                 pred_grid, _ = GridFactory.get(tmp_preds[[i]], [],
@@ -303,17 +292,11 @@ class Matcher:
                 matched_pred_uv_lines = pred_grid.get_image_lines(coords=points_coords,
                                                                   image_height=self.args.img_size[0] * scale,
                                                                   is_training_data=True)
-
-                # gt_cells = grid.get_row_col_for_uv_lines()
-                # pred_cells = pred_grid.get_row_col_for_uv_lines()
             else:
                 full_pred_uv_lines = torch.clone(tmp_preds[[i]]) * scale
                 tmp_preds[i][torch.sum(torch.isnan(grid_tensor[i, :, 0:4]), dim=-1) == 4] = torch.nan
                 gt_uv_lines = grid_tensor[[i]] * scale
                 matched_pred_uv_lines = tmp_preds[[i]] * scale
-                #
-                # gt_cells = None
-                # pred_cells = None
 
             img = torch.ones((3, self.args.img_size[0] * scale, self.args.img_size[1] * scale), dtype=torch.float32)
 
@@ -335,8 +318,6 @@ class Matcher:
                            imageidx=idx, thickness=2, epoch=epoch)
 
             path = self.args.paths.generate_debug_image_file_path(file_name=filenames[i], idx=idx, suffix=tag)
-            # path = os.path.join(self.args.paths.debug_folder,
-            # str(i) + "_" + str(epoch) + "_" + str(tag) + "_matching.png")
             img, ok = plot(matched_pred_uv_lines[[0]], path, img, coords=self.coords, show_grid=False,
                            cell_size=(int(self.args.cell_size[0] * scale), int(self.args.cell_size[1] * scale)),
                            threshold=0, colorstyle=ColorStyle.ID, coordinates=CoordinateSystem.UV_SPLIT, tag=tag,

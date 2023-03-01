@@ -33,15 +33,12 @@ from yolino.utils.logger import Log
 def get_hungarian_match(cost_matrix):
     start = timeit.default_timer()
     if len(cost_matrix) == 1:
-        # Log.debug("argmin on dim=1")
         return torch.tensor(0, device=cost_matrix.device), torch.argmin(cost_matrix, dim=1)
     elif len(cost_matrix[0]) == 1:
-        # Log.debug("argmin on dim=0")        
         return torch.argmin(cost_matrix, dim=0), torch.tensor(0, device=cost_matrix.device)
 
     from scipy.optimize import linear_sum_assignment
     # is ok as this is not part of the actual loss that would need to be differentiable
-    # Log.debug("Apply hungarian from scipy on cost_matrix with shape %s" % (str(cost_matrix.shape)))
     try:
         row_ind, col_ind = linear_sum_assignment(cost_matrix.detach().cpu().numpy())
     except ValueError as e:
@@ -50,36 +47,25 @@ def get_hungarian_match(cost_matrix):
         for row in m:
             Log.error(row)
         raise e
-    # Log.debug("Done")
-    # Log.time(key="hungarian", value=timeit.default_timer() - start)
     return torch.tensor(row_ind, device=cost_matrix.device), torch.tensor(col_ind, device=cost_matrix.device)
 
 
 def get_hungarian_match_gpu(cost_matrix, eps=1):
-    # if str(cost_matrix.device) != "cuda:0":
-    #     raise ValueError("We expected to work on gpu but cost_matrix has device=%s" % cost_matrix.device)
     start = timeit.default_timer()
     if len(cost_matrix) == 1:
-        # Log.debug("argmin on dim=1")
         return torch.tensor(0, device=cost_matrix.device), torch.argmin(cost_matrix, dim=1)
     elif len(cost_matrix[0]) == 1:
-        # Log.debug("argmin on dim=0")        
         return torch.argmin(cost_matrix, dim=0), torch.tensor(0, device=cost_matrix.device)
 
     Log.warning("Apply auction lap")
     from yolino.tools.auction_lap import auction_lap
     _, curr_ass, _ = auction_lap(cost_matrix * -1, eps=eps)
-    # exit(100)
-    # if str(curr_ass.device) != "cuda:0":
-    #     raise ValueError("We expected to work on gpu but curr_ass has device=%s" % curr_ass.device)
     Log.warning("Done")
     Log.time(key="hungarian_gpu", value=timeit.default_timer() - start)
     return torch.tensor(range(len(cost_matrix)), device=cost_matrix.device), curr_ass
 
 
 def linesegment_hausdorff_distance(gt, pred, gt_class_indices, pred_class_indices):
-    # TODO: test
-    # TODO: remove dim?
     len_gt = torch.linalg.norm(gt)
     len_pred = torch.linalg.norm(pred)
 
@@ -98,12 +84,6 @@ def cosine_similarity(gt, len_gt, pred, len_pred):
 
 def linesegment_cosine_distance(gt, preds, coords: VariableStructure, use_conf=False):
     Log.warning("Cosine distance does not use class or conf")
-    # gt_idx = coords.get_position_of([Variables.SAMPLE_ANGLE, Variables.CLASS])
-    # p_idx = coords.get_position_within_prediction([Variables.SAMPLE_ANGLE, Variables.CLASS])
-    # if use_conf and Variables.CONF in coords.train_vars():
-    #     gt_idx.append(coords.get_position_of(Variables.CONF))
-    #     p_idx.append(coords.get_position_within_prediction(Variables.CONF))
-
     distances = []
     for idx in range(len(preds)):
         diff = gt[2:4] - gt[0:2]
@@ -118,12 +98,6 @@ def linesegment_cosine_distance(gt, preds, coords: VariableStructure, use_conf=F
 
 
 def cosine_distance(gt, pred, len_gt, len_pred):
-    # diff = gt[2:4] - gt[0:2]
-    # pred_diff = pred[2:4] - pred[0:2]
-
-    # len_gt = torch.linalg.norm(diff)
-    # len_pred = torch.linalg.norm(pred_diff)
-
     return 1 - cosine_similarity(gt, len_gt, pred, len_pred)
 
 
@@ -148,9 +122,6 @@ def get_perpendicular_distances(gt, len_gt, pred, len_pred):
     if len_pred is None:
         len_pred = torch.linalg.norm(pred[2:4] - pred[0:2])
 
-    # if len_gt == 0 or len_pred == 0:
-    #     Log.warning("Weird geometry with lengths gt=%s, p=%s: GT=%s, P=%s" %(len_gt, len_pred, str(gt), str(pred)))
-
     perp_distances = []
     for idx in [[0, 1], [2, 3]]:
         perp_distances.append(point_to_line_distance(len_gt, gt, pred[idx]))
@@ -161,7 +132,6 @@ def get_perpendicular_distances(gt, len_gt, pred, len_pred):
 
 def point_to_line_distance(line_length, line, point):
     if line_length == 0:
-        # Log.debug("The line was a point")
         return np.linalg.norm(line[0:2] - point)
     else:
         return abs(
@@ -197,7 +167,6 @@ def get_parallel_mover_distance(gt, len_gt, pred, len_pred):
     dy = gt[3] - gt[1]
     # normals
     n1 = torch.tensor([-dy, dx])
-    # n2 = gt[0:2] (dy, -dx)
 
     line_length = torch.linalg.norm(n1)
     perps_p_s = point_to_line_distance(line_length, line=[*gt[0:2], *(gt[0:2] + n1)], point=pred[[0, 1]])
@@ -208,7 +177,6 @@ def get_parallel_mover_distance(gt, len_gt, pred, len_pred):
     dy = pred[3] - pred[1]
     # normals
     n1 = torch.tensor([-dy, dx])
-    # n2 = pred[0:2] (dy, -dx)
 
     line_length = torch.linalg.norm(n1)
     perps_g_s = point_to_line_distance(line_length, line=[*pred[0:2], *(pred[0:2] + n1)], point=gt[[0, 1]])
@@ -239,13 +207,6 @@ def linesegment_euclidean_distance(gt, pred, coords: VariableStructure, use_conf
     pred_idx = coords.get_position_within_prediction(vars)
 
     points_distances = torch.linalg.norm(gt[gt_idx] - pred[:, pred_idx], dim=-1)
-    # start_dist = torch.linalg.norm(gt[0:2] - pred[:, 0:2], dim=-1)
-    # end_dist = torch.linalg.norm(gt[2:4] - pred[:, 2:4], dim=-1)
-    #
-    # angle_dist, class_dist, conf_dist = variables_euclidean_distance(coords, gt, pred, start_dist, use_conf)
-    # # Log.info("Start %s\nEnd %s\nConf %s" % (start_dist, end_dist, conf_dist))
-    #
-    # points_distances = torch.sum(torch.stack([start_dist, end_dist, angle_dist, class_dist, conf_dist]), dim=0)
     points_distances = torch.flatten(points_distances)
     return points_distances
 
@@ -274,7 +235,7 @@ def variables_euclidean_distance(coords, gt, pred, start_dist, use_conf=False):
 
 
 def point_squared_distance(gt, pred, coords: VariableStructure, use_conf=False):
-    # TODO normalize to have max of 1 also in full image distances
+    # TODO normalize to have max of 1 also in full image distances?
 
     start_dist = torch.pow(gt[0:2] - pred[:, 0:2], 2)
 
@@ -317,10 +278,6 @@ def linesegment_squared_distance(gt, pred, coords: VariableStructure, use_conf=F
     pred_idx = coords.get_position_within_prediction(vars)
 
     points_distances = torch.sum(torch.pow(gt[gt_idx] - pred[:, pred_idx], 2), dim=1)
-    # end_dist = torch.sum(torch.pow(gt[2:4] - pred[:, 2:4], 2), dim=1)
-    #
-    # angle_dist, class_dist, conf_dist = variables_squared_distance(coords, gt, pred, start_dist, use_conf)
-    # points_distances = torch.sum(torch.stack([start_dist, end_dist, angle_dist, class_dist, conf_dist]), dim=0)
     points_distances = torch.flatten(points_distances)
     return points_distances
 
@@ -341,36 +298,6 @@ def linesegment_pauls_distance(gt, pred):
     return torch.sqrt(torch.pow(midpoint_x, 2) + torch.pow(midpoint_y, 2) +
                       torch.pow(lengths - pred_lengths, 2) +
                       torch.pow(norm_diff[0] - norm_pred_diff[0], 2) + torch.pow(norm_diff[1] - norm_pred_diff[1], 2))
-
-
-# def aml_to_cart(line):
-#     from yolino.dataset.dataset_base import calc_geom_from_angle
-#     return calc_geom_from_angle(x=line[1], y=line[2], angle=line[0], max_length=[line[3], line[3]])
-
-
-def aml_to_cart(aml):
-    from yolino.dataset.dataset_base import calc_geom_from_angle
-    upper_position = calc_geom_from_angle(x=aml[1], y=aml[2], angle=aml[0], max_length=[aml[3], aml[3]])
-    lower_position = calc_geom_from_angle(x=aml[1], y=aml[2], angle=aml[0], max_length=[aml[3], aml[3]], invert=True)
-    position = torch.cat([lower_position[2:4], upper_position[2:4]])
-    return position
-
-
-def to_aml(line):
-    new_lines = torch.ones((4), dtype=line.dtype) * -1
-    # Convert to dx, dy,
-    diff = line[2:4] - line[0:2]
-
-    # angle
-    new_lines[0] = np.arctan2(diff[1], diff[0])
-
-    # midpoints
-    new_lines[1:3] = get_midpoints(line)
-
-    # lengths
-    new_lines[3] = torch.linalg.norm(diff)
-
-    return new_lines
 
 
 def to_pauls_space_raw(lines):
@@ -500,8 +427,6 @@ def get_points_distances(p_cell, gt_cell, distance_metric: Distance, coords: Var
         fct = linesegment_squared_distance
     elif distance_metric == Distance.COSINE:
         fct = linesegment_cosine_distance  # TODO enable class diff
-    # elif distance_metric == Distance.HAUSDORFF:
-    #     fct = linesegment_hausdorff_distance  # TODO enable class diff
     elif distance_metric == Distance.POINT:
         fct = point_squared_distance
     else:
@@ -523,7 +448,6 @@ def get_points_distances(p_cell, gt_cell, distance_metric: Distance, coords: Var
     for idx in torch.where(~gt_isnan_flag)[0]:
         cost_matrix[0:len(p_cell), idx] = fct(gt_cell[idx], p_cell, coords, use_conf)
 
-    # Log.time(key="cost_matrix", value=timeit.default_timer() - start)
     return cost_matrix
 
 

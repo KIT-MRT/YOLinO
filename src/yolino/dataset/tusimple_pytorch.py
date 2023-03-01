@@ -32,7 +32,6 @@ from yolino.utils.enums import Dataset
 from yolino.utils.logger import Log
 
 
-# is_sorted = lambda a: torch.all(a[:-1] <= a[1:])
 def is_sorted(data, down=True):
     if down:
         p_i = max(data) + 1
@@ -91,7 +90,6 @@ class TusimpleDataset(DatasetInfo):
         if len(self.file_names) == 0 and self.explicit_in_split is not None:
             raise FileNotFoundError("Explicit filename %s not found. Files need to have the pattern of e.g. %s. "
                                     "We will now look for all files." % (self.explicit_in_split, example_filename))
-            # self.gather_files(explicit=None)
         self.on_load()
 
     def read_label_file(self, label_file_path, initial_i=0):
@@ -160,11 +158,6 @@ class TusimpleDataset(DatasetInfo):
         return len(self.img_list)
 
     def __get_labels__(self, idx):
-
-        # data = torch.tensor(self.h_samples[idx], device=self.args.cuda)
-        # nans = torch.tile(torch.tensor(torch.nan, device=self.args.cuda), dims=[len(self.h_samples[idx])])
-        # data = torch.vstack([data, nans]).T
-        # gridable_lines = torch.tile(data, dims=(5, 1, 1))
         gridable_lines = torch.ones((5, len(self.h_samples[idx]), 2), dtype=torch.float32) * torch.nan
 
         # Tusimple GT runs from horizon to bottom of the image.
@@ -174,8 +167,6 @@ class TusimpleDataset(DatasetInfo):
             gridable_lines[i, :, 0] = torch.tensor(list(reversed(self.h_samples[idx])))
 
         gridable_lines[gridable_lines[:, :, 1] < 0] = torch.tensor([torch.nan, torch.nan])
-
-        # TODO: check we do not abort somewhere on first nan
 
         if False:
             # import matplotlib
@@ -232,7 +223,7 @@ class TusimpleDataset(DatasetInfo):
                                         num_predictors=self.args.num_predictors)
             grid_tensor, grid = self.__get_grid_labels__(torch.unsqueeze(lines, dim=0), [],
                                                          idx, image=image,
-                                                         duplicates=duplicates)  # TODO: do we have a class?
+                                                         duplicates=duplicates)
         except ValueError as e:
             Log.error("Error in %s" % (self.img_list[idx]))
             raise e
@@ -259,4 +250,4 @@ class TusimpleDataset(DatasetInfo):
 
     @classmethod
     def get_max_image_size(self):
-        return (640, 1280)
+        return 640, 1280

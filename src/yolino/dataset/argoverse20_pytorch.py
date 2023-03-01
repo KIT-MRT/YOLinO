@@ -39,8 +39,7 @@ class Argoverse2Dataset(DatasetInfo):
                  load_only_labels=False, ignore_duplicates=False, show=False, load_full_dataset=False, lazy=False,
                  store_lines=False):
         super().__init__(Dataset.ARGOVERSE2, split, args, sky_crop=sky_crop, side_crop=side_crop, augment=augment,
-                         # TODO fill with correct vals
-                         num_classes=0, train=11240, test=30000, val=2404,  # expecting preprocessing with -sdr 20
+                         num_classes=0, train=11240, val=2404,  # expecting preprocessing with -sdr 20
                          override_dataset_path="/mrtstorage/users/meyer/02_data/argoverse20",
                          load_only_labels=load_only_labels, show=show, load_sequences=load_full_dataset, lazy=lazy,
                          norm_mean=[0.4338504672050476, 0.4435146152973175, 0.47162434458732605],
@@ -75,7 +74,6 @@ class Argoverse2Dataset(DatasetInfo):
 
     def load_label(self, full_path):
         try:
-            # TODO: remove round() when applied in prep
             self.lanes.append(torch.tensor(np.load(full_path), dtype=torch.float).round())
         except ValueError as e:
             Log.error(e)

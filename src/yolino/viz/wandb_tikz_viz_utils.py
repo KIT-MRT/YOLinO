@@ -366,7 +366,6 @@ def print_table_from_pandas(colalign, def_columns, df_runs, eval_columns, path, 
 
                     f.writelines(lines[1:4])
                     if is_long:
-                        # Kopf in longtable ist zu Ende
                         f.write("\\endhead\n")
                         f.write("\\hline\n\\endfoot\n")
 
@@ -396,7 +395,6 @@ def df_2_ranked_str_df(df_runs, eval_columns, group_by=[], round_1_columns=[], d
     ranking = groups[eval_columns].rank(ascending=True, method="dense", na_option="bottom").astype(int)
     ranking[descending_columns] = groups[descending_columns].rank(ascending=False, method="dense",
                                                                   na_option="bottom").astype(int)
-    # subset_str = df_runs_str[eval_columns]
     for rank in range(ranking.max().max()):
         df_runs_str[ranking == rank + 1] = get_str_df(rank=rank, len_rank=ranking.max().max(),
                                                       df=df_runs.loc[:, eval_columns])

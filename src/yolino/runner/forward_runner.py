@@ -66,8 +66,14 @@ class ForwardRunner:
 
         inference_start = timeit.default_timer()
         self.model = self.model.train(is_train)
-        logits = self.model(images)  # [batch, cells, preds, vars]
-        outputs = self.activations(logits)  # [batch, cells, preds, vars]
+        if is_train:
+            logits = self.model(images)  # [batch, cells, preds, vars]
+            outputs = self.activations(logits)  # [batch, cells, preds, vars]
+        else:
+            with torch.no_grad():
+                logits = self.model(images)  # [batch, cells, preds, vars]
+                outputs = self.activations(logits)  # [batch, cells, preds, vars]
+
         Log.time(key="raw_infer", value=timeit.default_timer() - inference_start, epoch=epoch)
 
         if first_run:

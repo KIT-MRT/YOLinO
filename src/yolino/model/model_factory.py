@@ -61,15 +61,6 @@ def get_model_specs(args):
 
 
 def get_model_class(args):
-    # if args.model == Network.MINI:
-    #     model_class = MiniNet
-    # elif args.model == Network.CLYOLO:
-    #     model_class = ClYolo
-    # elif args.model == Network.CLYOLOUP:
-    #     model_class = ClYoloUp
-    # elif args.model == Network.CLYOLOUPUP:
-    #     model_class = ClYoloUpUp
-    # el
     if args.model == Network.YOLO_CLASS:
         model_class = YolinoNet
     else:

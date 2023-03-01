@@ -60,8 +60,6 @@ class AnchorTest(unittest.TestCase):
         # avoid ugly debug with data loader
         image, grid_tensor, fileinfo, _, params = dataset.__getitem__(0)
         dataset.params_per_file.update({fileinfo: params})
-        # anchors = Anchor.get(args, args.linerep)
-        # anchors = Anchor(args, linerep=args.linerep)
 
         import numpy as np
         image = np.ones((args.cell_size[0] * 100, args.cell_size[1] * 100, 3), dtype=float) * 255

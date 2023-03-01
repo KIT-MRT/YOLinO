@@ -42,7 +42,7 @@ class DatasetTestEnum(unittest.TestCase):
             if "yolo_class" not in str(enum):
                 continue
             args = general_setup(name=str(enum),
-                                 config_file=os.path.abspath("../src/yolino/model/skudlik/darknet_params.yaml"),
+                                 config_file=os.path.abspath("../src/yolino/model/cfg/darknet_params.yaml"),
                                  setup_logging=False, ignore_cmd_args=True,
                                  alternative_args=["--model", str(enum), "--root", "..",
                                                    "--dvc", "../../dvc_experiment_mgmt", "--level", "WARN",

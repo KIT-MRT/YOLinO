@@ -88,7 +88,6 @@ class DatasetInfo(torchDataset, metaclass=ABCMeta):
             self.augmentor = DatasetTransformer(args, sky_crop, side_crop, augment, norm_mean=norm_mean,
                                                 norm_std=norm_std)
 
-
         self.dataset_path = self.get_dataset_path(enum.value, self.override_dataset_path)
 
         self.split = split
@@ -119,8 +118,6 @@ class DatasetInfo(torchDataset, metaclass=ABCMeta):
         dataset_path = os.getenv(env_var)
         Log.info("Dataset path is set to %s=%s" % (env_var, dataset_path))
         if dataset_path is None or dataset_path == "":
-            # if not os.path.exists(override_dataset_path):
-            #     os.makedirs(override_dataset_path)
             dataset_path = override_dataset_path
             Log.info("Dataset path is set to internal path=%s" % (dataset_path))
         if not os.path.isdir(dataset_path):
@@ -225,13 +222,13 @@ class DatasetInfo(torchDataset, metaclass=ABCMeta):
         return image, lines, params
 
     def num_classes(self):
-        return self.coords[Variables.CLASS]  # , get_position_of(self.coords, Variables.CLASS)
+        return self.coords[Variables.CLASS]
 
     def num_geom_coords(self):
-        return self.coords[Variables.GEOMETRY]  # , get_position_of(self.coords, Variables.GEOMETRY)
+        return self.coords[Variables.GEOMETRY]
 
     def num_conf(self):
-        return self.coords[Variables.CONF]  # , get_position_of(self.coords, Variables.CONF)
+        return self.coords[Variables.CONF]
 
     def num_coords(self, one_hot=True):
         return self.coords.get_length(one_hot=one_hot)
@@ -249,10 +246,6 @@ class DatasetInfo(torchDataset, metaclass=ABCMeta):
         shape = (0, self.num_classes())
         return torch.empty(shape, dtype=torch.float32)  # onehot-class
 
-    # def get_specs(self):
-    #     return {"num_classes": self.num_classes, "num_geom_coords": self.num_geom_coords, "num_coords": self.num_coords,
-    #             "numbers": self.__numbers__}
-
     def empty_grid(self):
         grid = Grid(img_height=self.args.img_size, args=self.args)
 
@@ -265,13 +258,6 @@ class DatasetInfo(torchDataset, metaclass=ABCMeta):
 
         if self.anchor_sorting:
             raise NotImplementedError()
-        #     if random:
-        #         anchors_angles = self.anchors.__generate_angles__()
-        #         centers = torch.rand((len(anchors_angles), 2))
-        #         geom_val = torch.stack([calc_geom_from_angle(xy[0], xy[1], angle)
-        #                                 for xy, angle in zip(centers, anchors_angles)])
-        #     else:
-        #         geom_val = self.anchors.bins
         else:
             linerep = LineRepresentation.get(self.args.linerep)
             if random:
@@ -310,8 +296,6 @@ class DatasetInfo(torchDataset, metaclass=ABCMeta):
         return os.path.isdir(self.dataset_path)
 
     def __load_image__(self, idx):
-        # Load image
-
         import cv2
         image = cv2.imread(self.img_list[idx])
         if image is None:

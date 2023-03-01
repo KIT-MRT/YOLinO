@@ -52,9 +52,6 @@ class AbstractLoss:
     # Creates a torch view on the relevant variables only
     # returns a tensor of shape (?, num_variables)
     def __prepare_data__(self, preds, grid_tensor):
-        # preds = preds.view(-1, preds.shape[-1])
-        # grid_tensor = grid_tensor.view(-1, grid_tensor.shape[-1])
-
         breaks = self.__get_breaks_in_coords__()
         _, labels_for_loss, _ = torch.tensor_split(grid_tensor, torch.tensor(breaks), dim=1)
         if not self.one_hot:
@@ -65,7 +62,6 @@ class AbstractLoss:
 
         return preds_for_loss, labels_for_loss
 
-    # TODO test
     def __get_breaks_in_coords__(self, only_training=False):
         breaks = []
         position = 0
@@ -202,7 +198,6 @@ class CrossEntropyCellLoss(AbstractLoss):
 
     def __init__(self, gpu, coords: VariableStructure, cuda, variable: Variables, conf_match_weight, reduction,
                  activation_is_exp, loss_weight_strategy):
-        # weight = torch.tensor([4/100, 24/100, 24/100, 24/100, 24/100])
         super().__init__(coords=coords, gpu=gpu, cuda=cuda, one_hot=False, variable=variable,
                          function=nn.CrossEntropyLoss(reduction=reduction), conf_match_weight=conf_match_weight,
                          reduction=reduction, activation_is_exp=activation_is_exp,
@@ -290,7 +285,6 @@ class NormLoss(AbstractLoss):
         return self.__apply_function__(preds, grid_tensor, p_unmatched, gt_unmatched, tag=tag, epoch=epoch)
 
 
-# TODO: sum of losses is proportional to batch_size!
 def get_loss(losses, args, coords: VariableStructure, weights: list, anchors, conf_weights):
     loss_weight_strategy = args.loss_weight_strategy
 
@@ -403,7 +397,6 @@ def get_actual_weight(epoch, variable_str, weight_strategy, weight, activation_i
     return add_weight, weight_factor
 
 
-# TODO: sum of losses is proportional to batch_size!
 class LossComposition:
     def __init__(self, losses, args, coords: VariableStructure, weights: list, anchors):
         self.add_weights = []
@@ -412,7 +405,6 @@ class LossComposition:
         self.anchors = anchors
         self.args = args
         self.coords = coords
-        # self.weights = torch.nn.functional.softmax(weights, dim=0)
         self.weights = weights
         self.matcher = CellMatcher(coords, args)
         Log.debug("Weights=%s" % self.weights)
@@ -438,7 +430,6 @@ class LossComposition:
             raise ValueError("Prediction can not contain nans!")
 
         num_batches, num_cells, num_predictors, _ = preds.shape
-        # Log.debug("Within the loss")
         weighted_losses = torch.zeros((1), device=self.args.cuda, dtype=torch.float32)
         losses = []
         mean_losses = []
@@ -477,7 +468,6 @@ class LossComposition:
                 mean_losses.append(0)
                 weighted_losses = 0
             else:
-                # try:
                 t: AbstractLoss
                 loss_val, mean_loss_val = t(preds, reduced_grid_tensor, tag=tag, epoch=epoch)
                 loss_val: torch.tensor

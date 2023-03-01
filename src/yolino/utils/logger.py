@@ -101,7 +101,6 @@ class Log():
 
     @classmethod
     def get_caller_str(self, level=0):
-        # frameinfo = getframeinfo(currentframe().f_back)
         stack = inspect.stack()
         idx = min(len(stack), min(2 + level, len(stack) - 1))
         frame, filename, lineno, function_name, lines, index = stack[idx]
@@ -109,9 +108,6 @@ class Log():
 
     @classmethod
     def setup(cls, args, task_type: TaskType, project_suffix=""):
-        # if args.ignore_missing:  # only run on full datasets
-        #     Log.warning("As we might not use the full dataset (--ignore_missing), remote loggers are not setup")
-        #     return
 
         if args.tags is None:
             args.tags = []
@@ -148,8 +144,6 @@ class Log():
 
     @classmethod
     def init_clearml(cls, args, task_type):
-        # TaskTypes.inference
-        # TaskTypes.data_processing
         Log.info("Setup trains logging for %s - %s [%s]" % (cls.__project_name__, args.id, str(task_type)))
 
         Log.__trains_task__ = Task.init(project_name=cls.__project_name__,
@@ -180,7 +174,6 @@ class Log():
     def init_tb(cls, args, tb_path):
         Log.info("Setup tensorboard logging for %s" % tb_path)
         Log.__tb__ = SummaryWriter(log_dir=tb_path)
-        # Log.__tb_handler__ = torch.profiler.tensorboard_trace_handler(tb_path)
         Log.__loggers__.append(Logger.TENSORBOARD)
 
     @classmethod
@@ -260,12 +253,6 @@ class Log():
 
         Log.debug("Show log from %s upwards" % Log.__level__)
 
-        # def update(cls, id):
-
-        #     if Logger.TENSORBOARD in Log.__loggers__:
-        #         Log.warning("Changed tensorboard logging to new folder")
-        #         Log.__tb__ = SummaryWriter(log_dir=os.path.join("runs", id))
-
         if setup_file_log:
             cls.init_file_logs(log_file=log_file, name=name)
 
@@ -319,9 +306,6 @@ class Log():
         if Log.__file_log__:
             Log.__file_log__.handlers[0].flush()
 
-    # @classmethod
-    # def epoch_summary(self, )
-
     @classmethod
     def time(cls, key, value, epoch=None):
 
@@ -342,13 +326,6 @@ class Log():
                 Log.push(epoch)
 
             Log.__wandb_buffer__.update(dict)
-
-            # if value < 60:
-            # Log.warning("TIME %s %.2fs" % (key, value), level=1)
-            # elif value < 3600:
-            #     Log.warning("TIME %s %.1fmin" % (key, value / 60), level=1)
-            # else:
-            #     Log.warning("TIME %s %.1fh" % (key, value / 3600), level=1)
 
         if key not in Log.timing:
             Log.timing[key] = []
@@ -433,7 +410,6 @@ class Log():
 
     @classmethod
     def grid(self, name, images, epoch, tag="unknown", imageidx: ImageIdx = ImageIdx.DEFAULT, level=0):
-        # TODO: make smaller
         grid = torchvision.utils.make_grid(images, nrow=math.ceil((math.sqrt(len(images)))))
 
         if not os.path.exists(os.path.dirname(name)):
@@ -446,8 +422,6 @@ class Log():
 
     @classmethod
     def graph(self, model, images):
-        # if Logger.TENSORBOARD in Log.__loggers__:
-        #     Log.__tb__.add_graph(model, images)
 
         if Logger.WEIGHTSBIASES in Log.__loggers__:
             wandb.watch(model)
@@ -521,8 +495,6 @@ class Log():
     def push(cls, next_epoch):
         if Logger.WEIGHTSBIASES in Log.__loggers__:
             if len(Log.__wandb_buffer__.keys()) > 1:
-                # Log.warning("%s" % (Log.__wandb_buffer__))
-                # Log.warning("Push epoch %s" % Log.__wandb_buffer__["epoch"], level=1)
                 wandb.log(Log.__wandb_buffer__, step=Log.__wandb_buffer__["epoch"])
 
                 if next_epoch == None:

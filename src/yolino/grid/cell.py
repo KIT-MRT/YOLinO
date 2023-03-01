@@ -39,7 +39,6 @@ class Cell:
                 self.predictors[0].update(data)
                 return True
             else:
-                # Log.warning("Too many predictors! We do not add this data.")
                 return False
         else:
             self.predictors.append(data)

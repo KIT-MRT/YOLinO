@@ -1,4 +1,4 @@
-#cell_size: [100, 100]
+cell_size: [100, 100]
 dataset: culane
 dvc: ../../../../../dvc_experiment_mgmt
 epoch: 10

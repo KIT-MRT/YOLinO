@@ -163,11 +163,6 @@ class CULaneDataSet(DatasetInfo):
 
         if self.has_labels:
             lines, classes_per_line_one_hot = self.__get_labels__(idx)
-            # path = self.args.paths.generate_debug_image_file_path(self.file_names[idx], ImageIdx.LABEL)
-            # _, ok = plot(lines=torch.unsqueeze(lines, dim=0), name=path, image=image, show_grid=True, cell_size=self.args.cell_size,
-            #              class_idx=get_position_of(self.coords, Variables.CLASS, one_hot=True),
-            #              colorstyle=ColorStyle.RANDOM, coordinates=CoordinateSystem.UV_CONTINUOUS, tag="unittest",
-            #              imageidx=ImageIdx.LABEL)
         else:
             lines = self.dummy_lines()
             classes_per_line_one_hot = self.dummy_class()

@@ -31,13 +31,6 @@ from yolino.utils.enums import CoordinateSystem, Variables, ImageIdx, ColorStyle
 from yolino.viz.plot import plot, get_color
 
 
-# abspath = os.path.abspath("../../tusimple-benchmark/evaluate")
-# print(abspath)
-# sys.path.append(abspath)
-#
-# from lane import LaneEval
-
-
 def breadth_first_connected_component(graph, start):
     # keep track of all visited nodes
     explored = []
@@ -140,7 +133,7 @@ def fit_spline(cell_size, file_name, image, paths, smooth_polylines, to_be_remov
         x = lp[:, 0] / cell_size[0]
         y = lp[:, 1] / cell_size[1]
         # TODO we could use the confidence here as well
-        # TODO: Larger s means more smoothing while smaller values of s indicate less smoothing.
+        # Larger s means more smoothing while smaller values of s indicate less smoothing.
         tck, u = interpolate.splprep([x, y], s=0.05)
         unew = np.arange(0, 1.01, 0.01)
         out = interpolate.splev(unew, tck)
@@ -244,7 +237,6 @@ def get_connected_components(confidences, file_name, image, min_segments_for_pol
         polylines.append(polyline[::-1])
         polylines_as_segment_ids.append(polyline_as_segment_ids)
     polyline_num_threshold = int(min_segments_for_polyline)
-    # polylines_no_threshold = copy.deepcopy(polylines)
     polylines = [pl for pl in polylines if len(pl) >= polyline_num_threshold]
     polylines_as_segment_ids = [pl for pl in polylines_as_segment_ids if len(pl) >= polyline_num_threshold]
 

@@ -26,7 +26,6 @@ from yolino.runner.evaluator import Evaluator
 from yolino.utils.enums import TaskType, CoordinateSystem
 from yolino.utils.general_setup import general_setup
 
-#  --explicit_model log/checkpoints/armadillo_model.pth
 if __name__ == "__main__":
     args = general_setup("Evaluation", task_type=TaskType.TEST)
 

@@ -54,8 +54,6 @@ def evaluate(args, only_viz=False):
     # ------ Evaluate -----
     if not only_viz:
         Log.warning("\n------------------ EVALUATE -------------------")
-    # augment: False, True
-    # split: train, val
     yaml_data = []
     for augment in [False]:
         for split in ["train", "val"]:
@@ -72,7 +70,7 @@ def evaluate(args, only_viz=False):
             total_num_lines = 0
 
             pbar = tqdm(loader, desc="Iterate %s Dataset" % split)
-            for i in pbar:  # range(len(dataset))):  # loader):
+            for i in pbar:
                 _, grid_tensor, filenames, duplicates, params = i
 
                 for entry in range(len(filenames)):

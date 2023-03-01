@@ -123,16 +123,9 @@ def generate_argparse(name, config_file="params.yaml", default_config="default_p
 def define_argparse(config_file="params.yaml", default_config="default_params.yaml", name="no_name",
                     preloaded_argparse=None):
     CONFIG_AVAILABLE, parser = setup_argparse(config_file, default_config, name, preloaded_argparse)
-    # ------ Invidivual Run Params ---------
+    # ------ Individual Run Params ---------
     run_group = parser.add_argument_group("Invidiual Run Parameters")
-    # parser.add_argument("--input", type=str,
-    #                     help="Folder containing the input data. Can be empty if the default dataset path should be used. If it is presplit into train, val, test folder "
-    #                          "add --presplit otherwise we split 80:20. You should provide both an 'images' "
-    #                          "and 'labels' folder below the root or the split.")
     add_dataset(run_group)
-    # parser.add_argument("--specs", type=str,
-    #                     help="Provide the path to the specs file e.g. specs/culane_train_specs.yaml. "
-    #                          "If relative it will be expected to lie within --dvc.")
     add_root(run_group)
     add_dvc(run_group)
     run_group.add_argument("--gpu", action="store_true", help="Enable GPU usage")  # TODO: merge with self.cuda
@@ -145,17 +138,11 @@ def define_argparse(config_file="params.yaml", default_config="default_params.ya
                            help="Flag to show the chosen parameters of the script.")
     # Evaluation / Prediction
     file_group = parser.add_argument_group("File Handling")
-    # parser.add_argument('--every_n', type=int, default=50, help='plots or saves every n-th sample')
     add_max_n(file_group)
-    # parser.add_argument("--enhance", action="store_true", help="Only add new files, nothing will be deleted.")
     add_plot(file_group)
     add_explicit(file_group)
-    # parser.add_argument('--out', type=str, default="metrics.json",
-    #                     help='Path to eval file inside the dvc folder. (dvc will be prepended)')
     # Logging
     log_group = parser.add_argument_group("Logging")
-    # parser.add_argument("--logging_frequency", type=int, default=1000,
-    #                     help="Iterations to wait before logging to logger")
     add_level(log_group)
     add_loggers(log_group)
     add_tags(log_group)
@@ -167,11 +154,6 @@ def define_argparse(config_file="params.yaml", default_config="default_params.ya
                             help="Name of the experiment e.g. tus_po_8p_dn19_up. Should also be the branch name and the folder name.")
     # Dataset
     dataset_group = parser.add_argument_group("Dataset")
-    # parser.add_argument("--fixed_crop_range", default=[-1, -1, -1, -1], nargs=4, type=int,
-    #                     help="Crop the images by a defined window: [left, upper, right, lower]")
-    # parser.add_argument("--presplit", action="store_true",
-    #                     help="Add if your dataset is split into train, val and test set")
-    # parser.add_argument("--classes", action="store_true", help="Dataset contains classes")
     add_img_height(dataset_group)
     add_split(dataset_group)
     add_subsample(dataset_group)
@@ -194,8 +176,6 @@ def define_argparse(config_file="params.yaml", default_config="default_params.ya
                              help="Provide variables to be predicted by the network. Remaining will only be used for visualization, but not learned"
                                   "Choose from %s" % [a.value for a in Variables], action=ParseVariables)
     add_scale(model_group)
-    # parser.add_argument("--grid_shape", type=int, nargs=2, help="The number of cells per image [rows,cols]")
-    # parser.add_argument("--cell_size", type=int, nargs=2, help="The number of pixels per cell [rows,cols]. Will overwrite --grid_shape.")
     # Augmentation
     augment_group = parser.add_argument_group("Augmentation")
     augment_group.add_argument("--crop_range", type=float, required=True,
@@ -278,7 +258,7 @@ def define_argparse(config_file="params.yaml", default_config="default_params.ya
     nms_group.add_argument("--min_samples", type=int, required=True,
                            help="NMS: Minimum number of samples required for main points in DBSCAN Cluster")
     nms_group.add_argument("--nxw", type=float, required=True,  # 0.05,
-                           help="NMS: Weight for the normed x-widths in the DBSCAN Clustering")  # TODO: WHAT?!
+                           help="NMS: Weight for the normed x-widths in the DBSCAN Clustering")
     nms_group.add_argument("--confidence", type=float, required=True,  # 0.9,
                            help="Confidence threshold", )
     nms_group.add_argument("--lw", type=float, required=True,  # 0.05,
@@ -287,8 +267,6 @@ def define_argparse(config_file="params.yaml", default_config="default_params.ya
                            help="NMS: Weight for the midpoint in the DBSCAN Clustering")
     # Eval
     eval_group = parser.add_argument_group("Evaluation")
-    # parser.add_argument("--sample_distance", type=int, default=1,
-    #                     help="Distance to sample points on the line segments for point based evaluation")
     eval_group.add_argument("--metrics", type=Metric, nargs="*", default=list(Metric),
                             choices=list(Metric), help="Select metrics that should be calculated")
     eval_group.add_argument("--matching_gate", type=float, required=True,
@@ -304,12 +282,7 @@ def define_argparse(config_file="params.yaml", default_config="default_params.ya
     postproc_group = parser.add_argument_group("Postprocessing")
     postproc_group.add_argument("--min_segments_for_polyline", type=int, required=True,
                                 help="Minimum number of segments to build a valid polyline in the line fitting for tusimple")
-    postproc_group.add_argument("--adjacency_threshold", required=True, type=float)  # , default=0.75 * 32 * 32)
-    # parser.add_argument("--label_idx", type=int)
-    # parser.add_argument("--nms_distance_threshold")
-    # parser.add_argument("--only_class", type=int)
-    # parser.add_argument("--y_weighted")
-    # parser.add_argument("--num_labellines", type=int)
+    postproc_group.add_argument("--adjacency_threshold", required=True, type=float)
     return CONFIG_AVAILABLE, parser
 
 
@@ -333,7 +306,7 @@ def add_anchors(parser):
                              "Set to 'none' to allow the network to learn specific predictors on random positions. "
                              "ATTENTION: this heavily increases computation time, as each loss calculation needs a "
                              "matching. Other choices define the distribution of the anchors. '%s' loads the values "
-                             "from the anchors file." % AnchorDistribution.KMEANS)  # TODO where is the anchors file
+                             "from the anchors file." % AnchorDistribution.KMEANS)
 
 
 def add_scale(parser):

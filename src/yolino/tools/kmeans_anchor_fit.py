@@ -89,8 +89,6 @@ def get_kmeans_cluster(args, force=False):
     Log.warning("Get %d-means on %s" % (args.num_predictors, kmeans_columns))
     kmeans = KMeans(n_clusters=args.num_predictors, random_state=0).fit(np_data)
     per_line_data["cluster"] = kmeans.labels_
-    # Log.scalars(tag="cluster_size", epoch=0,
-    #             dict={k: v for k, v in enumerate(np.bincount(kmeans.labels_))})
     cluster_means = per_line_data[
         np.unique(["x_s", "x_e", "y_s", "y_e", "cluster", "mx", "my", "dx", "dy", *kmeans_columns])].groupby(
         by="cluster").mean().sort_values(by=sort_by)
@@ -137,13 +135,12 @@ def plot_anchor(args, anchors):
     plt.axis('off')
     plt.tight_layout()
     plt.gca().set_aspect('equal', 'box')
-    # plt.legend(loc="right", ncol=1, bbox_to_anchor=(1.2, 0.5))
 
     Log.warning("Export to file://%s" % (os.path.abspath(name)))
     plt.savefig(name)
     Log.plt(epoch=0, fig=plt, tag=name)
 
-    Log.warning("Export to file://%s_.tex" % (os.path.abspath(name)))
+    # Log.warning("Export to file://%s_.tex" % (os.path.abspath(name)))
     # tikzplotlib.save(name + ".tex")
 
 

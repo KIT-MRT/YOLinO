@@ -28,11 +28,7 @@ from yolino.utils.enums import Dataset, Network, LINE
 from yolino.utils.logger import Log
 
 
-# ------------------------------------------------------------
-# --------------------- FACTORY ------------------------------ 
-# ------------------------------------------------------------ 
-
-class DatasetFactory():
+class DatasetFactory:
     from yolino.dataset.tusimple_pytorch import TusimpleDataset
     from yolino.dataset.caltech_pytorch import CaltechDataSet
     from yolino.dataset.cifar10_pytorch import CifarDataSet
@@ -48,10 +44,6 @@ class DatasetFactory():
     @classmethod
     def __str__(self) -> str:
         return str(self.datasets.keys())
-
-    # @classmethod
-    # def get(self, dataset_str: str, only_available, split, args, shuffle, augment):
-    #     return self.get(Dataset[dataset_str.lower()], only_available, split, args, shuffle, augment)
 
     @classmethod
     def get_coords(self, split, args):
@@ -111,52 +103,3 @@ class DatasetFactory():
                     return dataset, None
         else:
             raise ValueError("%s not found. Please choose from %s" % (dataset_enum, DatasetFactory.datasets.keys()))
-
-        # ------------------------------------------------------------
-
-
-# ------------------------ MAIN ------------------------------
-# ------------------------------------------------------------ 
-
-if __name__ == '__main__':
-    from yolino.utils.general_setup import general_setup
-    import yaml
-
-
-    def dumpdata(dataset, path, log_dir=None):
-        if log_dir is None:
-            log_dir = dataset
-
-        params = {}
-        params["rotation_range"] = 0.1
-        params["img_height"] = 1640
-        params["model"] = Network.YOLO_CLASS
-        params["linerep"] = LINE.POINTS
-        params["num_predictors"] = 8
-        params["learning_rate"] = 0.001
-        params["conf"] = 0.99
-        params["lw"] = 0.016
-        params["mpxw"] = 1.5
-        params["debug"] = True
-        params["cell_size"] = "[100,100]"
-        params["max_n"] = 2
-
-        tmp = params
-        tmp["dataset"] = dataset
-        tmp["log_dir"] = log_dir + "_po_8p_dn19"
-
-        if not os.path.exists(os.path.dirname(path)):
-            os.makedirs(os.path.dirname(path))
-        with open(path, "w") as f:
-            yaml.dump(tmp, f)
-
-
-    path = "tmp/params.yaml"
-    dumpdata("culane", path)
-    os.environ["DATASET_CULANE"] = "/mrtstorage/datasets/public/CULane"
-    args = general_setup("Dataset Main", path)
-
-    dataset, loader = DatasetFactory.get(args.dataset, only_available=True, split="runner", args=args, shuffle=True,
-                                         augment=True)
-
-    assert (len(dataset) >= 2)

@@ -45,6 +45,7 @@ from yolino.viz.plot import plot_debug_geometry, finish_plot_debug_geometry, plo
 
 from yolino.model.line_representation import MidDirLines
 
+
 class Grid:
     def __iter__(self):
         return iter(self.cells)
@@ -132,14 +133,6 @@ class Grid:
         return total_points
 
     def slice_and_straighten_line(self, geom_line, r, c, plot_image=False):
-        # input: 
-        #   geom_line: flat list or ?x2
-        #   r: row index of the box to slice it through
-        #   c: col index of the box to slice it through
-        # return: 
-        #   segments: [x,y], [x,y] for start and end point
-        #   geom_box: shapely box, use like xs=geom_box.boundary.xy[0], ys=geom_box.boundary.xy[1])
-
         cs = self._internal_cell_size
 
         geom_line = reformat2shapely(geom_line)
@@ -175,9 +168,7 @@ class Grid:
         cell_string = f"{r},{c}"
 
         segments = []
-        # TODO calc straightening error
         # TODO rather use linear approximation instead of just removing knots
-        # TODO return the small chunk remaining after slice at the end of a line as we do not extrapolate or cut here!
         if geom_intersection.type == 'MultiLineString':
             segments = np.zeros((len(geom_intersection.geoms), 2, 2), dtype=float)
             for idx, geom_intersection_line in enumerate(geom_intersection.geoms):
@@ -280,7 +271,6 @@ class Grid:
                 points = line_segment_to_sampled_points(line_segment=line[geom_indices],
                                                         variables=line[variable_indices],
                                                         sample_distance=sample_distance)
-                # print("%s vs %s" % (np.shape(total_points), np.shape(points)))
                 total_points = np.concatenate([total_points, points])
         return total_points
 
@@ -506,7 +496,6 @@ class Grid:
 
         if coords.line_representation != LINE.POINTS:
             coords = coords.clone(LINE.POINTS)
-            # raise ValueError("Image lines should only be put into points representation.")
 
         if image_height > 0:
             scale = self.get_cell_size(image_height)
@@ -530,9 +519,7 @@ class Grid:
                     continue
                 v = row * scale[0]
                 h = col * scale[1]
-                # len(cell.predictors)
                 for idx, predictor in enumerate(cell.predictors):
-                    # predictors += 1
 
                     if predictor.confidence < confidence_threshold:
                         continue
@@ -607,9 +594,7 @@ class Grid:
         return list(range(self.get_cell_id_range(row_col, axis)))
 
     def get_unique_cell_id_pairs(self, row_col):
-        # Log.info("Row_col with shape %s and data %s" % (row_col.shape, row_col.flatten()))
         pairs = self.get_cell_id_pairs(row_col)
-        # Log.info("Pairs with shape %s and data %s" % (pairs.shape, pairs.flatten()))
         try:
             return np.unique(pairs, axis=0)
         except ValueError as e:
@@ -621,7 +606,6 @@ class Grid:
         for idx in range(len(row_col) - 1):
             rows = list(self.get_cell_id_range(row_col[idx:idx + 2], axis=0))
             cols = list(self.get_cell_id_range(row_col[idx:idx + 2], axis=1))
-            # Log.info("%s, %s" % (str(rows), str(cols)))
             pairs = np.vstack([pairs, np.array(np.meshgrid(rows, cols)).T.reshape(-1, 2)])
         return pairs
 
@@ -681,19 +665,12 @@ class Grid:
 
                             corner_cases[p_idx][idx] = True
 
-                # if corner_cases.any():
-                #     print("Found a corner case at %s with pixels\n%s\n%s" % (row_col, line.flatten(), position_in_cell.flatten()))
-
         # limit to grid range
         row_col[row_col < 0] = 0
         for idx in range(len(row_col)):
             for axis in range(len(row_col[idx])):
                 if row_col[idx][axis] >= self.shape[axis % 2]:
-                    # Log.warning("Limit value to grid range. Before: %s for grid of shape %s"
-                    #             % (row_col[idx], str(self.shape)))
                     row_col[idx][axis] = self.shape[axis % 2] - 1
-                    # Log.warning("Limit value to grid range. After: %s for grid of shape %s"
-                    #             % (row_col[idx], str(self.shape)))
         return row_col, position_in_cell, portion_in_cell
 
     def add_single_slice_uv(self, line_segment_uv, variables, row, col, coords,
@@ -734,5 +711,3 @@ class Grid:
     def clear(self, r, c):
         self.cells[r, c] = None
 
-    # def get_uv_for_cell(self, r, c):
-    #     self.get_position_of_line_segment()

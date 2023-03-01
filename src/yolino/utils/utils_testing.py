@@ -76,22 +76,6 @@ def load_image(img_size, filename, paths):
     return np.asarray(img)
 
 
-# def load_labels(args, filename, paths, img):
-#     label_path = paths.generate_eval_label_npy_file_import_path(filename)
-#     Log.info("Load labels from %s" % label_path)
-#     uv_polylines = np.load(label_path, allow_pickle=True)  # Labels are stored with (640, 1280)!!!
-#     huge_image = cv2.resize(img, dsize=(1280, 640), interpolation=cv2.INTER_CUBIC)
-#     huge_image = np.asarray(huge_image)
-#     plot(uv_polylines, os.path.join(args.debug_folder, filename + "_initial_gt.png"),
-#          huge_image, False)
-
-#     label_grid = grid_from_uv_and_img_shape(uv_polylines, args.downsampling,
-#                                             args.num_predictors, args.img_size,
-#                                             scale=1 / (640. / args.img_size[0]))  # TODO: ATTENTION! Labels have twice the size as prediction!?
-
-#     return uv_polylines, label_grid
-
-
 def load_prediction(args, coords, filename, paths, image):
     npy_path = paths.generate_prediction_file_path(filename)
     Log.info("Load prediction from %s" % npy_path)

@@ -57,7 +57,6 @@ class MetricsStorage:
         today = datetime.now()
         metrics["date"] = today.strftime("%b-%d-%Y_%H-%M-%S")
 
-        # Log.infometrics)
         if logger:
             logger.report_scalar(title='ROC', series='Pre NMS Recall', value=metrics["pre_nms_recall"],
                                  iteration=epoch)
@@ -73,14 +72,8 @@ class MetricsStorage:
             logger.report_histogram(title='FileBased', series='Precision',
                                     iteration=epoch, values=self.precisions, xlabels=self.files, xaxis='Samples',
                                     yaxis='Precision')
-            # logger.report_histogram(title='Distances', series='FileBased',
-            #                         iteration=start_epoch, values=distances, xaxis='Samples', yaxis='Distances')
-
         store_metrics("point", metrics, out)
         store_metrics("point", self.distances, file_out)
-
-    # def getF1(self):
-    #     return self.getF1(np.mean(self.precisions), np.mean(self.recalls))
 
     @classmethod
     def F1_score(cls, prec, recall):

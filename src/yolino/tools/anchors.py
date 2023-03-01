@@ -85,13 +85,6 @@ def plot_vonmises(args, per_line_data, split):
             Log.error("Von mises failed with n=%d\n%s" % (n, e))
             continue
 
-        # format of the array :
-        # [
-        # [p1, p2, ...] # probability coefficients of the mixtures
-        # [mu1, mu2, ...] # mu coefficients of each sub-distribution
-        # [kappa1, kappa2, ...] # kappa coefficients of each sub-distribution
-        # ]
-
         # plot the empirical distribution
         x_histo = vonmisestools.histogram(x, bins=100)
 
@@ -132,9 +125,7 @@ def run():
                          "values smaller with \n%s" % np.asarray(per_line_data["angles"])[
                              np.where(np.abs(per_line_data["angles"]) < 1)])
 
-    # angles = deepcopy(per_line_data["angles"]).to_numpy()
     per_line_data["moved_angles"] = (per_line_data["angles"] + math.pi / 2.) % (math.pi * 2)
-    # angles = np.where(angles >= 0, angles, angles + 2 * math.pi)
     n_angles = per_line_data["moved_angles"].to_numpy()
     optimum = plot_kmeans(args, n_angles, "train")
 
@@ -152,11 +143,6 @@ def run():
 
     yaml_data["anchor_kmeans"] = [{kk: vv for kk, vv in v.items()} for k, v in
                                   dict(cluster_means.transpose()).items()]
-
-    # path = os.path.join(specs_folder, "%s_%s_anchors.yaml" % (args.dataset, "train"))
-    # Log.warning("Write yaml specs to file://%s" % path)
-    # with open(path, "w") as f:
-    #     yaml.dump(yaml_data, f)
 
     # --------- k-means in cells -------
     print("K-Means per cell")
@@ -180,7 +166,6 @@ def run():
         file = os.path.join(cells_folder, file)
         per_cell_data = pd.read_pickle(file)
         if len(per_cell_data) <= args.num_predictors:
-            # Log.warning("Nothing to do for cell [%d,%d]" % (r, c))
 
             text_kwargs = dict(ha='center', va='center', fontsize=28)
             axes[r, c].text(0.5, 0.5, '%d' % len(per_cell_data), **text_kwargs)
@@ -191,12 +176,9 @@ def run():
                              "values smaller with up to %s" % per_line_data["angles"].abs().min())
 
         per_cell_data = per_cell_data.drop(per_cell_data[per_cell_data.angles == 0].index)
-        # angles = per_cell_data["angles"].to_numpy()
         per_cell_data["moved_angles"] = (per_cell_data["angles"] + math.pi / 2.) % (math.pi * 2)
         n_angles = per_cell_data["moved_angles"].to_numpy()
-        # optimum = plot_kmeans(args, angles, specs_folder, "train")
-        optimum = args.num_predictors  # TODO make num_preds
-        # angles %= 2 * math.pi
+        optimum = args.num_predictors
 
         kmeans = KMeans(n_clusters=optimum, random_state=0).fit(n_angles.reshape(-1, 1))
         per_cell_data["cluster"] = kmeans.labels_
@@ -230,13 +212,6 @@ def run():
     Log.warning("Write yaml specs to file://%s" % path)
     with open(path, "w") as f:
         yaml.dump(yaml_data, f)
-
-    # # --------- Von Mises ---------
-    # plot_vonmises(args, per_line_data, specs_folder, "train")
-
-    #     args = general_setup("AnchorVal", show_params=True, task_type=TaskType.PARAM_OPTIMIZATION,
-    #                          setup_logging=False
-    #                          )
 
 
 if __name__ == '__main__':

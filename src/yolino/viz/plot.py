@@ -28,13 +28,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from shapely.geometry import LineString
-
 from yolino.eval.distances import aml_to_cart
 from yolino.grid.coordinates import validate_input_structure
 from yolino.grid.predictor import Predictor
 from yolino.model.variable_structure import VariableStructure
 from yolino.utils.enums import ImageIdx, CoordinateSystem, ColorStyle, Variables, LINE
-from yolino.utils.logger import Logger, Log
+from yolino.utils.logger import Log
 
 try:
     import cv2
@@ -85,8 +84,6 @@ def draw_text(image, label, x1, x2, y1, y2, fontScale=1, thickness=1, colorstyle
     color.append(0.5)
     cv2.putText(image, str(label), (int(y1), int(x1)), color=color, fontFace=cv2.FONT_HERSHEY_PLAIN,
                 fontScale=fontScale, thickness=thickness)
-
-    #    plt.text(x1, y1, label, color=np.asarray(color) / 255.)
     return color
 
 
@@ -105,9 +102,6 @@ def draw_cell(cell, image, valid_count=0, total_idx=0, coords: VariableStructure
 
     for i_idx, instance in enumerate(cell):  # e.g. segmet = tensor([ 0.3262,  0.2997, -0.3307, -0.6456,  0.0008])
         total_idx += 1
-        # if np.all(np.abs(instance[0:2] - instance[2:4]) < 1):
-        #     Log.debug("Skip instance %s" % instance)
-        #     continue
 
         x1 = y1 = 0 * standalone_scale
         x2 = y2 = 1 * standalone_scale
@@ -176,8 +170,6 @@ def draw_cell(cell, image, valid_count=0, total_idx=0, coords: VariableStructure
         else:
             Log.warning("Export cell image to file://%s" % (os.path.abspath(name)), level=1)
             cv2.imwrite(name, image)
-            # Log.warning("Export cell image to file://%s_plt.png" % (os.path.abspath(name)), level=1)
-            # plt.savefig(name + "_plt.png")
             Log.img(name, image[..., ::-1], epoch=None, tag=os.path.basename(name), imageidx=ImageIdx.LABEL, level=1)
     return valid_count
 
@@ -237,12 +229,10 @@ def get_color(colorstyle, idx=None, x1=None, x2=None, y1=None, y2=None, angle=No
     if color is not None:
         return color
 
-    # Log.debug("Generate color for %s = %s" % (colorstyle, value))
     if colorstyle == ColorStyle.ID:
         # value should be the id
         color = [
             *reversed(tuple(cv2.applyColorMap(np.array((idx + 1) * 30, dtype=np.uint8), COLORMAP).flatten().tolist()))]
-        # color = tuple((np.asarray(colorsys.hsv_to_rgb(255 / 20 * idx, 1, 1)) * 255).astype(int).tolist())
 
     elif colorstyle == ColorStyle.CLASS:
         color = tuple(
@@ -286,7 +276,7 @@ def get_color(colorstyle, idx=None, x1=None, x2=None, y1=None, y2=None, angle=No
             cv2.applyColorMap(np.array((idx + 1) * 255 / len(anchors), dtype=np.uint8), COLORMAP).flatten().tolist()))]
     else:
         color = tuple(cv2.applyColorMap(np.array(100, dtype=np.uint8), COLORMAP).flatten().tolist())
-    # Log.warning("Color is %s" % str(color))
+
     if bgr:
         color = [*reversed(color)]
     return color
@@ -300,9 +290,6 @@ def draw_color_bar(image, colorstyle, threshold):
         return image
 
     cell_size = 32
-
-    # image = np.hstack([image, np.zeros((image.shape[0], cell_size * 3, 3), dtype=image.dtype)])
-
     width = 8 if colorstyle == ColorStyle.ORIENTATION else 4  # times cellsize
     extended_image = np.ones((image.shape[0], image.shape[1] + cell_size * width, 3), dtype=image.dtype) * 255
     extended_image[:, 0:image.shape[1], :] = image
@@ -318,22 +305,8 @@ def draw_color_bar(image, colorstyle, threshold):
             ext_x = int(x_center - math.cos(angle) * width / 3. * cell_size)
             y_center = int(image.shape[1] + width / 2. * cell_size)
             ext_y = int(y_center - math.sin(angle) * width / 3. * cell_size)
-            # print("Image is %s" % (str(extended_image.shape)))
-            # print("Draw %s to %s" % (str((x_center, y_center)), str((ext_x, ext_y))))
             cv2.line(extended_image, (y_center, x_center), (ext_y, ext_x), color=color, thickness=2)
     elif colorstyle == ColorStyle.CONFIDENCE:
-        # scale = 10 ^ 3
-        # start_range = int(threshold * scale)
-        # diff = (1 - threshold) * scale
-        # ticks = int(diff / 10)
-        # # steps = int(extended_image.shape[0] / ticks)
-        # steps = extended_image.shape[0] / (100 - start_range)
-
-        # Log.debug("\nImage is %s" % str(image.shape))
-        # Log.debug("Draw colorbar from conf %s to 1000" % (start_range))
-        # Log.debug("Set %s ticks at each %s px" % (ticks, steps))
-        # Log.debug("Print text when i mod %s == 0" % (ticks))
-
         for i in range(1, 100):
             conf = i / 100.
             # print("%s at bound %s" % (conf, threshold))
@@ -343,8 +316,6 @@ def draw_color_bar(image, colorstyle, threshold):
             cv2.rectangle(extended_image, pt1, pt2, color, -1)
 
             if i % 5 == 0:
-                # val = unsqueeze(idx / 255 * 100, min=threshold)
-                # (int(extended_image.shape[1] - 1.5 * cell_size), math.ceil(steps * (idx + 1)))
                 cv2.putText(extended_image, str(conf), (pt2[0] + 10, pt2[1]), color=(0, 0, 0),
                             fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.5, thickness=1, lineType=cv2.LINE_AA)
     else:
@@ -356,25 +327,10 @@ def draw_color_bar(image, colorstyle, threshold):
 def draw_grid(image, cell_size):
     for x in range(0, image.shape[1], cell_size[0]):
         cv2.line(image, tuple(map(int, [x, 0])), tuple(map(int, [x, image.shape[0]])), (50, 50, 50), thickness=1)
-        # plt.plot((x, x), (0, image.shape[0]), color=(0.8, 0.8, 0.8), linewidth=1.0)
 
     for y in range(0, image.shape[0], cell_size[1]):
         cv2.line(image, tuple(map(int, [0, y])), tuple(map(int, [image.shape[1], y])), (50, 50, 50), thickness=1)
-        # plt.plot((0, image.shape[1]), (y, y), color=(0.8, 0.8, 0.8), linewidth=1.0)
 
-    # plt.xticks(np.arange(0, image.shape[0], cell_size[0]))
-    # plt.yticks(np.arange(0, image.shape[1], cell_size[1]))
-    # plt.gca().axes.get_xaxis().set_visible(False)
-    # plt.gca().axes.get_yaxis().set_visible(False)
-    # plt.tight_layout()
-    # plt.grid(True)
-
-
-# def draw_grid_plt(image_shape, grid_shape):
-#     for col in range(0, image_shape[1], int(image_shape[1] / grid_shape[1])):
-#         plt.plot([col, col], [image_shape[0], 0], color='gray')
-#     for row in range(0, image_shape[0], int(image_shape[0] / grid_shape[0])):
-#         plt.plot([image_shape[1],0], [row, row], color='gray')
 
 def convert_to_torch_image(image):
     assert (image.shape[2] == 3)
@@ -423,16 +379,14 @@ def draw_line(image, x1, y1, x2, y2, idx, conf, classification, threshold, color
     if not use_conf or conf > threshold:
         # (w, h)
         color = get_color(colorstyle, idx=idx, x1=x1, x2=x2, y1=y1, y2=y2,
-                          class_id=classification,  # (segment[class_idx] if class_idx else None),
-                          conf=conf,  # (segment[conf_idx] if conf_idx else None),
+                          class_id=classification,
+                          conf=conf,
                           threshold=threshold, max_class=max_class, color=color, anchors=anchors)
 
         cv2.arrowedLine(image, tuple(map(int, [y1, x1])), tuple(map(int, [y2, x2])),
                         color,
                         thickness=thickness,
                         tipLength=0.15)
-        # plt.arrow(y1, x1, y2 - y1 + 0.00001, x2 - x1 + 0.0001, color=np.asarray(color) / 255., head_width=0.05,
-        #          length_includes_head=True)
 
 
 def draw_rectangle(image, x1, y1, x2, y2, idx, conf, classification, threshold, colorstyle, max_class, anchors,
@@ -443,8 +397,8 @@ def draw_rectangle(image, x1, y1, x2, y2, idx, conf, classification, threshold, 
     if conf is None or conf > threshold:
         # (w, h)
         color = get_color(colorstyle, idx=idx, x1=x1, x2=x2, y1=y1, y2=y2,
-                          class_id=classification,  # (segment[class_idx] if class_idx else None),
-                          conf=conf,  # (segment[conf_idx] if conf_idx else None),
+                          class_id=classification,
+                          conf=conf,
                           threshold=threshold, max_class=max_class, color=color, anchors=anchors)
         cv2.rectangle(image, (y1, x1), (y2, x2), color=color, thickness=1)
 
@@ -456,7 +410,6 @@ def plot_cell_class(grid, name, image, epoch, tag, imageidx: ImageIdx, ignore_cl
     assert (image.dtype == np.float32)
     image = np.transpose(image, (1, 2, 0))
     image = image * 255
-    # image = cv2.resize(image, (image.shape[1], image.shape[0]))
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     valid_count = 0
@@ -465,9 +418,6 @@ def plot_cell_class(grid, name, image, epoch, tag, imageidx: ImageIdx, ignore_cl
             if grid.cells[r, c] is None:
                 continue
             current_predictors = grid.cells[r, c].predictors
-            # if len(current_predictors) != 1:
-            #     Log.warning("We plot multiple predictors on top of each other. Might not be visible!")
-
             for p_idx, p in enumerate(current_predictors):
                 p: Predictor
                 if p.confidence < threshold:
@@ -522,7 +472,7 @@ def save_grid(images, path, title="grid"):
     import os
     if not os.path.exists(os.path.dirname(path)):
         os.makedirs(os.path.dirname(path))
-    
+
     Log.warning(("Write " + title + " to file://%s") % path, level=1)
     cv2.imwrite(path, grid)
 
@@ -533,7 +483,6 @@ def plot(lines, name, image, coords: VariableStructure = None, show_grid=False, 
          coordinates: CoordinateSystem = CoordinateSystem.UV_SPLIT, epoch=-1, tag="runner",
          imageidx: ImageIdx = ImageIdx.DEFAULT, cell_indices=None, color=None, thickness=4,
          training_vars_only=False, anchors=None, show=False, level=0):
-        
     import timeit
     start_time = timeit.default_timer()
     if image is None:
@@ -559,7 +508,6 @@ def plot(lines, name, image, coords: VariableStructure = None, show_grid=False, 
         assert (image.dtype == np.float32)
         image = np.transpose(image, (1, 2, 0))
         image = image * 255
-        # image = cv2.resize(image, (image.shape[1], image.shape[0]))
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     assert (image.shape[2] <= 3)
@@ -576,15 +524,12 @@ def plot(lines, name, image, coords: VariableStructure = None, show_grid=False, 
         for b_idx, batch in enumerate(lines):
             for i_idx, instance in enumerate(batch):
                 for idx in range(len(instance) - 1):
-                    # e.g. segment = tensor([ 0.3262,  0.2997, -0.3307, -0.6456,  0.0008])
                     total_idx += 1
                     if type(instance) == torch.Tensor:
                         if torch.all(instance[idx + 1] == 0) or torch.any(torch.isnan(instance[idx:idx + 2])):
-                            # Log.debug("Skip because entry is nan or zero %s" % str(instance[idx:idx + 2]))
                             continue
                     elif type(instance) == np.ndarray:
                         if np.all(instance[idx + 1] == 0) or np.any(np.isnan(instance[idx:idx + 2])):
-                            # Log.debug("Skip because entry is nan or zero %s" % str(instance[idx:idx + 2]))
                             continue
 
                     x1 = instance[idx][0]
@@ -594,20 +539,15 @@ def plot(lines, name, image, coords: VariableStructure = None, show_grid=False, 
                     valid_count += 1
 
                     # TODO: handle conf and class
-                    draw_line(image, x1, y1, x2, y2, idx=i_idx,  # * len(batch) + idx,
+                    draw_line(image, x1, y1, x2, y2, idx=i_idx,
                               conf=-1, classification=None, threshold=0, colorstyle=colorstyle, max_class=None,
                               color=color, thickness=thickness, anchors=anchors, use_conf=False)
-
-    # (batch, line_segments, 2 * 2 + ?)
     elif coordinates == CoordinateSystem.UV_SPLIT:
         for b_idx, batch in enumerate(lines):
             valid_count = draw_cell(cell=batch, image=image, valid_count=valid_count, total_idx=total_idx,
                                     coords=coords, cell_size=cell_size, threshold=threshold, colorstyle=colorstyle,
                                     cell_indices=cell_indices, color=color, thickness=thickness,
                                     training_vars_only=training_vars_only, anchors=anchors)
-
-
-    # (batch, cells, <=predictors, 2 * 2 + ?)
     elif coordinates == CoordinateSystem.CELL_SPLIT:
         raise AttributeError("Plot can only visualize UV based coordinates.")
     else:
@@ -625,10 +565,6 @@ def plot(lines, name, image, coords: VariableStructure = None, show_grid=False, 
 
         cv2.imwrite(name, image)
 
-        # if do_tikz:
-        #    plt.gca().set_aspect('equal', adjustable='box')
-        #    plt.gca().invert_yaxis()
-        #    finish(name + "_plt", clear=False)
         Log.img(name, image[..., ::-1], epoch, tag=tag, imageidx=imageidx, level=level + 1)
 
     if False:
@@ -644,7 +580,7 @@ def plot(lines, name, image, coords: VariableStructure = None, show_grid=False, 
         plt.close('all')
 
         Log.debug("Hue space is %s" % (printable_hist))
-    
+
     Log.time(key="plot", value=timeit.default_timer() - start_time)
     return image, valid_count
 
@@ -656,10 +592,7 @@ def plot_style_grid(lines, name, image, coords: VariableStructure = None, show_g
     grid_images = []
     thickness = int(image.shape[2] / 160)
 
-    styles = [ColorStyle.ORIENTATION, 
-              #   ColorStyle.UNIFORM,
-              ColorStyle.CLASS, ColorStyle.CONFIDENCE,
-              ColorStyle.RANDOM]
+    styles = [ColorStyle.ORIENTATION, ColorStyle.CLASS, ColorStyle.CONFIDENCE, ColorStyle.RANDOM]
     for style in styles:
         if style == ColorStyle.CLASS and (coords[Variables.CLASS] == 0
                                           or (show_only_train and not Variables.CLASS in coords.train_vars())):
@@ -671,7 +604,7 @@ def plot_style_grid(lines, name, image, coords: VariableStructure = None, show_g
         if style == ColorStyle.CONFIDENCE:
             thresholds = [0]
         else:
-            thresholds = np.unique([threshold])  # , 0.9])
+            thresholds = np.unique([threshold])
 
         for t in thresholds:
             line_img, ok = plot(lines, name="", image=image, coords=coords,
@@ -685,9 +618,6 @@ def plot_style_grid(lines, name, image, coords: VariableStructure = None, show_g
             line_img = cv2.rectangle(img=line_img, pt1=(0, 0), pt2=(200, 25), color=(255, 255, 255), thickness=-1)
             line_img = cv2.putText(img=line_img, text="%s [t=%s]" % (style, t), org=(5, 20), color=(0, 0, 0),
                                    fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=1, thickness=1)
-            # path = name + "_%s.png" % style
-            # Log.debug("Export debug bgr file to file://%s" % path)
-            # plt.imsave(path, convert_cv2_to_plt_style(line_img))
             grid_images.append(convert_to_torch_image(line_img))
 
     if gt is not None:
@@ -701,9 +631,6 @@ def plot_style_grid(lines, name, image, coords: VariableStructure = None, show_g
         line_img = cv2.rectangle(img=line_img, pt1=(0, 0), pt2=(200, 25), color=(255, 255, 255), thickness=-1)
         line_img = cv2.putText(img=line_img, text="ground truth", org=(5, 20), color=(0, 0, 0),
                                fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=1, thickness=1)
-        # path = name + "_gt.png"
-        # Log.debug("Export debug bgr file to file://%s" % path)
-        # plt.imsave(path, convert_cv2_to_plt_style(line_img))
         grid_images.append(convert_to_torch_image(line_img))
     Log.grid(name=name, images=grid_images, epoch=epoch, tag=tag, imageidx=imageidx, level=level + 1)
 
@@ -724,14 +651,9 @@ def plot_debug_geometry(geom_box, geom_line, line_segment):
         else:
             plt.plot(line_segment[:, 1],
                      line_segment[:, 0], '.g-')
-    # else:
-    #     Log.warning("Segment is None")
 
 
 def finish_plot_debug_geometry(suffix=""):
-    # axes = plt.gca()
-    # axes.set_ylim([c - cs[0], c + 2 * cs[1]])
-    # axes.set_xlim([r - cs[0], r + 2 * cs[1]])
 
     if not os.path.exists("tmp"):
         os.makedirs("tmp")
@@ -744,7 +666,6 @@ def finish_plot_debug_geometry(suffix=""):
         'matplotlib.font_manager').disabled = True
     Log.warning("Export debug viz to file://%s" %
                 os.path.abspath(debug_image_path), level=1)
-
 
     start, end = plt.gca().get_ylim()
     int_end = math.floor(end / 32) * 32
@@ -800,15 +721,12 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser("Add grid to image")
     parser.add_argument("image", type=str, help="Provide path to an image")
-    # /home/meyer/01_coding/cvpr_ws/src/yolino_polyline_detection/test/test_data/images/0313-1_10000.npy
     parser.add_argument("-s", "--grid_shape", nargs=2, type=int, default=None,
                         help="Specify number of grid cells, [rows, cols].")
     parser.add_argument("-c", "--cell_size", nargs=2, type=int, default=None,
                         help="Specify pixels per cell, [height, width].")
 
     args = parser.parse_args()
-
-    # import os
 
     if not os.path.exists(args.image):
         Log.error("Unknown path %s" % args.image)

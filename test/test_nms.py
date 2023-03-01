@@ -41,80 +41,6 @@ except ModuleNotFoundError:
 class NmsTest(unittest.TestCase):
     prediction_grid: Grid
 
-    # def test_nms(self):
-    #
-    #     args = test_setUp(self._testMethodName, str(Dataset.TUSIMPLE),
-    #                       additional_vals={"batch_size": 2},
-    #                       level=Level.DEBUG
-    #                       )
-    #
-    #     prediction = np.expand_dims(np.asarray([
-    #         [64., 180., 60., 187., 0.7],
-    #         [63., 163., 60., 179., 0.6],
-    #         [71., 230., 63., 216., 0.99],  # match
-    #         [61., 224., 59., 212., 1],  # match
-    #         [104., 384., 96., 365., 1]
-    #     ]), axis=0)
-    #
-    #     # newlines = nms(prediction, grid_shape=[10, 20], cell_size=32, confidence_threshold=0.5, orientation_weight=1,
-    #     #                length_weight=1, midpoint_weight=2, epsilon=250, min_samples=2)  # with factor 5 in weights
-    #     # newlines = nms(deepcopy(prediction), grid_shape=[10, 20], cell_size=32, confidence_threshold=0.5, orientation_weight=1,
-    #     #                length_weight=1, midpoint_weight=2, epsilon=70, min_samples=2)  # with softmax
-    #     # newlines = nms(deepcopy(prediction), grid_shape=[10, 20], cell_size=32, confidence_threshold=0.5,
-    #     #                orientation_weight=1, length_weight=1, midpoint_weight=2, epsilon=311, min_samples=2)  # pure weights
-    #     newlines, reduced = nms(deepcopy(prediction), grid_shape=[10, 20], cell_size=[32, 32], confidence_threshold=0.5,
-    #                             orientation_weight=1, length_weight=1, midpoint_weight=2, epsilon=2,
-    #                             min_samples=2, plot_debug=True)  # normalized weights per dimension
-    #
-    #     self.assertEqual(np.sum(newlines[:, :, -1] == 0), 2)
-    #     self.assertEqual(np.sum(newlines[:, :, -1] == 1), 1)
-    #
-    #     for i, p in enumerate(newlines[0]):
-    #         if i == 2:
-    #             self.assertEqual(p[-1], prediction[0, 2:4, -1].max(),
-    #                              msg="We expect the conf to be set to the max of the cluster")
-    #             self.assertTrue(np.array_equal(p[0:-1],
-    #                                            np.average(prediction[0, 2:, 0:4], axis=0,
-    #                                                       weights=np.power(prediction[0, 2:, -1], 10))),
-    #                             msg="We expect it to be the mean of the %dth and %dth prediction %s, but we have %s"
-    #                                 % (2, 4, prediction[0, 2:, 0:4].mean(axis=0), p[0:-1]))
-    #         elif i == 3 or i == 4:
-    #             self.assertEqual(p[-1], 0, msg="We expect the conf to be set to 0")
-    #             self.assertTrue(np.array_equal(p[0:-1], prediction[0, i, 0:-1]),
-    #                             msg="We expect it to be the same as before")
-    #         else:
-    #             self.assertTrue(np.array_equal(p, prediction[0, i]))
-    #
-    # def test_nms_on_reduced_train_data(self):
-    #
-    #     args = test_setUp(self._testMethodName, str(Dataset.CULANE),
-    #                       additional_vals={"batch_size": 1, "num_predictors": 4,
-    #                                        "training_variables": [Variables.GEOMETRY, Variables.CONF],
-    #                                        "activations": [ACTIVATION.SIGMOID, ACTIVATION.SIGMOID],
-    #                                        # "confidence": 0.5, "eps": 30
-    #                                        },
-    #                       # level=Level.DEBUG
-    #                       )
-    #
-    #     predictions = np.asarray([[15., 10, 25, 20, 0.9], [35, 30, 45, 40, 0.1],
-    #                               [0, 0, 10, 10, 0.1], [5, 0, 5, 10, 0.8]])
-    #     preds_uv = np.tile(predictions, (args.batch_size, 1, 1))
-    #
-    #     lines, reduced = nms(deepcopy(preds_uv), grid_shape=args.grid_shape, cell_size=args.cell_size,
-    #                          confidence_threshold=args.confidence, orientation_weight=args.nxw,
-    #                          length_weight=args.lw,
-    #                          midpoint_weight=args.mpxw, epsilon=args.eps, min_samples=args.min_samples,
-    #                          weight_samples=False)
-    #     for i in [1, 2, 3]:
-    #         self.assertTrue(np.array_equal(lines[0, i], [*predictions[i, 0:4], 0]),
-    #                         msg="Expected the %dth line to just get 0 conf as it is below the threshold, but we have %s" %
-    #                             (i, lines[0, i]))
-    #     self.assertTrue(
-    #         np.array_equal(lines[0, 0],
-    #                        [*np.average(predictions[[0, 3], 0:4], weights=predictions[[0, 3], -1] ** 10, axis=0), 0.9]),
-    #         msg="Expected the first line (the representative) to get the max conf of 0.9 and the average values of "
-    #             "0 and 3, but we have %s" % (lines[0, 0]))
-
     def test_nms_on_dublicate(self):
         args = test_setup(self._testMethodName, str(Dataset.CULANE),
                           additional_vals={"batch_size": 2, "num_predictors": 8,
@@ -150,45 +76,6 @@ class NmsTest(unittest.TestCase):
                     self.assertTrue(np.array_equal(lines[b, i + j], [*preds_uv[b, i + j][0:-1], 0]),
                                     msg="Expected the %dth line of each cell in batch=%d to get conf=0, but we have %s"
                                         % (i + j, b, lines[b, i + j]))
-
-    def test_nms(self):
-        args = test_setup(self._testMethodName, str(Dataset.CULANE),
-                          additional_vals={"batch_size": 2, "num_predictors": 8,
-                                           "eps": 107,
-                                           "nxw": 0, "lw": 0, "anchors": str(AnchorDistribution.NONE)},
-                          # level=Level.DEBUG
-                          )
-
-        random = np.random.random(size=(100, 4)) * 1000
-        zeros = np.zeros((100, 1))
-        preds = np.concatenate([random, zeros], axis=1).reshape((1, 100, 5))
-
-        preds, reduced = nms(preds, grid_shape=args.grid_shape, cell_size=args.cell_size,
-                             confidence_threshold=args.confidence,
-                             orientation_weight=args.nxw, length_weight=args.lw, midpoint_weight=args.mpxw,
-                             epsilon=args.eps, min_samples=args.min_samples, plot_debug=False, normalize=False,
-                             weight_samples=False)
-
-    # def test_eval(self):
-    #     args = test_setUp(self._testMethodName, str(Dataset.TUSIMPLE),
-    #                       additional_vals={"batch_size": 2, "num_predictors": 8,
-    #                                        "min_samples": 1, "eps": 40, "nxw": 2,
-    #                                        "lw": 1, "mpxw": 3, "confidence": 0.5,
-    #                                        "max_n": 2,
-    #                                        "anchors": str(AnchorDistribution.NONE),
-    #                                        "explicit_model": "log/checkpoints/tus_checkpoint.pth"},
-    #                       # level=Level.DEBUG
-    #                       )
-    #     evaluator = Evaluator(args, prepare_forward=True, load_best_model=False)
-    #     # prevent debug tracemalloc
-    #     images, grid_tensors, fileinfo, _ = unsqueeze(evaluator.dataset.__getitem__(0),
-    #                                                   evaluator.dataset.__getitem__(1))
-    #
-    #     outputs, lines = evaluator(images, labels=grid_tensors, idx=evaluator.forward.start_epoch,
-    #                                filenames=fileinfo, tag="eval_unittest", apply_nms=True, fit_line=False)
-    #
-    #     self.assertEqual(lines[0].shape[1], 3, lines[0].shape)
-    #     self.assertEqual(lines[1].shape[1], 4, lines[1].shape)
 
 
 if __name__ == '__main__':

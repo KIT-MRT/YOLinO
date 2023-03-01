@@ -43,7 +43,7 @@ class VariableStructure(dict):
             Variables.INSTANCE: 0,  # Classification !?
             Variables.FOLLOWER: 0,  # Classification
             Variables.POSITION_IN_LINE: 0,  # Classification
-            Variables.CONF: num_conf,  # Regression # TODO: is conf in dataset already?!
+            Variables.CONF: num_conf,  # Regression
             Variables.SAMPLE_ANGLE: num_angles,
         }
         super().__init__(dict_data)
@@ -113,9 +113,7 @@ class VariableStructure(dict):
             else:
                 end = position + v
 
-            # Log.info("V=%s, Pos=%d, End=%d" % (str(k), position, end))
             if variables is None or k in variables:
-                # Log.info("Provide range for %s with Pos=%d to End=%d" % (variable, position, end))
                 ranges.append(range(position, end))
 
             position = end
@@ -139,7 +137,6 @@ class VariableStructure(dict):
             Log.error(self)
             raise ValueError("Unknown type for variables %s" % type(variables))
 
-        # Log.info("Pos=%d" % position)
         for k, v in self.items():
             if v == 0:
                 continue

@@ -56,9 +56,6 @@ class GridTest(unittest.TestCase):
     params["linerep"] = str(LINE.POINTS)
     params["num_predictors"] = 8
     params["learning_rate"] = 0.001
-    # params["conf"] = 0.99
-    # params["lw"] = 0.016
-    # params["mpxw"] = 1.5
     params["split"] = "train"
     params["root"] = ".."
 
@@ -85,8 +82,6 @@ class GridTest(unittest.TestCase):
         self.dumpdata("culane")
         self.args = general_setup(self._testMethodName, GridTest.params_file, ignore_cmd_args=True, setup_logging=False,
                                   task_type=None, default_config=get_default_param_path())
-        # self.args.cell_size = [100, 100]
-        # self.args.grid_shape = [5, 10]
 
         if not os.path.exists(GridTest.dump_path):
             os.makedirs(GridTest.dump_path)
@@ -123,40 +118,6 @@ class GridTest(unittest.TestCase):
                     self.assertEqual(predictor.end.tolist(), [1., 1.])
                     self.assertEqual(predictor.confidence, 1)
                     self.assertEqual(predictor.linerep, LINE.POINTS)
-
-    # # Assert that the expected grid shape meets the actual grid. Further assert that the row and col ids of a cell
-    # # are correct and the values are set correctly for all cells as points although we input euler points.
-    # def testGridInitEuler(self):
-    #     for r_idx, row in enumerate(self.grid_eu.cells):
-    #         for c_idx, cell in enumerate(row):
-    #             self.assertEqual(cell.row, r_idx)
-    #             self.assertEqual(cell.col, c_idx)
-
-    #             for predictor in cell:
-    #                 self.assertEqual(predictor.label, 2)
-    #                 self.assertAlmostEqual(predictor.start[0], 0.)
-    #                 self.assertAlmostEqual(predictor.start[1], 0.)
-    #                 self.assertAlmostEqual(predictor.end[0], 1)
-    #                 self.assertAlmostEqual(predictor.end[1], 0.5)
-    #                 self.assertEqual(predictor.confidence, 1)
-    #                 self.assertEqual(predictor.linerep, "points")  # TODO: we store as points!
-
-    # # Assert that the expected grid shape meets the actual grid. Further assert that the row and col ids of a cell
-    # # are correct and the values are set correctly for all cells as points although we input 1D points.
-    # def testGridInitOneD(self):
-    #     for r_idx, row in enumerate(self.grid_eu.cells):
-    #         for c_idx, cell in enumerate(row):
-    #             self.assertEqual(cell.row, r_idx)
-    #             self.assertEqual(cell.col, c_idx)
-
-    #             for predictor in cell:
-    #                 self.assertEqual(predictor.label, 2)
-    #                 self.assertAlmostEqual(predictor.start[0], 0.)
-    #                 self.assertAlmostEqual(predictor.start[1], 0.)
-    #                 self.assertAlmostEqual(predictor.end[0], 1)
-    #                 self.assertAlmostEqual(predictor.end[1], 0.5)
-    #                 self.assertEqual(predictor.confidence, 1)
-    #                 self.assertEqual(predictor.linerep, "points")  # TODO: we store as points!
 
     # Check cell insertion.
     def testGridModify(self):
@@ -415,10 +376,6 @@ class GridTest(unittest.TestCase):
             plt.grid()
             plt.savefig("/tmp/grid1.png")
 
-        # with self.assertRaises(ValueError):
-        #     GridFactory.get(data=np.expand_dims(np.expand_dims(line, 0), 0), variables=[],
-        #                                    coordinate=CoordinateSystem.UV_CONTINUOUS, args=args, input_coords=coords,
-        #                                    variables_have_conf=False, plot_image=args.plot)
         line = np.unique(line, axis=0)
         grid, errors = GridFactory.get(data=np.expand_dims(np.expand_dims(line, 0), 0), variables=[],
                                        coordinate=CoordinateSystem.UV_CONTINUOUS, args=args, input_coords=coords,
@@ -442,7 +399,6 @@ class GridTest(unittest.TestCase):
                                    [352, 512], [352, 576],
                                    [384, 480], [384, 512]]):
             r, c = (topleft / 32).astype(int)
-            # print(f"{r},{c} {topleft}: {[str(g) for g in grid[r, c].predictors] if grid[r, c] is not None else 'none'}")
             self.assertIsNotNone(grid[r, c], f"None in {r},{c} {topleft}")
             self.assertEqual(len(grid[r, c]), 1,
                              f"Cell {r},{c} has {grid[r, c]}, we expect one line segment there.")

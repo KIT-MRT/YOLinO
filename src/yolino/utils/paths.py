@@ -171,12 +171,6 @@ class Paths:
         if not os.path.exists(self.qeval_tusimple):
             self.qeval_tusimple.mkdir(exist_ok=True, parents=True)
 
-    # def generate_image_folder_path(self, split):
-    #     return os.path.abspath(os.path.join(self.dataroot, split, "images"))
-
-    # def generate_label_folder_path(self, split):
-    #     return os.path.abspath(os.path.join(self.dataroot, split, "labels"))
-
     def generate_file_stub(self, file_name, idx=ImageIdx.DEFAULT, boxplot=False, suffix="", prefix=""):
         idx_string = idx.value
 
@@ -193,22 +187,6 @@ class Paths:
             return prefix + splits[-1] + (("_" + idx_string) if len(idx_string) > 0 else "") \
                    + ("_bp" if boxplot else "") \
                    + (("_" + str(suffix)) if len(str(suffix)) > 0 else "")
-
-    # def generate_image_npy_file_import_path(self, file_name, split):
-    #     path = os.path.join(self.generate_image_folder_path(split), file_name + ".npy")
-    #     self.create_dir(os.path.dirname(path))
-    #     return path
-
-    # def generate_label_npy_file_import_path(self, file_name, split):
-    #     path = os.path.join(self.generate_label_folder_path(split), file_name + ".npy")
-    #     self.create_dir(os.path.dirname(path))
-    #     return path
-
-    # def generate_image_file_import_path(self, file_name, split, extension=".png"):
-    #     return os.path.join(self.generate_image_folder_path(split), file_name + extension)
-
-    # def generate_label_txt_file_import_path(self, file_name, split):
-    #     return os.path.join(self.generate_label_folder_path(split), file_name + ".txt")
 
     def generate_specs_file_name(self, dataset, split, anchor_vars, num_predictors, scale):
         return os.path.join(self.specs_folder,

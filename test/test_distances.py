@@ -112,12 +112,6 @@ class DistanceTest(unittest.TestCase):
                                    math.sqrt(math.pow(1 * factor / len_l1 + 1 * factor / len_l1, 2) +
                                              math.pow(1 * factor / len_l1 - 1 * factor / len_l1, 2)), places=2)
 
-            # TODO: test parallel - norm_diff is missing
-            # parallel = torch.tensor([0, 0.1, 0.9, 1]) * factor
-            # len_parallel = torch.linalg.norm(parallel[0:2]-parallel[2:4])
-            # self.assertAlmostEqual(linesegment_pauls_distance(l1, parallel).item(),
-            #                        math.sqrt(math.pow(0.04, 4)+math.pow(len_parallel-len_l1, 2)),
-            #                        places=2)
 
 
 if __name__ == '__main__':

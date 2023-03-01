@@ -41,12 +41,14 @@ psum = 0
 psum_sq = 0
 print("Look into %s" % path)
 
+
 def get_them(psum, psum_sq):
     num_pixels = len(ds) * args.img_size[0] * args.img_size[1]
     mean = psum / num_pixels
     var = (psum_sq / num_pixels) - (mean ** 2)
     std = torch.sqrt(var)
     print(f"mu={mean.numpy().tolist()},s={std.numpy().tolist()},s2={var.numpy().tolist()}\r")
+
 
 for data in loader:
     img, _, _, _, _ = data

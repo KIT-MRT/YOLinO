@@ -71,7 +71,6 @@ class UVMatcher(Matcher):
         if torch.all(torch.tensor([len(g) for g in grid_tensor]) == 0):
             return matched_preds, matched_gt
 
-        # start = timeit.default_timer()
         Log.info("Waiting for uv match...")
         for b_idx, batch in enumerate(preds):
             validate_input_structure(preds[[b_idx]], CoordinateSystem.UV_SPLIT)
@@ -119,16 +118,13 @@ class UVMatcher(Matcher):
             if self.plot:
                 self._debug_single_match_plot_(gt=grid_tensor[b_idx].numpy(), pred=preds[b_idx].detach().cpu().numpy(),
                                                p_match=matched_preds[b_idx].cpu().numpy(), suffix="uv")
-            # Log.info("Uv matching took %f" % (timeit.default_timer() - start))
-            # Log.time(key="uv_match", value=(timeit.default_timer() - start))
-
             if torch.any(matched_gt[b_idx] != -100):
                 good_gt_idx = torch.where(matched_gt[b_idx] >= 0)[0][0]
                 Log.debug("Match e.g. %s with GT %s" % (
                     preds[b_idx][matched_gt[b_idx][good_gt_idx]], grid_tensor[b_idx][good_gt_idx]))
 
         Log.time(key="matching_uv", value=timeit.default_timer() - start)
-        return matched_preds.to(preds.device), None  # , matched_gt.to(preds.device)
+        return matched_preds.to(preds.device), None
 
     def sort_lines_by_geometric_match(self, preds: torch.tensor, grid_tensor: list, filenames, epoch,
                                       tag="dummy_matcher",
@@ -161,7 +157,7 @@ class UVMatcher(Matcher):
                                             confidence_threshold=self.args.confidence)
 
         # resort matched GT entries and have nan tensors in the remaining places
-        # TODO rather not create a new one!?!
+        # TODO rather not create a new one
         num_batch, num_lines, num_vars = preds.shape
         resorted_grid_tensor = torch.ones((num_batch, num_lines, self.coords.get_length())) * torch.nan
         for b_idx, pred_in_cell in enumerate(matched_predictions):
@@ -170,11 +166,6 @@ class UVMatcher(Matcher):
                     resorted_grid_tensor[b_idx, int(p_idx)] = grid_tensor[b_idx][int(gt_idx)]
 
         if not never_plot:
-            # dummy = np.ones([1600]) * -100
-            # matches = np.where(matched_predictions[0] != -100)[0]
-            # dummy[matches] = np.arange(0, len(matches))
-            # self._debug_single_match_plot_(gt=resorted_grid_tensor[0].numpy(), pred=preds[0].numpy(),
-            #                                p_match=matched_predictions[0], suffix=tag + "_after")
             self._debug_full_match_plot_(epoch, preds, resorted_grid_tensor, filenames=filenames,
                                          coordinates=CoordinateSystem.UV_SPLIT, tag=tag + "_resorted")
 
@@ -182,27 +173,6 @@ class UVMatcher(Matcher):
         preds = preds.view(-1, self.coords.num_vars_to_train())
 
         return preds, resorted_grid_tensor, matched_predictions
-    #
-    # def _debug_full_match_plot_(self, epoch, preds, grid_tensor):
-    #
-    #     if not self.show or self.coords[Variables.GEOMETRY] == 0:
-    #         return
-    #
-    #     coordinates = CoordinateSystem.UV_SPLIT
-    #     validate_input_structure(pred_grid, coordinates)
-    #     validate_input_structure(grid, coordinates)
-    #
-    #     grid, errors = GridFactory.get(grid[[0]], [],
-    #                                    coordinate=coordinates,
-    #                                    args=self.args, coords=self.coords)
-    #
-    #     pred_uv_lines = pred_grid.get_image_lines(image_height=self.args.img_size[0] / 4)
-    #     uv_lines = grid.get_image_lines(image_height=self.args.img_size[0] / 4)
-    #
-    #     grid_cells = grid.get_row_col_for_uv_lines()
-    #     pred_cells = pred_grid.get_row_col_for_uv_lines()
-    #
-    #     self.__plot_match_image__(epoch, pred_uv_lines, grid_cells, pred_cells, uv_lines)
 
 
 class UVPointMatcher(UVMatcher):

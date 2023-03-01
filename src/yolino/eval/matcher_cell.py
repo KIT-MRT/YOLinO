@@ -98,12 +98,10 @@ class CellMatcher(Matcher):
                 Output variable filled with the matching prediction ID or -100 if there is no match at the position
                 of the GT in the input. Will always have shape [batch * number of cells, number of predictors].
         """
-        # (batch, cells, <=predictors, 2 * 2 + ?)
         start = timeit.default_timer()
         Log.debug("Cell match pred %s and gt %s" % (str(preds.shape), str(grid_tensor.shape)))
         validate_input_structure(preds, CoordinateSystem.CELL_SPLIT)
         validate_input_structure(grid_tensor, CoordinateSystem.CELL_SPLIT)
-        # Log.debug("Matching input is correct")
         num_batch, num_cells, _, _ = preds.shape
         matched_preds = torch.ones((num_batch * num_cells, self.args.num_predictors),
                                    dtype=torch.int64, device=preds.device) * self.no_match_index
@@ -118,10 +116,6 @@ class CellMatcher(Matcher):
             grid_tensor_cell = grid_tensor[b_idx, c_idx]
             pred_cell = preds[b_idx, c_idx]
             idx = b_idx * num_cells + c_idx
-            # Log.debug("Get match in batch %d and cell %d" % (b_idx, c_idx))
-            # if b_idx == 1 and c_idx == 18:
-            # Log.debug(pred_cell)
-            # Log.debug(grid_tensor_cell)
             if self.args.match_by_conf_first:
                 ids = torch.where(pred_cell[:, -1] >= confidence_threshold)[0]
             else:
@@ -145,7 +139,6 @@ class CellMatcher(Matcher):
 
             if self.args.match_by_conf_first and \
                     torch.any(matched_gt[idx, gt_is_valid[b_idx][c_idx]] == self.no_match_index):
-                # Log.warning("We match with inconfident predictions now")
                 inconfident_prediction_ids = torch.where(pred_cell[:, -1] < confidence_threshold)[0]
                 inconfident_predictions = pred_cell[inconfident_prediction_ids]
 

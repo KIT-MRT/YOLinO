@@ -40,14 +40,11 @@ class LineRepresentation:
 
     @classmethod
     def from_cart(cls, start_xy, end_xy, **kwargs):
-        # raise NotImplementedError("You should work with an explicit line representation")
         return np.concatenate([start_xy, end_xy]).flatten()
 
     @classmethod
     def to_cart(cls, values):
         return values
-        # raise NotImplementedError("You should work with an explicit line representation")
-        # return np.concatenate([start_xy, end_xy]).flatten()
 
     @classmethod
     def extrapolate_cart(cls, start, end):

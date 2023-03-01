@@ -31,12 +31,8 @@ source = PIL.Image.open("/home/meyer/Downloads/Bild1.jpg")
 min_diff = math.inf
 diff_path = ""
 for root, dirs, files in os.walk("/mrtstorage/datasets/public/tusimple_lane_detection/train_set/clips/0531"):
-    # if not "ring_front_center" in root:
-    #     continue
     print(root)
     for f in tqdm(files):
-        # if not f.startswith("ring_front_center_"):
-        #     continue
         if not f.endswith("20.jpg"):
             continue
         path = os.path.join(root, f)

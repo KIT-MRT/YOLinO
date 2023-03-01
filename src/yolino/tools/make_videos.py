@@ -31,8 +31,6 @@ def generate_argparse(name):
 
     parser.add_argument("--height", type=int, required=True,
                         help="Output height of the video.")
-    # parser.add_argument("--width", type=int, required=True,
-    #                     help="Output width of the video")
     parser.add_argument("-o", "--output", type=str, required=True,
                         help="Path to the output video")
     parser.add_argument("-i", "--input", type=str, required=True,
@@ -61,9 +59,6 @@ def genVideo(path, videoFile, end_pattern, height):
         return
     images.sort()
 
-    # cap = cv2.VideoCapture(videoFile)
-
-    # cvImg = cv2.imread(images[0])
     pil_image = PIL.Image.open(images[0]).convert('RGB')
     open_cv_image = np.array(pil_image)
     # Convert RGB to BGR
@@ -88,7 +83,6 @@ def genVideo(path, videoFile, end_pattern, height):
     i = 0
     for image in images:
         print("Process " + str(image))
-        # cvImg = cv2.imread(images[0])
         pil_image = PIL.Image.open(images[0]).convert('RGB')
         open_cv_image = np.array(pil_image)
         # Convert RGB to BGR
@@ -110,7 +104,6 @@ def genVideo(path, videoFile, end_pattern, height):
 
 if __name__ == '__main__':
     args = generate_argparse("Videos")
-    # genVideo(path=args.input, videoFile=args.output + str('.mp4'), end_pattern=args.pattern, height=args.height)
 
     for root, dirs, files in os.walk(args.input):
         if len(dirs) == 0:

@@ -32,21 +32,17 @@ from yolino.utils.logger import Log
 
 def setup(log_dir, dvc, config):
     kind = os.path.splitext(os.path.basename(argparse._sys.argv[0]))[0]
-    # if "test" in kind:
-    #     return None
 
     if config is not None and "project_name" in config and "task_name" in config and not "kolumbos" in socket.gethostname():
         Log.debug("Use %s and %s for trains" % (config["project_name"], config["task_name"]))
         task = Task.init(project_name=config["project_name"],
                          task_name=config["task_name"],
                          task_type=Task.TaskTypes.testing)
-        # TODO: continue_last_task=True ?
     else:
         today = datetime.now()
         task = Task.init(project_name="YOLinO_" + log_dir[0:3],
                          task_name=log_dir + "_" + kind + "_" + today.strftime("%b-%d-%Y_%H-%M-%S"),
                          task_type=Task.TaskTypes.testing if "train" in kind else Task.TaskTypes.testing)
-        # TODO: , reuse_last_task_id=False)
 
     try:
         repo = git.Repo(dvc)
