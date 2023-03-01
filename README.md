@@ -1,9 +1,30 @@
-# Polyline Estimation
+# YOLinO: Polyline Estimation
 
-The repository contains Code to train and evaluate a network for polyline estimation from RGB images.
+The repository contains code to train and evaluate our network YOLinO network for polyline estimation from RGB images. The code was developed for a PhD thesis and is target towards evaluating rather productive use.
 
-## Installation (no mrttools)
-Use python3!
+## Open Issues
+There are some issues we want to tackle in the future:
+- [ ] Cleanup code
+- [ ] Extract experiment coding for clean code structure
+- [ ] Migrate from Gitlab CI to Github Actions
+- [ ] Add proper documentation
+- [ ] Provide parametrization instructions
+- [ ] Provide params.yaml for Argoverse, Tusimple, CULane, ...
+
+## Citation
+When using this code please cite our publications:
+```
+@inproceedings{meyer2021yolino,
+  title={YOLinO: Generic Single Shot Polyline Setection in Real Time},
+  author={Meyer, Annika and Skudlik, Philipp and Pauls, Jan-Hendrik and Stiller, Christoph},
+  booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision Workshops},
+  pages={2916--2925},
+  year={2021}
+}
+```
+
+
+## Installation
 
 ### Virtual Environments
 It is recommended to use a virtualenv or conda to wrap your python packages from the rest of your system. Especially tensorflow and pytorch might exist in another version on a server.
@@ -30,7 +51,7 @@ Make sure your PYTHONPATH is empty. Maybe add `export PYTHONPATH=` to your virtu
 ```bash
 mkdir yolino
 cd yolino
-git clone https://gitlab.mrt.uni-karlsruhe.de/MRT/private/meyer/publications/diss/yolino.git
+git clone https://github.com/KIT-MRT/YOLinO.git
 
 conda create --name yolino pip python==3.8
 # Alternative: mkvirtualenv yolino --python=/usr/bin/python3
@@ -59,23 +80,21 @@ conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cudatoolkit
 
 ### Get weights
 
-Download the darknet weights at https://pjreddie.com/media/files/yolov3.weights. This is not required.
+Download the darknet weights at https://pjreddie.com/media/files/yolov3.weights.
 
 ### Dataset Paths
 
-The code expects the dataset files to be accessible at `/mrtstorage/datasets/public` or a path be specified
-at `$DATASET_TUSIMPLE` and `$DATASET_CULANE`, respectively.
+The code expects the dataset files to be accessible at the environment variable fitting the dataset e.g. `$DATASET_TUSIMPLE` and `$DATASET_CULANE`, respectively.
 
 ### Folder Setup
 
-The `dvc_experiment_mgmt` (can be any name) repo contains multiple branches for different setups. Use e.g.
-tus_po_8p_dn19 as a good start for the tusimple dataset. The name encodes the **tus**imple dataset with **po**ints line representation, **8 p**redictors without any upsampling on **darknet-19**. The scripts expect this folder structure by default. Pass `--root` (path to the yolino folder), `--dvc` (folder containing your output) and `--config` (path to a params.yaml) if the structure is different.
+So far a second folder is necessary next to the acutal yolino package, where we store parametrization, checkpoints etc. We recommend to use separate folders for dealing with different datasets or configurations. For example, we use `tus_po_8p_dn19` as a good start for the tusimple dataset. The name encodes the **tus**imple dataset with **po**ints line representation, **8 p**redictors without any upsampling on **darknet-19**. The scripts expect this folder structure by default. Pass `--root` (path to the yolino folder), `--dvc` (folder containing your output) and `--config` (path to a params.yaml) if the structure is different.
 
   ```
-  ├── dvc_experiment_mgmt --> https://gitlab.mrt.uni-karlsruhe.de/meyer/dvc_experiment_mgmt
+  ├── tus_md_8p_dn19
   │   ├── params.yaml
   │   ├── ...
-  ├── tus_po_8p_dn19 --> https://gitlab.mrt.uni-karlsruhe.de/meyer/dvc_experiment_mgmt
+  ├── tus_po_8p_dn19
   │   ├── params.yaml
   │   ├── ...
   ├── yolino
@@ -84,9 +103,6 @@ tus_po_8p_dn19 as a good start for the tusimple dataset. The name encodes the **
     │   ├── ...
     ├── ...
   ```
-
-In the current version source code and dvc experiments are decoupled, but the logging should commit both commit IDs to
-the server for each training
 
 ### Logging Server
 
@@ -97,13 +113,6 @@ specified. It is recommended to use only weights and biases. File logging slows 
   on your machine.
 - **Clearml**: Setup your account on https://app.clear.ml/ and run `clearml-init` in your python environment on your
   machine.
-- **Local Clearml**: Setup your account on http://mrttrains:8080/login and run `clearml-init` in your python environment
-  on your machine. Make sure to put the urls to
-  ```
-  web_server: http://mrttrains:8080
-  api_server: http://mrttrains:8008
-  files_server: http://mrttrains:8081
-  ```
 
 ### Other Requirements
 
@@ -115,8 +124,7 @@ specified. It is recommended to use only weights and biases. File logging slows 
 
 ### Code execution examples
 
-- Training in folder e.g. called tus_po_8p_dn19 (https://gitlab.mrt.uni-karlsruhe.de/meyer/dvc_experiment_mgmt) on e.g.
-  GPU with ID 1 (check `nvidia-smi`)
+- Training in folder e.g. called tus_po_8p_dn19 on e.g. GPU with ID 1 (check `nvidia-smi`)
     ```
     cd tus_po_8p_dn19
     CUDA_VISIBLE_DEVICES="1" python ../yolino/src/yolino/train.py --gpu
@@ -132,23 +140,21 @@ specified. It is recommended to use only weights and biases. File logging slows 
 
 ### Training
 
-1. Your configuration is already set with the given `params.yaml` from your `dvc_experiment_mgmt`. Choose e.g.
-   branch `tus_po_8p_dn19` for getting started.
-3. Enter a tmux session
-4. `workon <virtualenv-name>`
-2. Set your dataset paths properly.
-5. `cd <yolino-folder>/tus_po_8p_dn19`
-6. Execute training command on e.g. gpu with ID=1 `CUDA_VISIBLE_DEVICES="1" python ../yolino/src/yolino/train.py --gpu`
+1. Your configuration is already set with the given `params.yaml` from your configuration folder.
+4. Use proper virtual environment with `workon <virtualenv-name>` or conda with `conda activate <conda-name>`.
+2. Set your dataset paths properly to e.g. `$DATASET_TUSIMPLE`.
+5. `cd tus_po_8p_dn19`
+6. Execute training command on e.g. gpu with ID=1 `CUDA_VISIBLE_DEVICES="1" python ../yolino/src/yolino/train.py --gpu --loggers wb`
 7. Open wandb site to watch your training. Link will be printed to cmd.
 
 ### Visualize Data Loading
 
-1. Your configuration is already set with the given `params.yaml` from your `dvc_experiment_mgmt` repo. Choose a branch, e.g. `tus_po_8p_dn19`, for getting started.
-4. `workon <virtualenv-name>`
-2. Set your dataset paths properly.
-3. `cd <yolino-folder>/tus_po_8p_dn19`
-4. Execute visualization command for e.g.
-   clips/0313-2/100/20.jpg `python ../yolino/src/yolino/show.py --explicit clips/0313-2/100/20.jpg`. By default all
+1. Your configuration is already set with the given `params.yaml` from your configuration folder.
+4. Use proper virtual environment with `workon <virtualenv-name>` or conda with `conda activate <conda-name>`.
+2. Set your dataset paths properly to e.g. `$DATASET_TUSIMPLE`.
+3. `cd tus_po_8p_dn19`
+4. Execute visualization command for e.g. clips/0313-2/100/20.jpg
+   `python ../yolino/src/yolino/show.py --explicit clips/0313-2/100/20.jpg`. By default all
    parameters from the params.yaml are taken. You might want to use no augmentation with `--augment ""`. If you wish to
    skim through the dataset leave the `--explicit` filename. Make sure to have access to the whole dataset or
    use `--ignore_missing`. With `--max_n` you can limit the number of files loaded.
@@ -178,7 +184,7 @@ pip3 install -e . # inside yolino repo
 sbatch run_with_sbatch.sh
 ```
 
-## CI and Docker
+## CI and Docker (outdated)
 The docker for CI jobs is generated every time the master is build and either the Dockerfile or the gitlab-ci.yaml script is changed. For a branch named 'docker' it is always run.
 If you like to generate the docker file locally use the following commands to build and push
 ```
