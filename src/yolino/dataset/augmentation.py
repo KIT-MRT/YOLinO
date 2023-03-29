@@ -174,14 +174,18 @@ class DatasetTransformer:
 
 class FixedCrop(torch.nn.Module):
     def __init__(self, sky_crop, left_crop, bottom_crop=0, right_crop=0):
-        super().__init__()
-        self.sky_crop = sky_crop
-        self.left_crop = left_crop
-        self.bottom_crop = bottom_crop
-        self.right_crop = right_crop
+        super().__init__()      
+        self.sky_crop = int(sky_crop)
+        self.left_crop = int(left_crop)
+        self.bottom_crop = int(bottom_crop)
+        self.right_crop = int(right_crop)
         self.use_label = True
 
     def __call__(self, image, label, params):
+        if self.sky_crop == image.shape[1] - self.bottom_crop: 
+            Log.error(f"This crop will result in no image as you selected range {self.sky_crop}:{image.shape[1] - self.bottom_crop} of the height of {image.shape}. Maybe you confused height and width?")
+        if self.left_crop == image.shape[2] - self.right_crop: 
+            Log.error(f"This crop will result in no image as you selected range {self.left_crop}:{image.shape[2] - self.right_crop} of the width of {image.shape}. Maybe you confused height and width?")
         image = image[:,
                 self.sky_crop:image.shape[1] - self.bottom_crop,
                 self.left_crop:image.shape[2] - self.right_crop]
@@ -321,7 +325,7 @@ class RandomCropWithLabels(torch.nn.Module):
 
         """
         min_crop_h = int(image.shape[1] * self.crop_portion)
-        crop_h = torch.randint(min_crop_h, image.shape[1] - 1, size=(1,)).item()
+        crop_h = torch.randint(min_crop_h, image.shape[1]-1, size=(1,)).item()
 
         min_crop_w = int(image.shape[2] * self.crop_portion)
         crop_w = int(min_crop_w * crop_h / min_crop_h)
