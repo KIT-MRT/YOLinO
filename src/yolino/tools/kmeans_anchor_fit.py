@@ -57,6 +57,8 @@ def get_kmeans_cluster(args, force=False):
                                                            anchor_vars=args.anchor_vars, scale=args.scale,
                                                            num_predictors=args.num_predictors)
 
+
+    Log.warning(f"We try to load anchors from {kmeans_yaml_file}.")
     if not force and os.path.exists(kmeans_yaml_file):
         with open(kmeans_yaml_file, "r") as f:
             data = yaml.safe_load(f)

@@ -332,6 +332,7 @@ class DatasetInfo(torchDataset, metaclass=ABCMeta):
             raise ValueError("No augmentation params found for %s: %s" % (filename, self.params_per_file))
         return image
 
+    @classmethod
     def __make_torch__(self, cv_image):
         # Make torch image
         torch_image = torch.from_numpy(cv_image / 255.).permute(2, 0, 1).contiguous().float()

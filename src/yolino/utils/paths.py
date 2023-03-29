@@ -310,3 +310,10 @@ class Paths:
         path = os.path.join(self.checkpoints, 'ep' + str(epoch).zfill(4) + '_model.pth')
         self.create_dir(os.path.dirname(path))
         return path
+
+    def overwrite_debug_folder(self, new_path):
+        self.general_debug_folder = os.path.join(new_path.split("/")[:-1])
+        self.debug_folder = new_path
+        print("Debug folder: file://%s" % self.debug_folder)
+        self.cleanup_debug()
+
