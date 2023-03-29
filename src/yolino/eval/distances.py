@@ -299,6 +299,36 @@ def linesegment_pauls_distance(gt, pred):
                       torch.pow(norm_diff[0] - norm_pred_diff[0], 2) + torch.pow(norm_diff[1] - norm_pred_diff[1], 2))
 
 
+# def aml_to_cart(line):
+#     from yolino.dataset.dataset_base import calc_geom_from_angle
+#     return calc_geom_from_angle(x=line[1], y=line[2], angle=line[0], max_length=[line[3], line[3]])
+
+
+def aml_to_cart(aml):
+    from yolino.dataset.dataset_base import calc_geom_from_angle
+    upper_position = calc_geom_from_angle(x=aml[1], y=aml[2], angle=aml[0], max_length=[aml[3], aml[3]])
+    lower_position = calc_geom_from_angle(x=aml[1], y=aml[2], angle=aml[0], max_length=[aml[3], aml[3]], invert=True)
+    position = torch.cat([lower_position[2:4], upper_position[2:4]])
+    return position
+
+
+def to_aml(line):
+    new_lines = torch.ones((4), dtype=line.dtype) * -1
+    # Convert to dx, dy,
+    diff = line[2:4] - line[0:2]
+
+    # angle
+    new_lines[0] = np.arctan2(diff[1], diff[0])
+
+    # midpoints
+    new_lines[1:3] = get_midpoints(line)
+
+    # lengths
+    new_lines[3] = torch.linalg.norm(diff)
+
+    return new_lines
+
+
 def to_pauls_space_raw(lines):
     new_lines = np.ones((len(lines), 5), dtype=lines.dtype) * -1
 

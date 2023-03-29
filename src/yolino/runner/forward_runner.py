@@ -26,6 +26,7 @@ from yolino.model.model_factory import load_checkpoint
 from yolino.model.variable_structure import VariableStructure
 from yolino.utils.logger import Log
 
+import torch
 
 class ForwardRunner:
     def __init__(self, args, preloaded_model=None, start_epoch=-1, coords: VariableStructure = None,
