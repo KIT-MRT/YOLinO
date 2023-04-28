@@ -168,7 +168,7 @@ class Grid:
 
         segments = []
         # TODO rather use linear approximation instead of just removing knots
-        if geom_intersection.type == 'MultiLineString':
+        if geom_intersection.geom_type == 'MultiLineString':
             segments = np.zeros((len(geom_intersection.geoms), 2, 2), dtype=float)
             for idx, geom_intersection_line in enumerate(geom_intersection.geoms):
                 # remove knots of the polylines within a cell by taking only first and last point of the box-crop
@@ -187,7 +187,7 @@ class Grid:
                     plot_debug_geometry(geom_box, geom_line, geom_intersection_line)
             if plot_image:
                 finish_plot_debug_geometry()
-        elif geom_intersection.type == 'LineString':
+        elif geom_intersection.geom_type == 'LineString':
             # remove knots of the polylines within a cell by taking only first and last point of the box-crop
             segments = np.asarray(
                 [[[geom_intersection.coords.xy[0][0], geom_intersection.coords.xy[1][0]], [
@@ -218,7 +218,7 @@ class Grid:
                     plot_debug_geometry_area(
                         c, cs, r, polygon, geom_box, geom_line, True,
                         title="Straightening error area = %s" % polygon.area)
-        elif geom_intersection.type == 'Point' or geom_intersection.type == "MultiPoint":
+        elif geom_intersection.geom_type == 'Point' or geom_intersection.geom_type == "MultiPoint":
             self.errors["knots_removed"] += 1
 
             if plot_image:
@@ -226,14 +226,14 @@ class Grid:
                 finish_plot_debug_geometry()
 
             Log.debug("A line only touched a grid cell in a single point. We did not add this to the cell.")
-        elif geom_intersection.type == 'GeometryCollection':
+        elif geom_intersection.geom_type == 'GeometryCollection':
             if len(geom_intersection.geoms) > 2:
                 Log.error(f"We have a lot of slices within a cell! Please check cell {r},{c}")
             if plot_image:
                 plot_debug_geometry(geom_box, geom_line, None)
                 finish_plot_debug_geometry()
 
-            Log.debug("We found a collection of %s" % [a.type for a in geom_intersection.geoms])
+            Log.debug("We found a collection of %s" % [a.geom_type for a in geom_intersection.geoms])
             for idx, geom_intersection_line in enumerate(geom_intersection.geoms):
                 s = self.handle_geometry_type(c, cs, geom_box, geom_intersection_line, geom_line, plot_image, r)
                 if len(s) > 0:
@@ -243,7 +243,7 @@ class Grid:
                         segments = np.concatenate([segments, s])
         else:
             raise AttributeError(
-                "Invalid intersection type received from shapely: %s" % geom_intersection.type)
+                "Invalid intersection type received from shapely: %s" % geom_intersection.geom_type)
 
         plt.close("all")
         plt.clf()

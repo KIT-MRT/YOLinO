@@ -47,14 +47,14 @@ def intersection_square(top_left, width, geom_line):
 
 
 def handle_shapely_intersection(geom_intersection, segments, offset_h, offset_w):
-    if geom_intersection.type == "LineString":
+    if geom_intersection.geom_type == "LineString":
         try:
             segments = torch.concat([segments, torch.ones((1, 500, 2)) * torch.nan])
             for idx, point in enumerate(zip(geom_intersection.xy[0], geom_intersection.xy[1])):
                 segments[-1, idx] = (torch.tensor(point) - torch.tensor([offset_h, offset_w]))
         except NotImplementedError:
             Log.error(
-                "Invalid line string after crop %s with %s" % (geom_intersection.type, str(geom_intersection)))
+                "Invalid line string after crop %s with %s" % (geom_intersection.geom_type, str(geom_intersection)))
             raise NotImplementedError(
                 "Somehow we received an invalid type of linestring from shapely. Please check %s" % str(
                     geom_intersection))
@@ -62,7 +62,7 @@ def handle_shapely_intersection(geom_intersection, segments, offset_h, offset_w)
         Log.debug("Full polyline will be erased from the labels")
         return []
 
-    elif geom_intersection.type == "MultiLineString" or geom_intersection.type.lower() == "geometrycollection":
+    elif geom_intersection.geom_type == "MultiLineString" or geom_intersection.geom_type.lower() == "geometrycollection":
         connect = False
         for i in range(len(geom_intersection.geoms)):
             g = geom_intersection.geoms[i]
