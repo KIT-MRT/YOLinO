@@ -518,4 +518,4 @@ class Log():
         Log.scalars(tag=VAL_TAG, dict={"loss/best": math.inf, "best_epoch": 0}, epoch=0)
         Log.push(next_epoch=0)
 
-        exit(0)
+        raise ValueError(msg)

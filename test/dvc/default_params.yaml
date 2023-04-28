@@ -2,7 +2,7 @@
 # command line > environment variables > config file values > defaults
 activations: linear,sigmoid
 adjacency_threshold: 768 # 0.75 * 32 * 32
-anchor_vars: midpoint,direction
+anchor_vars: points
 anchors: none
 association_metric: euclidean
 augment: crop,rotation,jitter,erasing
@@ -24,7 +24,7 @@ full_eval: false
 img_height: 640
 learning_rate: 0.0001
 level: WARN
-linerep: md
+linerep: points
 loading_workers: 9
 log_dir: argo_po_8p_dn19
 loggers: [ wb ]
@@ -50,4 +50,3 @@ split: train
 subsample_dataset_rhythm: -1
 training_variables: geom,confidence
 use_conf_in_loss_matching: true
-weights: 1,2

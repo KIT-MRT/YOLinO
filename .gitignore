@@ -175,3 +175,6 @@ res/argo2_metadata.yaml
 test/test_export/res
 test/export/res
 res/wandb_export_*.csv
+test/dvc/params.yaml
+test/dvc/debug_*
+test/dvc/dummy_*
