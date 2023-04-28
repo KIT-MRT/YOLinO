@@ -178,3 +178,4 @@ res/wandb_export_*.csv
 test/dvc/params.yaml
 test/dvc/debug_*
 test/dvc/dummy_*
+test/dvc/log
