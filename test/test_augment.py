@@ -40,7 +40,9 @@ class TestAugmentation(unittest.TestCase):
         self.target_size = torch.tensor([40, 40])
         self.crop_transform = RandomCropWithLabels(crop_portion=self.crop_portion)
 
-    @unittest.skipIf(not os.path.isdir(os.environ["DATASET_ARGO2"]) or not os.path.isdir(os.environ["DATASET_ARGO2_IMG"]),
+    @unittest.skipIf("DATASET_ARGO2" is not in os.environ or "DATASET_ARGO2_IMG" is not in os.environ
+                     or not os.path.isdir(os.environ["DATASET_ARGO2"])
+                     or not os.path.isdir(os.environ["DATASET_ARGO2_IMG"]),
                      "No data to evaluate on")
     def test_normalization(self):
 
