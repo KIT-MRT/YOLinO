@@ -106,7 +106,7 @@ class Paths:
         days = 90
         numseconds = days * 24 * 60 * 60
         now = time.time()
-        Log.info("Cleanup %s" % checkpoints)
+        Log.debug("Cleanup %s" % checkpoints)
         for r, d, _ in os.walk(checkpoints):
             for folder in d:
                 folder_path = os.path.join(r, folder)
@@ -120,7 +120,7 @@ class Paths:
         days = 30
         numseconds = days * 24 * 60 * 60
         now = time.time()
-        Log.info("Cleanup %s" % self.general_debug_folder)
+        Log.debug("Cleanup %s" % self.general_debug_folder)
         for r, d, _ in os.walk(self.general_debug_folder):
             for folder in d:
                 folder_path = os.path.join(r, folder)
@@ -175,7 +175,7 @@ class Paths:
         idx_string = idx.value
 
         if os.path.isabs(file_name):
-            Log.warning("We shall create a file stub for %s" % file_name)
+            Log.info("We shall create a file stub for %s" % file_name)
 
         splits = file_name.split("/")
         if len(splits) > 1:
@@ -231,7 +231,7 @@ class Paths:
 
         with self._lock:
             if not os.path.isdir(folder):
-                Log.info("Create %s" % folder)
+                Log.debug("Create %s" % folder)
                 os.makedirs(folder)
         return file_path
 
@@ -253,7 +253,7 @@ class Paths:
 
         folder = os.path.dirname(file_path)
         if not os.path.isdir(folder):
-            Log.info("Create %s" % folder)
+            Log.debug("Create %s" % folder)
             os.makedirs(folder)
         return file_path
 

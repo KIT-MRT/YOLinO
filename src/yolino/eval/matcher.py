@@ -102,7 +102,7 @@ class Matcher:
             if self.plot:
                 self._debug_single_match_plot_(gt=gt_subset.cpu().numpy(), pred=pred_subset.detach().cpu().numpy(),
                                                p_match=np.ones(len(pred_subset), dtype=int) * self.no_match_index)
-            # Log.warning("Nothing to match. All GT is %s" % (gt_subset))
+            # Log.info("Nothing to match. All GT is %s" % (gt_subset))
             return False, [], []
 
         if len(pred_subset) == 0:
@@ -249,7 +249,7 @@ class Matcher:
         plt.gca().invert_yaxis()
 
         path = os.path.join(self.args.paths.debug_folder, "pred_gt_match_%s.png" % suffix)
-        Log.warning("Store prediction gt match debug image file://%s" % path, level=1)
+        Log.info("Store prediction gt match debug image file://%s" % path, level=1)
         plt.savefig(path)
         plt.close(fig)
 

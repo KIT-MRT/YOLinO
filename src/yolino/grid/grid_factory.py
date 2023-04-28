@@ -54,7 +54,7 @@ class GridFactory:
             raise NotImplementedError
         elif coordinate == CoordinateSystem.CELL_SPLIT:
             if len(variables) > 0:
-                Log.warning(
+                Log.info(
                     "Please put variables into the data for cell based handling. Separate data will be ignored.")
 
             if args.offset and args.anchors != AnchorDistribution.NONE and anchors is None:
@@ -96,12 +96,12 @@ class GridFactory:
                     continue
 
                 if len(line) == 1:
-                    Log.info("A GT line only has a single valid point. We remove the point %s in image of size %s"
+                    Log.debug("A GT line only has a single valid point. We remove the point %s in image of size %s"
                              % (line, args.img_size[0]))
                     continue
 
                 if len(np.unique(line)) == 2:
-                    Log.info("A GT line only has a single valid point. We remove the point %s in image of size %s"
+                    Log.debug("A GT line only has a single valid point. We remove the point %s in image of size %s"
                              % (line, args.img_size[0]))
                     continue
 
@@ -146,7 +146,7 @@ class GridFactory:
                                                "max": np.max(grid.errors["area_removed"])}
 
                     if summary["area_removed"]["max"] > 16 * 16:
-                        Log.info("Straighten the lines to the grid induced the following unusual errors:\n%s" % summary)
+                        Log.debug("Straighten the lines to the grid induced the following unusual errors:\n%s" % summary)
                         errors[b_idx] = summary
 
                 if "max_distance" in grid.errors and len(grid.errors["max_distance"]) > 0:
@@ -157,7 +157,7 @@ class GridFactory:
                     }
 
                     if summary["max_distance"]["max"] > 16:
-                        Log.info(
+                        Log.debug(
                             "Straighten the lines to the grid induced the following unusual errors:\n%s" % summary)
                         errors[b_idx] = summary
 

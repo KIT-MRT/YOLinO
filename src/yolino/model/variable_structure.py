@@ -101,7 +101,7 @@ class VariableStructure(dict):
         if len(variables) == 1 and variables[0] not in self.train_vars():
             return []
 
-        # Log.info("Pos=%d" % position)
+        # Log.debug("Pos=%d" % position)
         for k in self.train_vars():
             v = self[k]
             if v == 0:

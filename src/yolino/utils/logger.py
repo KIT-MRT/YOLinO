@@ -131,7 +131,7 @@ class Log():
         if Logger.CLEARML in args.loggers and TRAINS_EXIST:
             cls.init_clearml(args, task_type)
 
-        Log.info("We log to %s and cmd" % (", ".join([str(l) for l in Log.__loggers__])))
+        Log.debug("We log to %s and cmd" % (", ".join([str(l) for l in Log.__loggers__])))
 
     @classmethod
     def upload_params(cls, param_dict):
@@ -139,12 +139,12 @@ class Log():
             try:
                 wandb.config.update(param_dict)
             except wandb.sdk.lib.config_util.ConfigError as e:
-                Log.warning("wandb %s" % str(e).split("to")[1].split("If")[0])
+                Log.info("wandb %s" % str(e).split("to")[1].split("If")[0])
                 wandb.config.update(param_dict, allow_val_change=True)
 
     @classmethod
     def init_clearml(cls, args, task_type):
-        Log.info("Setup trains logging for %s - %s [%s]" % (cls.__project_name__, args.id, str(task_type)))
+        Log.debug("Setup trains logging for %s - %s [%s]" % (cls.__project_name__, args.id, str(task_type)))
 
         Log.__trains_task__ = Task.init(project_name=cls.__project_name__,
                                         task_name=args.id,
@@ -172,14 +172,14 @@ class Log():
 
     @classmethod
     def init_tb(cls, args, tb_path):
-        Log.info("Setup tensorboard logging for %s" % tb_path)
+        Log.debug("Setup tensorboard logging for %s" % tb_path)
         Log.__tb__ = SummaryWriter(log_dir=tb_path)
         Log.__loggers__.append(Logger.TENSORBOARD)
 
     @classmethod
     def init_wandb(cls, args, task_type):
 
-        Log.info("Setup wandb logging for %s" % (cls.__project_name__))
+        Log.debug("Setup wandb logging for %s" % (cls.__project_name__))
         Log.__wandb_run__ = wandb.init(project=cls.__project_name__,
                                        tags=[version, *args.tags],
                                        config=args,
@@ -274,6 +274,13 @@ class Log():
             Log.__wandb_run__.tags += (tag_name,)
 
     @classmethod
+    def print(self, msg, level=0, **kwargs):
+        print("INFO".ljust(7) + Log.get_caller_str(level) + " " + str(msg))
+        if Log.__file_log__:
+            Log.__file_log__.warning(msg="INFO".ljust(7) + Log.get_caller_str(level) + " " + str(msg), **kwargs)
+
+
+    @classmethod
     def info(self, msg, level=0, **kwargs):
         Log.__cmd__.info(msg="INFO".ljust(7) + Log.get_caller_str(level) + " " + str(msg), **kwargs)
         if Log.__file_log__:
@@ -340,7 +347,7 @@ class Log():
                 if len(v) == 1:
                     new_dict[str(k) + "/" + tag] = v[0]
                 else:
-                    Log.warning("Miss to push %s: %s" % (k, v))
+                    Log.info("Miss to push %s: %s" % (k, v))
                     continue
             else:
                 new_dict[str(k) + "/" + tag] = v
@@ -416,7 +423,7 @@ class Log():
             os.makedirs(os.path.dirname(name))
 
         from yolino.viz.plot import convert_torch_to_plt_style
-        Log.warning("Save %s image to file://%s" % (tag, os.path.abspath(name)), level=level + 1)
+        Log.info("Save %s image to file://%s" % (tag, os.path.abspath(name)), level=level + 1)
         plt.imsave(name, convert_torch_to_plt_style(grid))
         Log.img(name, grid, epoch, tag=tag, imageidx=imageidx, level=level + 1)
 
@@ -441,7 +448,7 @@ class Log():
 
             msg = ("%s:" % k).ljust(20) + " %s" % val_str
             if Logger.WEIGHTSBIASES in Log.__loggers__:
-                Log.info(msg, level=1)
+                Log.debug(msg, level=1)
             else:
                 print(msg)
 

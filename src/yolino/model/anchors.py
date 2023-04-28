@@ -60,7 +60,7 @@ class Anchor:
         if self.args.anchors == AnchorDistribution.NONE:
             self.bins = torch.tensor([])
         else:
-            Log.warning("Generate %s anchors for %s lines "
+            Log.info("Generate %s anchors for %s lines "
                         "based on %s variable." % (args.anchors, linerep, args.anchor_vars))
             timer = timeit.default_timer()
             self.bins = self.generate()

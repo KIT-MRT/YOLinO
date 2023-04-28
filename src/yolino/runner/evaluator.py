@@ -129,7 +129,7 @@ class Evaluator:
 
         fitted_lines = []
         if do_in_uv:
-            Log.info("Run evaluation on full UV")
+            Log.debug("Run evaluation on full UV")
             try:
                 preds_uv, gt_uv = self.prepare_uv(preds=preds, grid_tensors=grid_tensor, filenames=filenames,
                                                   images=images)
@@ -247,7 +247,7 @@ class Evaluator:
                                           geom_px_scale=self.args.cell_size[0])
 
         if not has_tps:
-            Log.info("We do not have any true positives in the prediction and thus will not calculate the "
+            Log.debug("We do not have any true positives in the prediction and thus will not calculate the "
                      "RMSE, MAE nor the class metrics")
 
         self.add_scores(scores)
@@ -455,7 +455,7 @@ class Evaluator:
             del scores["confusion_mean"]
 
         if self.matcher.plot:
-            Log.info("You can find evaluation debug image in file://%s or file://%s" %
+            Log.debug("You can find evaluation debug image in file://%s or file://%s" %
                      (
                          os.path.join(self.args.paths.debug_folder,
                                       str(epoch) + "_" + str(self.args.split) + "_debug.png"),

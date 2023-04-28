@@ -65,7 +65,7 @@ def plot_kmeans(args, angles, split, finish=True):
 
     if finish:
         path = os.path.join(args.paths.specs_folder, "%s_%s_means.png" % (args.dataset, split))
-        Log.warning("Write k-means plot to file://%s" % path)
+        Log.info("Write k-means plot to file://%s" % path)
         plt.savefig(path)
         plt.close()
     return optimum
@@ -74,7 +74,7 @@ def plot_kmeans(args, angles, split, finish=True):
 def plot_vonmises(args, per_line_data, split):
     number_of_mixes = [2]  # , 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     for n in number_of_mixes:
-        Log.info("Plot von mises n=%d" % n)
+        Log.debug("Plot von mises n=%d" % n)
         x = deepcopy(per_line_data["angles"].to_numpy())
         # Von Mises Fit
         # calculate the coefficients
@@ -100,7 +100,7 @@ def plot_vonmises(args, per_line_data, split):
         # display the two plots on the same figure
         plt.legend()
         path = os.path.join(args.paths.specs_folder, "%s_%s_mises_%d.png" % (args.dataset, split, n))
-        Log.warning("Write von Mises plot to file://%s" % path)
+        Log.info("Write von Mises plot to file://%s" % path)
         plt.savefig(path)
         # plt.show()
         plt.close()
@@ -198,7 +198,7 @@ def run():
         axes[r, c].axes.xaxis.set_ticklabels([])
 
     path = os.path.join(args.paths.specs_folder, "%s_train_cell_kmeans_anchors.png" % args.dataset)
-    Log.warning("Write cell anchor image to file://%s" % path)
+    Log.info("Write cell anchor image to file://%s" % path)
 
     plt.xlim([0, 1])
     plt.ylim([0, 1])
@@ -207,7 +207,7 @@ def run():
     plt.close()
 
     path = os.path.join(args.paths.specs_folder, "%s_%s_anchors.yaml" % (args.dataset, "train"))
-    Log.warning("Write yaml specs to file://%s" % path)
+    Log.info("Write yaml specs to file://%s" % path)
     with open(path, "w") as f:
         yaml.dump(yaml_data, f)
 

@@ -88,25 +88,25 @@ class Argoverse2Dataset(DatasetInfo):
         base_path = os.path.join(self.dataset_path, "sensor")
         image_base_path = os.path.join(self.dataset_img_path, "sensor")
 
-        Log.warning("Load labels from %s" % base_path)
-        Log.warning("Load images from %s" % image_base_path)
+        Log.info("Load labels from %s" % base_path)
+        Log.info("Load images from %s" % image_base_path)
         index = 0
 
         walking_folder = ""
         if self.explicit_in_split is not None and len(self.explicit_in_split) == 1:
             walking_folder = os.path.join(base_path, self.split, self.explicit_in_split[0])
-            Log.warning("Try walk in %s" % walking_folder)
+            Log.info("Try walk in %s" % walking_folder)
             split = self.explicit_in_split[0].split("/")
             if not os.path.isdir(walking_folder):
                 walking_folder = os.path.join(base_path, self.split, split[0])
-                Log.warning("Try walk in %s" % walking_folder)
+                Log.info("Try walk in %s" % walking_folder)
             if not os.path.isdir(walking_folder):
                 walking_folder = os.path.join(base_path, split[0], split[1])
-                Log.warning("Try walk in %s" % walking_folder)
+                Log.info("Try walk in %s" % walking_folder)
 
         if not os.path.isdir(walking_folder):
             walking_folder = os.path.join(base_path, self.split)
-            Log.warning("Try walk in %s" % walking_folder)
+            Log.info("Try walk in %s" % walking_folder)
 
         for root, dirs, files in tqdm(os.walk(walking_folder),
                                       desc=f"Walk folders .../{'/'.join(walking_folder.split('/')[-2:])}",

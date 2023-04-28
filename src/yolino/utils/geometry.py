@@ -82,7 +82,7 @@ def handle_shapely_intersection(geom_intersection, segments, offset_h, offset_w)
                 if len(xy[0]) == 2 and torch.all(xy[:, 0] == next_xy[:, 0]) and torch.all(prev_xy[:, -1] == xy[:, 0]):
                     last_valid_index = torch.where(segments[-1, :, 0].isnan())[0][0] - 1
 
-                    Log.info(f"The center split is just a stage around p1={xy[0, 0].item(), xy[1, 0].item()}. "
+                    Log.debug(f"The center split is just a stage around p1={xy[0, 0].item(), xy[1, 0].item()}. "
                              f"The remainder of that stage has only p2={xy[0, 1].item(), xy[1, 1].item()}. "
                              f"We removed it. Segments so far\n{segments[-1, last_valid_index - 4:last_valid_index + 1]}...")
                     connect = True
@@ -94,7 +94,7 @@ def handle_shapely_intersection(geom_intersection, segments, offset_h, offset_w)
 
             for idx, point in enumerate(zip(xy[0], xy[1])):
                 if connect:
-                    Log.info(f"We append\n{xy[:, 1:3]}")
+                    Log.debug(f"We append\n{xy[:, 1:3]}")
                     connect = False
                     continue
 
@@ -191,7 +191,7 @@ def reformat2shapely(line_segment):
     where_both = np.logical_and(where_first, where_snd)
     if np.any(where_both):
         bad_indices = np.where(where_both)[0]
-        Log.info(f"{len(bad_indices)} times we have the same point in a line at indices={bad_indices}."
+        Log.debug(f"{len(bad_indices)} times we have the same point in a line at indices={bad_indices}."
                  f"We delete the first of each pair as shapely is not able to process otherwise.")
         line_segment = np.stack([np.delete(line_segment[:, 0], bad_indices),
                                  np.delete(line_segment[:, 1], bad_indices)],

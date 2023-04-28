@@ -34,7 +34,7 @@ class YolinoNet(nn.Module):
         self.scale = args.scale
         self.darknet = Darknet(args.darknet_cfg, return_intermediate=True)
         if args.darknet_weights and os.path.isfile(args.darknet_weights):
-            Log.info("Load weights from %s" % args.darknet_weights)
+            Log.debug("Load weights from %s" % args.darknet_weights)
             self.darknet.load_weights(args.darknet_weights)
 
         self.coords = coords

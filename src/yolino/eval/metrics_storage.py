@@ -115,7 +115,7 @@ def store_metrics(metric_type, key_value_pairs, filename):
 
     metrics[metric_type] = key_value_pairs
 
-    Log.info("Write eval metrics to file://%s" % filename)
+    Log.debug("Write eval metrics to file://%s" % filename)
     with open(filename, "w") as f:
         json.dump(metrics, f)
 

@@ -48,7 +48,7 @@ def load_checkpoint(args, dataset_specs, load_best=False, allow_failure=True):
                 raise fnf_error
 
     if epoch == 0:
-        Log.info("Start training from scratch")
+        Log.debug("Start training from scratch")
     else:
         Log.warning('Use pretrain model at epoch %d trained with ID=%s' % (epoch, args.id))
     return model, scheduler_checkpoint, epoch
@@ -69,7 +69,7 @@ def get_model_class(args):
 
 def get_model(args, coords):
     model_class = get_model_class(args)
-    Log.info("Load model %s" % model_class)
+    Log.debug("Load model %s" % model_class)
     model = model_class(args=args, coords=coords)
     return model
 
@@ -97,11 +97,11 @@ def print_checkpoint(checkpoint):
             from pprint import pprint
             pprint(checkpoint["args"].__dict__)
         else:
-            Log.info("We do not print %s. Enable in model_factory.py" % k)
+            Log.debug("We do not print %s. Enable in model_factory.py" % k)
 
 
 def get_checkpoint(args, print_debug=False, check_args=True, load_best=False):
-    Log.info("\nTry loading pretrain weights from %s" % (str(args.paths.pretrain_model)))
+    Log.debug("\nTry loading pretrain weights from %s" % (str(args.paths.pretrain_model)))
     if load_best and args.explicit_model is None:
         checkpoint = torch.load(str(args.paths.pretrain_best_model), map_location=torch.device(args.cuda))
     else:

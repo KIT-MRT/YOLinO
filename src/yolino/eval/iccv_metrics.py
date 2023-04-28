@@ -161,7 +161,7 @@ def iccv_f1(preds_uv, gt_uv, img_size, sample_distance=1, threshold=0.5, conf_id
         axs[2].legend()
 
         path = "/tmp/4_result.png"
-        Log.warning("plot to %s" % path)
+        Log.info("plot to %s" % path)
         plt.savefig(path)
         plt.close()
 

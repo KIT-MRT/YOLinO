@@ -80,7 +80,7 @@ class Grid:
 
     def to_csv(self, path, coords, image_height=-1):
         lines = self.get_image_lines(coords=coords, image_height=image_height, confidence_threshold=0)
-        Log.info("Write CSV to file://%s" % path)
+        Log.debug("Write CSV to file://%s" % path)
         with open(path, 'w', newline='') as csvfile:
             fieldnames = ['start_x', 'end_x', 'end_y', 'start_y', 'class', 'confidence']
             writer = csv.writer(csvfile)
@@ -136,7 +136,7 @@ class Grid:
 
         geom_line = reformat2shapely(geom_line)
         if geom_line.length <= 2:
-            Log.info(f"The line {geom_line} is only {geom_line.length}px in length.")
+            Log.debug(f"The line {geom_line} is only {geom_line.length}px in length.")
             return [], None
 
         geom_intersection, geom_box = intersection_box((r, c), cs[0], cs[1], geom_line)
@@ -346,12 +346,12 @@ class Grid:
                         dict_data["mx"], dict_data["my"], dict_data["dx"], dict_data["dy"] = MidDirLines.from_cart(
                             start=np_p[0:2], end=np_p[2:4])
 
-                        Log.info(f"Write to {pkl_file}")
+                        Log.debug(f"Write to {pkl_file}")
                         with open(pkl_file, "ab") as f:
                             pickle.dump(dict_data, f, protocol=2)
 
                     if len(indices) > 1:
-                        Log.info("We have more than one anchor matching a line.")
+                        Log.debug("We have more than one anchor matching a line.")
                     for p_idx, final_index in enumerate(indices):
                         if False:
                             anchors.add_heatmap(row, col, final_index)
@@ -362,7 +362,7 @@ class Grid:
                                    % (row, col, array[cell_idx, final_index, 0:4])
                             msg += "New one: %s" % (predictor.tensor(coords=coords, convert_to_lrep=convert_to_lrep))
 
-                            Log.info(msg)
+                            Log.debug(msg)
                             if duplicates is not None and not ignore_duplicates:
                                 duplicates.add(row, col, final_index.item())
 
@@ -417,7 +417,7 @@ class Grid:
                 plt.suptitle(filename)
             # path = "/tmp/anchors.png"
             path = self.paths.generate_anchor_image_file_path(file_name=filename, **anchors.args.__dict__)
-            Log.warning(f"Save anchor debug to file://{path}", level=1)
+            Log.info(f"Save anchor debug to file://{path}", level=1)
             Log.plt(epoch=0, fig=plt, tag=os.path.join(str(ImageIdx.ANCHOR), filename))
             plt.savefig(path)
 

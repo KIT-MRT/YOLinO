@@ -59,7 +59,7 @@ def argparse(name):
 def enrich_args(args, name, unknown):
     args.log_dir = "argo2_prep"
     args.resume_log = False
-    Log.warning(f"Unknown args {unknown}")
+    Log.info(f"Unknown args {unknown}")
     # args.subsample_dataset_rhythm = -1
     # Log.setup_cmd(viz_level=args.level, name="Argoverse 2.0")
     args.split = "none"
@@ -470,7 +470,7 @@ def process_log(log_ids: np.ndarray, thread_index, subsample_factor, max_n_in_lo
     import av2.geometry.interpolate as interp_utils
     from av2.map.lane_segment import LaneType
     from av2.map.map_api import ArgoverseStaticMap
-    Log.warning(f"Thread {thread_index} is running for {len(log_ids)} logs...")
+    Log.info(f"Thread {thread_index} is running for {len(log_ids)} logs...")
     counter = 0
     for log_index, log_id in enumerate(log_ids):
         if abort(counter, args.max_n):
@@ -493,12 +493,12 @@ def process_log(log_ids: np.ndarray, thread_index, subsample_factor, max_n_in_lo
                                      os.path.splitext(name)[
                                          1] == ".jpg"])
                 if num_npy_files >= num_img_files:
-                    Log.info(
+                    Log.debug(
                         f"{log_id} already done. \nInput {img_folder_path} contains {num_img_files}.\nOutput {npy_folder_path} contains {num_npy_files}.")
                     # pbar.update(int(num_img_files / subsample_factor))
                     continue
                 else:
-                    Log.info(
+                    Log.debug(
                         f"{log_id} is missing {num_img_files - num_npy_files} files... We continue here.")
 
         loader = AV2SensorDataLoader(data_dir=Path(dataset_input_path), labels_dir=Path(dataset_input_path),
@@ -524,9 +524,9 @@ def process_log(log_ids: np.ndarray, thread_index, subsample_factor, max_n_in_lo
             continue
 
         log_map_dirpath = os.path.join(dataset_input_path, log_id, "map")
-        Log.info("Load map from %s" % log_map_dirpath)
+        Log.debug("Load map from %s" % log_map_dirpath)
         avm = ArgoverseStaticMap.from_map_dir(Path(log_map_dirpath), build_raster=True)
-        Log.info("Loaded Map")
+        Log.debug("Loaded Map")
 
         num_valid_in_log = 0
         successfully_finished = 0
@@ -550,20 +550,20 @@ def process_log(log_ids: np.ndarray, thread_index, subsample_factor, max_n_in_lo
             npy_path = os.path.join(dataset_output_path, short_file_name)
             if args.enhance:
                 if os.path.exists(npy_path + ".npy"):
-                    Log.info(f"Skip {short_file_name}.npy - it is already generated.")
+                    Log.debug(f"Skip {short_file_name}.npy - it is already generated.")
                     num_valid_in_log += 1
                     continue
 
             cam_timestamp_ns = int(img_fpath.stem)
             city_SE3_ego = loader.get_city_SE3_ego(log_id, cam_timestamp_ns)
             if city_SE3_ego is None:
-                Log.info("missing LiDAR pose")
+                Log.debug("missing LiDAR pose")
                 continue
             im_pose = city_SE3_ego.translation[0:2]
 
             lidar_fpath = loader.get_closest_lidar_fpath(log_id, cam_timestamp_ns)
             if lidar_fpath is None:
-                Log.info("missing LiDAR file %s" % lidar_fpath)
+                Log.debug("missing LiDAR file %s" % lidar_fpath)
                 # without depth map, can't do this accurately
                 continue
 
@@ -679,7 +679,7 @@ def process_log(log_ids: np.ndarray, thread_index, subsample_factor, max_n_in_lo
 
                 if len(l) > max_num_control_points:
                     max_num_control_points = len(l)
-                    Log.info(f"Currently we need {max_num_control_points} control points.")
+                    Log.debug(f"Currently we need {max_num_control_points} control points.")
 
                 if len(l) > len_npy:
                     raise ValueError(f"We need more than {len(l)} control points.")
@@ -701,7 +701,7 @@ def process_log(log_ids: np.ndarray, thread_index, subsample_factor, max_n_in_lo
                 finish_plot(axs, fig, img_height=img.shape[0])
                 path = args.paths.generate_debug_image_file_path(short_file_name, idx=ImageIdx.LABEL,
                                                                  suffix="npy")
-                Log.info("Plot stored data to file://%s" % path)
+                Log.debug("Plot stored data to file://%s" % path)
                 fig.savefig(path)
                 Log.plt(epoch=0, tag=os.path.join(str(ImageIdx.LABEL), split, short_file_name),
                         fig=fig)
@@ -709,7 +709,7 @@ def process_log(log_ids: np.ndarray, thread_index, subsample_factor, max_n_in_lo
                 del axs
                 del fig
 
-            Log.info("Store %s.npy" % npy_path)
+            Log.debug("Store %s.npy" % npy_path)
             np.save(npy_path, new_lanes.round())
             counter += 1
             num_valid_in_log += 1
@@ -718,7 +718,7 @@ def process_log(log_ids: np.ndarray, thread_index, subsample_factor, max_n_in_lo
     if counter < min(max_n_in_log, 300) and not args.ignore_missing and args.explicit is None:
         Log.error(f"We only found {counter} files in thread {thread_index}. That is not enough.")
     else:
-        Log.warning(f"Thread {thread_index} is finished with {counter} files..")
+        Log.info(f"Thread {thread_index} is finished with {counter} files..")
     return counter
 
 
@@ -781,7 +781,7 @@ if __name__ == '__main__':
                 f"We only found {len(log_dirs)}, but expected {file_checks[split]['logs']} logs for {split}.")
         log_dirs = np.asarray(log_dirs)
 
-        Log.warning(f"{len(log_dirs)} are valid for this run "
+        Log.info(f"{len(log_dirs)} are valid for this run "
                     f"and will be distributed on {args.loading_workers} threads.")
 
         for idx in range(args.loading_workers):
@@ -796,7 +796,7 @@ if __name__ == '__main__':
                 threads.append(x)
                 x.start()
 
-        Log.warning("So let's wait...")
+        Log.info("So let's wait...")
         # wait for all to finish
         is_running = np.ones(len(threads), dtype=bool)
         total = min(args.max_n, int(320 * len(log_dirs) / subsample_factor))
@@ -809,7 +809,7 @@ if __name__ == '__main__':
                     is_running[index] = threads[index].is_alive()
 
                     if not threads[index].is_alive():
-                        Log.warning(f"Finished thread {index}")
+                        Log.info(f"Finished thread {index}")
 
                 new_pbar_total = 0
                 for DIR in log_dirs:

@@ -50,7 +50,7 @@ class DatasetInfo(torchDataset, metaclass=ABCMeta):
                  val=-1, norm_mean=None, norm_std=None,
                  override_dataset_path=None, load_only_labels=False, show=False,
                  load_sequences=False, lazy=False, ignore_duplicates=False, store_lines=False) -> None:
-        Log.info("---- Load %s [%s] ----" % (enum, split))
+        Log.debug("---- Load %s [%s] ----" % (enum, split))
 
         self.img_list = []
         self.file_names = []
@@ -94,7 +94,7 @@ class DatasetInfo(torchDataset, metaclass=ABCMeta):
         if self.args.max_n < 0:
             self.args.max_n = math.ceil(self.__numbers__[self.split] * 100 / max(1, args.subsample_dataset_rhythm))
         if self.args.max_n > 0:
-            Log.info("Limit the search to a maximum of %d files" % self.args.max_n)
+            Log.debug("Limit the search to a maximum of %d files" % self.args.max_n)
 
         self.plot = "plot" in self.args and self.args.plot
         self.show = show
@@ -102,7 +102,7 @@ class DatasetInfo(torchDataset, metaclass=ABCMeta):
         self.has_labels = True  # should be set to false on errors
 
         if not self.lazy:
-            Log.info("Gather data for %s for split %s" % (self.dataset_path, self.split))
+            Log.debug("Gather data for %s for split %s" % (self.dataset_path, self.split))
             self.anchor_sorting = args.anchors != AnchorDistribution.NONE
 
             if self.allow_down_facing:
@@ -115,10 +115,10 @@ class DatasetInfo(torchDataset, metaclass=ABCMeta):
     def get_dataset_path(self, enum_str, override_dataset_path):
         env_var = "DATASET_" + enum_str.upper()
         dataset_path = os.getenv(env_var)
-        Log.info("Dataset path is set to %s=%s" % (env_var, dataset_path))
+        Log.debug("Dataset path is set to %s=%s" % (env_var, dataset_path))
         if dataset_path is None or dataset_path == "":
             dataset_path = override_dataset_path
-            Log.info("Dataset path is set to internal path=%s" % (dataset_path))
+            Log.debug("Dataset path is set to internal path=%s" % (dataset_path))
         if not os.path.isdir(dataset_path):
             raise FileNotFoundError(
                 "Dataset path %s does not exist. Try to set with $%s" % (dataset_path, env_var))
@@ -194,7 +194,7 @@ class DatasetInfo(torchDataset, metaclass=ABCMeta):
                  cell_size=grid.get_cell_size(full_size_image.shape[1]), show=self.show, threshold=0.5)
 
         for batch in errors:
-            Log.info("Grid found an unusual error in %s [b=%d]:\n%s" % (self.file_names[idx], batch, errors[batch]))
+            Log.debug("Grid found an unusual error in %s [b=%d]:\n%s" % (self.file_names[idx], batch, errors[batch]))
         try:
             grid_tensor = grid.tensor(coords=self.coords, one_hot=True, set_conf=1,
                                       anchors=self.anchors, convert_to_lrep=self.args.linerep,
@@ -291,7 +291,7 @@ class DatasetInfo(torchDataset, metaclass=ABCMeta):
         return data
 
     def is_available(self):
-        Log.warning("Dataset %s is loading from path %s for split %s" % (self.enum, self.dataset_path, self.split))
+        Log.info("Dataset %s is loading from path %s for split %s" % (self.enum, self.dataset_path, self.split))
         return os.path.isdir(self.dataset_path)
 
     def __load_image__(self, idx):
@@ -345,7 +345,7 @@ class DatasetInfo(torchDataset, metaclass=ABCMeta):
         if self.lazy:
             return
 
-        Log.info("Found %d files for split %s" % (len(self), self.split))
+        Log.debug("Found %d files for split %s" % (len(self), self.split))
         if len(self) == 0:
             raise FileNotFoundError("Could not find any data for %s and %s split" % (self.enum, self.split))
 

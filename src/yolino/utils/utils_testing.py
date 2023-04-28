@@ -69,7 +69,7 @@ def setupPaths(args, filename, kind):
 
 def load_image(img_size, filename, paths):
     image_path = paths.generate_eval_image_npy_file_import_path(filename)
-    Log.info("Load image from %s" % image_path)
+    Log.debug("Load image from %s" % image_path)
     img = np.load(image_path, allow_pickle=True)
     img = cv2.resize(img, dsize=(img_size[1], img_size[0]), interpolation=cv2.INTER_CUBIC)
     return np.asarray(img)
@@ -77,17 +77,17 @@ def load_image(img_size, filename, paths):
 
 def load_prediction(args, coords, filename, paths, image):
     npy_path = paths.generate_prediction_file_path(filename)
-    Log.info("Load prediction from %s" % npy_path)
+    Log.debug("Load prediction from %s" % npy_path)
     prediction = torch.load(npy_path)
 
     try:
         grid_path = paths.generate_prediction_grid_file_path(filename, swap=True)
-        Log.info("Try to load swapped prediction grid from %s" % grid_path)
+        Log.debug("Try to load swapped prediction grid from %s" % grid_path)
         with open(grid_path, "rb") as f:
             prediction_grid = pickle.load(f)
     except:
         grid_path = paths.generate_prediction_grid_file_path(filename, swap=False) + "_swap.pkl"
-        Log.info("Failed... Try to load swapped prediction grid from %s" % grid_path)
+        Log.debug("Failed... Try to load swapped prediction grid from %s" % grid_path)
         with open(grid_path, "rb") as f:
             prediction_grid = pickle.load(f)
     plot_style_grid(prediction_grid.get_image_lines(coords=coords, image_height=image.shape[0]),

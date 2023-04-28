@@ -161,13 +161,13 @@ class TestLoss(unittest.TestCase):
         start = timeit.default_timer()
         self.run_multi_loss(use_anchors=True)
         end = timeit.default_timer()
-        Log.warning("Anchor loss takes %ss" % (end - start))
+        Log.info("Anchor loss takes %ss" % (end - start))
 
     def test_multi_loss(self):
         start = timeit.default_timer()
         self.run_multi_loss(use_anchors=False)
         end = timeit.default_timer()
-        Log.warning("Matching loss takes %ss" % (end - start))
+        Log.info("Matching loss takes %ss" % (end - start))
 
     def run_multi_loss(self, use_anchors):
         batch_size = 2
@@ -232,7 +232,7 @@ class TestLoss(unittest.TestCase):
 
             sum_losses, sum_loss, mean_losses = loss_fct(preds=preds, grid_tensor=grid_tensor, filenames=filenames,
                                                          epoch=0)
-            Log.info("Losses: %s" % str(sum_losses))
+            Log.debug("Losses: %s" % str(sum_losses))
 
             for i in range(len(sum_losses)):
                 if i == idx:
@@ -648,7 +648,7 @@ class TestLoss(unittest.TestCase):
             for e in range(5):
                 images, preds = trainer(filenames=filenames, images=images, grid_tensor=grid_tensors, is_train=True,
                                         first_run=False, epoch=0, image_idx_in_batch=i)
-                Log.warning("Loss %s = %s" % (loss, trainer.losses[TRAIN_TAG]._backprops_))
+                Log.info("Loss %s = %s" % (loss, trainer.losses[TRAIN_TAG]._backprops_))
 
                 grid, _ = GridFactory.get(data=torch.unsqueeze(preds.detach()[i], dim=0), variables=[],
                                           coordinate=CoordinateSystem.CELL_SPLIT, args=args,
@@ -682,7 +682,7 @@ class TestLoss(unittest.TestCase):
             for e in tqdm(range(5)):
                 images, preds = trainer(filenames=filenames, images=images, grid_tensor=grid_tensors, is_train=True,
                                         first_run=False, epoch=e, image_idx_in_batch=0)
-                Log.info("Loss %s = %.3f" % (loss, trainer.losses[TRAIN_TAG]._backprops_[-1]))
+                Log.debug("Loss %s = %.3f" % (loss, trainer.losses[TRAIN_TAG]._backprops_[-1]))
 
                 idx = 0
                 grid, _ = GridFactory.get(data=torch.unsqueeze(preds.detach()[idx], dim=0), variables=[],

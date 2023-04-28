@@ -70,7 +70,7 @@ class UVMatcher(Matcher):
         if torch.all(torch.tensor([len(g) for g in grid_tensor]) == 0):
             return matched_preds, matched_gt
 
-        Log.info("Waiting for uv match...")
+        Log.debug("Waiting for uv match...")
         for b_idx, batch in enumerate(preds):
             validate_input_structure(preds[[b_idx]], CoordinateSystem.UV_SPLIT)
             validate_input_structure(torch.unsqueeze(grid_tensor[b_idx], dim=0), CoordinateSystem.UV_SPLIT)

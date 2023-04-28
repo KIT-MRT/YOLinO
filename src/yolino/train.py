@@ -48,8 +48,8 @@ if __name__ == "__main__":
         for epoch in range(trainer.model_epoch, args.epoch):
             epoch_start = timeit.default_timer()
 
-            Log.info("")
-            Log.warning('**** Epoch %d/%s %s ****' % (epoch, args.epoch, args.id))
+            Log.debug("")
+            Log.print('**** Epoch %d/%s %s ****' % (epoch, args.epoch, args.id))
 
             ###### TRAIN #######
             for i, data in tqdm(enumerate(trainer.loader), total=len(trainer.loader), desc="Train %s" % args.id):
@@ -87,8 +87,8 @@ if __name__ == "__main__":
 
             ###### EVAL #######
             if trainer.is_time_for_val(epoch):
-                Log.info("")
-                Log.warning('**** EPOCH %d EVALUATION %s ****' % (epoch, args.id))
+                Log.debug("")
+                Log.print('**** EPOCH %d EVALUATION %s ****' % (epoch, args.id))
                 with torch.no_grad():
 
                     eval_batch_time = timeit.default_timer()

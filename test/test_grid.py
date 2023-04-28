@@ -245,7 +245,7 @@ class GridTest(unittest.TestCase):
     # Test Slices along horizontal line
     def testGeneralSliceOfLabelsH(self):
         line = np.asarray([10., 0, 10, 2, 10, 30, 10, self.image.shape[1]])
-        Log.info("Slice line %s along grid of shape %s" % (line, self.args.grid_shape))
+        Log.debug("Slice line %s along grid of shape %s" % (line, self.args.grid_shape))
         lines, _ = self.grid.slice_and_straighten_line(
             line, 0, 0, plot_image=False)
 
@@ -262,7 +262,7 @@ class GridTest(unittest.TestCase):
     # Test Slices along vertical line
     def testGeneralSliceOfLabelsV(self):
         line = np.asarray([0., 10, 1, 10, 2, 10, self.image.shape[1], 10])
-        Log.info("Slice line %s along grid of shape %s" % (line, self.args.grid_shape))
+        Log.debug("Slice line %s along grid of shape %s" % (line, self.args.grid_shape))
 
         lines, _ = self.grid.slice_and_straighten_line(line, 0, 0, plot_image=False)
         lines = np.asarray(lines)
@@ -277,14 +277,14 @@ class GridTest(unittest.TestCase):
     # Test Slices along vertical line, just a point on the grid; should return empty
     def testGeneralSliceOfLabelsPoint(self):
         line = np.asarray([0., 10, 0, 10])
-        Log.info("Slice line %s along grid of shape %s" % (line, self.args.grid_shape))
+        Log.debug("Slice line %s along grid of shape %s" % (line, self.args.grid_shape))
 
         with self.assertRaises(ValueError):
             lines, _ = self.grid.slice_and_straighten_line(line, 0, 0, plot_image=False)
 
     def testGeneralSliceOfLabelsDuplicatePoint(self):
         line = np.asarray([0., 10, 0, 10.5, 0, 14])
-        Log.info("Slice line %s along grid of shape %s" % (line, self.args.grid_shape))
+        Log.debug("Slice line %s along grid of shape %s" % (line, self.args.grid_shape))
         lines, _ = self.grid.slice_and_straighten_line(line, 0, 0, plot_image=False)
         self.assertEqual(len(lines), 1, np.shape(lines))
         self.assertAlmostEqual(line[0], lines[0, 0, 0], places=2, msg=lines)
@@ -294,7 +294,7 @@ class GridTest(unittest.TestCase):
 
     def testGeneralSliceOfLabelsSmallInsideCell(self):
         line = np.asarray([0., 10, 0, 12])
-        Log.info("Slice line %s along grid of shape %s" % (line, self.args.grid_shape))
+        Log.debug("Slice line %s along grid of shape %s" % (line, self.args.grid_shape))
         lines, _ = self.grid.slice_and_straighten_line(
             line, 0, 0, plot_image=False)
 
@@ -305,7 +305,7 @@ class GridTest(unittest.TestCase):
 
     def testGeneralSliceOfLabelsSmallInsideCellReverse(self):
         line = np.asarray([0., 12, 0, 10])
-        Log.info("Slice line %s along grid of shape %s" % (line, self.args.grid_shape))
+        Log.debug("Slice line %s along grid of shape %s" % (line, self.args.grid_shape))
         lines, _ = self.grid.slice_and_straighten_line(
             line, 0, 0, plot_image=False)
 
@@ -317,7 +317,7 @@ class GridTest(unittest.TestCase):
 
     def testGeneralSliceOfLabelsInsideCell(self):
         line = np.asarray([10., 10, 20, 20])
-        Log.info("Slice line %s along grid of shape %s" % (line, self.args.grid_shape))
+        Log.debug("Slice line %s along grid of shape %s" % (line, self.args.grid_shape))
         lines, _ = self.grid.slice_and_straighten_line(line, 0, 0, plot_image=False)
 
         self.assertTrue(

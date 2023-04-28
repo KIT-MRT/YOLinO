@@ -168,7 +168,7 @@ def draw_cell(cell, image, valid_count=0, total_idx=0, coords: VariableStructure
         if image is None:
             Log.error("Could not plot image. Nothing there")
         else:
-            Log.warning("Export cell image to file://%s" % (os.path.abspath(name)), level=1)
+            Log.info("Export cell image to file://%s" % (os.path.abspath(name)), level=1)
             cv2.imwrite(name, image)
             Log.img(name, image[..., ::-1], epoch=None, tag=os.path.basename(name), imageidx=ImageIdx.LABEL, level=1)
     return valid_count
@@ -213,7 +213,7 @@ def draw_angles(anchor_angles, dataset, anchor_distribution, split, ax=None, fin
         plt.title("%s-Anchors %s %s" % (dataset, anchor_distribution, split))
 
         path = "/tmp/%s_%s_%s_anchors.png" % (dataset, anchor_distribution, split)
-        Log.warning("Save anchor to file://%s" % path, level=1)
+        Log.info("Save anchor to file://%s" % path, level=1)
         plt.savefig(path)
         plt.close("all")
         plt.clf()
@@ -452,7 +452,7 @@ def plot_cell_class(grid, name, image, epoch, tag, imageidx: ImageIdx, ignore_cl
         if valid_count == 0:
             Log.warning("We plotted no data, is that correct? Ignore=%s\n%s"
                         % (ignore_classes, Log.get_pretty_stack()))
-        Log.warning("Export %d classification to file://%s" % (valid_count, os.path.abspath(name)))
+        Log.info("Export %d classification to file://%s" % (valid_count, os.path.abspath(name)))
 
         if not os.path.exists(os.path.dirname(name)):
             os.makedirs(os.path.dirname(name))
@@ -473,7 +473,7 @@ def save_grid(images, path, title="grid"):
     if not os.path.exists(os.path.dirname(path)):
         os.makedirs(os.path.dirname(path))
 
-    Log.warning(("Write " + title + " to file://%s") % path, level=1)
+    Log.info(("Write " + title + " to file://%s") % path, level=1)
     cv2.imwrite(path, grid)
 
 
@@ -557,7 +557,7 @@ def plot(lines, name, image, coords: VariableStructure = None, show_grid=False, 
         image = draw_color_bar(image, colorstyle, threshold=threshold)
 
     if name != "" and name is not None:
-        Log.warning("Export %d lines (%s) to file://%s" % (valid_count, coordinates.name, os.path.abspath(name)),
+        Log.info("Export %d lines (%s) to file://%s" % (valid_count, coordinates.name, os.path.abspath(name)),
                     level=level + 1)
 
         if not os.path.exists(os.path.dirname(name)):
@@ -575,7 +575,7 @@ def plot(lines, name, image, coords: VariableStructure = None, show_grid=False, 
         plt.hist(hue_space, 20)
 
         path = "tmp/hue.png"
-        Log.warning("Plot to file://%s" % path)
+        Log.info("Plot to file://%s" % path)
         plt.savefig(path)
         plt.close('all')
 
@@ -663,7 +663,7 @@ def finish_plot_debug_geometry(suffix=""):
     pil_logger.setLevel(logging.INFO)
     logging.getLogger(
         'matplotlib.font_manager').disabled = True
-    Log.warning("Export debug viz to file://%s" %
+    Log.info("Export debug viz to file://%s" %
                 os.path.abspath(debug_image_path), level=1)
 
     start, end = plt.gca().get_ylim()
@@ -707,7 +707,7 @@ def plot_debug_geometry_area(c, cs, r, polygon_area, geom_box, long_uv_line, plo
         pil_logger.setLevel(logging.INFO)
         logging.getLogger(
             'matplotlib.font_manager').disabled = True
-        Log.warning("Export debug viz of straightening to file://%s" %
+        Log.info("Export debug viz of straightening to file://%s" %
                     debug_image_path)
         plt.title(title)
         plt.savefig(debug_image_path)

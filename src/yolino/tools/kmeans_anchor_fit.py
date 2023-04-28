@@ -85,7 +85,7 @@ def get_kmeans_cluster(args, force=False):
     np_data = per_line_data[kmeans_columns].to_numpy()
     if len(np_data.shape) == 1:
         np_data = np_data.reshape(-1, 1)
-    Log.warning("Get %d-means on %s" % (args.num_predictors, kmeans_columns))
+    Log.info("Get %d-means on %s" % (args.num_predictors, kmeans_columns))
     kmeans = KMeans(n_clusters=args.num_predictors, random_state=0).fit(np_data)
     per_line_data["cluster"] = kmeans.labels_
     cluster_means = per_line_data[
@@ -94,8 +94,8 @@ def get_kmeans_cluster(args, force=False):
     yaml_data["anchor_kmeans"] = [{kk: vv for kk, vv in v.items()} for k, v in
                                   dict(cluster_means.transpose()).items()]
     # ------ Write yaml -----
-    Log.warning("\n------------------ WRITE YAML -------------------")
-    Log.warning("Write yaml specs to file://%s" % kmeans_yaml_file)
+    Log.print("\n------------------ WRITE YAML -------------------")
+    Log.info("Write yaml specs to file://%s" % kmeans_yaml_file)
 
     yaml_data["anchor_kmeans"] = sorted(yaml_data["anchor_kmeans"], key=lambda x: x["x_s"] + x["y_s"])
     with open(kmeans_yaml_file, "w") as f:
@@ -104,8 +104,8 @@ def get_kmeans_cluster(args, force=False):
 
 
 def plot_anchor(args, anchors):
-    Log.warning("\n------------------ PLOT -------------------")
-    Log.warning("Plot %d-means" % (args.num_predictors))
+    Log.print("\n------------------ PLOT -------------------")
+    Log.info("Plot %d-means" % (args.num_predictors))
 
     plt.figure(figsize=(5, 5))
     scale = 1
@@ -135,11 +135,11 @@ def plot_anchor(args, anchors):
     plt.tight_layout()
     plt.gca().set_aspect('equal', 'box')
 
-    Log.warning("Export to file://%s" % (os.path.abspath(name)))
+    Log.info("Export to file://%s" % (os.path.abspath(name)))
     plt.savefig(name)
     Log.plt(epoch=0, fig=plt, tag=name)
 
-    # Log.warning("Export to file://%s_.tex" % (os.path.abspath(name)))
+    # Log.info("Export to file://%s_.tex" % (os.path.abspath(name)))
     # tikzplotlib.save(name + ".tex")
 
 

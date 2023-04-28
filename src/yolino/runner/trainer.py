@@ -119,7 +119,7 @@ class TrainHandler:
         if "calculate" in init_weight_factor:
             # reduce by number of geom vars = 4
             init_weight_factor = [((num_cells * num_preds) / average_num_lines) / 4, *[1.] * (num_train_vars - 1)]
-            Log.warning(f"We calculated the weights={init_weight_factor}, "
+            Log.info(f"We calculated the weights={init_weight_factor}, "
                         f"we had ({num_cells} * {num_preds}) / {average_num_lines}")
 
         init_weight_factor = torch.tensor(init_weight_factor)
@@ -127,11 +127,11 @@ class TrainHandler:
         # calculate trainable weight
         if loss_weighting == LossWeighting.FIXED_NORM:
             train_weights = init_weight_factor / sum(init_weight_factor)
-            Log.warning(f"Final weights={train_weights} with strategy {loss_weighting}")
+            Log.info(f"Final weights={train_weights} with strategy {loss_weighting}")
 
         elif loss_weighting == LossWeighting.FIXED:
             train_weights = init_weight_factor
-            Log.warning(f"Final weights={train_weights} with strategy {loss_weighting}")
+            Log.info(f"Final weights={train_weights} with strategy {loss_weighting}")
 
         elif loss_weighting == LossWeighting.LEARN_LOG or loss_weighting == LossWeighting.LEARN_LOG_NORM:
             train_weights = torch.zeros((num_train_vars), dtype=float)
@@ -153,9 +153,9 @@ class TrainHandler:
                     ignore_weight = num_train_vars - 1
                 train_weights[ignore_weight] = 1
 
-            Log.warning(f"Final trainable weights s=log(sigma**2)={train_weights.numpy()} "
+            Log.info(f"Final trainable weights s=log(sigma**2)={train_weights.numpy()} "
                         f"with strategy {loss_weighting}")
-            Log.warning(f"Final weight factor w=(1 / (2*e^s))={(1 / (2 * torch.exp(train_weights))).numpy()} "
+            Log.info(f"Final weight factor w=(1 / (2*e^s))={(1 / (2 * torch.exp(train_weights))).numpy()} "
                         f"with strategy {loss_weighting}")
 
         elif loss_weighting == LossWeighting.LEARN:
@@ -167,9 +167,9 @@ class TrainHandler:
                     ignore_weight = num_train_vars - 1
                 train_weights[ignore_weight] = 1
 
-            Log.warning(f"Final trainable weights s={train_weights.numpy()} "
+            Log.info(f"Final trainable weights s={train_weights.numpy()} "
                         f"with strategy {loss_weighting}")
-            Log.warning(f"Final weight factor w=(1 / (2*s^2))={(1 / (2 * (train_weights ** 2))).numpy()} "
+            Log.info(f"Final weight factor w=(1 / (2*s^2))={(1 / (2 * (train_weights ** 2))).numpy()} "
                         f"with strategy {loss_weighting}")
         else:
             raise NotImplementedError(f"We do not know {loss_weighting}")
@@ -230,7 +230,7 @@ class TrainHandler:
             print(np.histogram(confs, bins=12, range=[-0.1, 1.1])[0])
             plt.hist(confs, 12, range=[-0.1, 1.1])
             name = "/tmp/seaborn_conf_hist.png"
-            Log.warning("Log to file://%s" % name)
+            Log.info("Log to file://%s" % name)
             plt.savefig(name)
 
         loss_weight_dict = {}
@@ -393,7 +393,7 @@ class TrainHandler:
 
         g.map_dataframe(draw_heatmap, "col", "row", "heat")
         name = "/tmp/seaborn_heatmap_%s.png" % title
-        Log.warning("Log to file://%s" % name)
+        Log.info("Log to file://%s" % name)
         plt.savefig(name)
 
     def plot_prediction(self, epoch, filenames, grid_tensors, images, preds, indices,
@@ -509,14 +509,14 @@ class TrainHandler:
                 self.best_gradient_loss = gradient_loss
                 self.best_mean_loss = new_best_mean_loss
                 self.best_epoch = epoch
-                Log.info('Best mean loss: %f' % self.best_mean_loss)
+                Log.debug('Best mean loss: %f' % self.best_mean_loss)
                 self.save_new_best(epoch)
         else:
             if gradient_loss < self.best_gradient_loss - 0.0001:
                 self.best_gradient_loss = gradient_loss
                 self.best_mean_loss = new_best_mean_loss
                 self.best_epoch = epoch
-                Log.info('Best gradient loss: %f' % self.best_gradient_loss)
+                Log.debug('Best gradient loss: %f' % self.best_gradient_loss)
                 self.save_new_best(epoch)
 
         self.evaluator.publish_scores(epoch=epoch, tag=VAL_TAG)
@@ -544,7 +544,7 @@ class TrainHandler:
 
     def on_training_finished(self, epoch, do_nms):
 
-        Log.warning('**** Best Model Eval %s ****' % (self.args.id))
+        Log.print('**** Best Model Eval %s ****' % (self.args.id))
         best_evaluator = Evaluator(args=self.evaluator.args, anchors=self.evaluator.anchors,
                                    coords=self.evaluator.coords, load_best_model=True)
         # best_evaluator.plot = True
@@ -561,7 +561,7 @@ class TrainHandler:
         Log.push(None)
 
         if do_nms:
-            Log.warning('**** NMS Training Data Eval %s ****' % (self.args.id))
+            Log.print('**** NMS Training Data Eval %s ****' % (self.args.id))
             for i, data in tqdm(enumerate(self.loader), total=len(self.loader)):
                 images, grid_tensor, fileinfo, dupl, params = data
                 num_duplicates = int(sum(dupl["total_duplicates_in_image"]).item())
@@ -569,7 +569,7 @@ class TrainHandler:
                                apply_nms=True, epoch=epoch, num_duplicates=num_duplicates)
             self.evaluator.publish_scores(epoch=epoch, tag=TRAIN_TAG)
 
-            Log.warning('**** NMS Validation Data Eval %s ****' % (self.args.id))
+            Log.print('**** NMS Validation Data Eval %s ****' % (self.args.id))
             for i, data in tqdm(enumerate(self.val_loader), total=len(self.val_loader)):
                 images, grid_tensor, fileinfo, dupl, params = data
                 num_duplicates = int(sum(dupl["total_duplicates_in_image"]).item())
@@ -578,7 +578,7 @@ class TrainHandler:
 
             self.evaluator.publish_scores(epoch=epoch, tag=VAL_TAG)
 
-        Log.info('Finished Training')
+        Log.debug('Finished Training')
         Log.finish()
 
     def loss(self, grid_tensor, outputs, filenames, epoch, tag="dummy_trainer"):

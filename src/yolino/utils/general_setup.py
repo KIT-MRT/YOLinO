@@ -72,7 +72,7 @@ def __push_commit__(root, ignore_dirty=False):
 
     if repo.is_dirty() and not ignore_dirty:
         import socket
-        Log.warning(socket.gethostname())
+        Log.info(socket.gethostname())
         if not "hkn" in socket.gethostname():
             input("Your repo has uncommited changes, please commit first or ignore this warning and press any key.")
         else:
@@ -192,7 +192,7 @@ def general_setup(name, config_file="params.yaml", ignore_cmd_args=False, altern
     args.paths.create_dir(args.paths.experiment_dir)
     yaml_path = os.path.join(args.paths.experiment_dir, "latest_params.yaml")
     with open(yaml_path, "w") as f:
-        Log.warning(f"Dump params to file://{yaml_path}")
+        Log.info(f"Dump params to file://{yaml_path}")
         dirname = os.path.dirname(yaml_path)
         if not os.path.exists(dirname):
             os.makedirs(dirname)
@@ -202,13 +202,13 @@ def general_setup(name, config_file="params.yaml", ignore_cmd_args=False, altern
 
     yaml_path = os.path.join(args.paths.experiment_dir, "latest_interesting_params.yaml")
     with open(yaml_path, "w") as f:
-        Log.warning(f"Dump params to file://{yaml_path}")
+        Log.info(f"Dump params to file://{yaml_path}")
         for k, v in sorted(args.__dict__.items()):
             if k in experiment_param_keys.keys():
                 fnc("%s: %s" % (k, v))
                 yaml.safe_dump({k: str(v)}, f)
 
-    Log.info("----- SETUP DONE -----\n")
+    Log.debug("----- SETUP DONE -----\n")
     Log.upload_params(args)
     return args
 

@@ -42,16 +42,16 @@ class LineDuplicates:
 
     def summarize(self, grid_rows=20):
         if len(self) == 0:
-            Log.info("No duplicates")
+            Log.debug("No duplicates")
         else:
             height = self.height()
             if height[2] >= grid_rows / 2.:
-                Log.info(
+                Log.debug(
                     "We have to neglected %d (%.2f %%) GT elements, mean height is %d, median is %.1f, max is %d, as we have duplicate matches."
                     "We continue, but you might want to fix that for %s"
                     % (len(self), self.percentage(), height[0], height[1], height[2], self.filename))
             else:
-                Log.info("We have %d duplicates, but only at horizon (height<=%d)." % (len(self), height[2]))
+                Log.debug("We have %d duplicates, but only at horizon (height<=%d)." % (len(self), height[2]))
 
     def bad_boys(self, threshold=0):
         where = torch.where(self.__total_per_cell__ > threshold)

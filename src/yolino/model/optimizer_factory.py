@@ -25,11 +25,11 @@ from yolino.utils.logger import Log
 
 
 def get_optimizer(args, net, loss_weights):
-    Log.info("Optimizer %s" % str(args.optimizer))
+    Log.debug("Optimizer %s" % str(args.optimizer))
     params = ([p for p in net.parameters()] + [l for l in loss_weights if l.requires_grad])
     if args.optimizer == Optimizer.ADAM:
         if args.learning_rate != 0.001 or args.decay_rate != 0:
-            Log.warning("The optimizer by default uses lr=0.001 and weight_decay=0, you set lr=%f and weight_decay=%f."
+            Log.info("The optimizer by default uses lr=0.001 and weight_decay=0, you set lr=%f and weight_decay=%f."
                         % (args.learning_rate, args.decay_rate))
         optimizer = torch.optim.Adam(
             params,

@@ -50,7 +50,7 @@ def run():
         Log.tag("duplicate")
         exit(0)
 
-    Log.warning("Start collecting lines from the dataset into %s" % pkl_file)
+    Log.info("Start collecting lines from the dataset into %s" % pkl_file)
     if not os.path.exists(args.paths.specs_folder):
         os.makedirs(args.paths.specs_folder)
     if not os.path.exists(args.paths.specs_cells_folder):
@@ -61,7 +61,7 @@ def run():
                "mx", "my", "dx", "dy"]
 
     per_line_data, _ = collect_dataframes(columns, args)
-    Log.warning(f"Write {len(per_line_data)} lines to {pkl_file}.")
+    Log.info(f"Write {len(per_line_data)} lines to {pkl_file}.")
     per_line_data.to_pickle(pkl_file)
 
 
@@ -80,7 +80,7 @@ def collect_dataframes(columns, args):
     total_data["lines"] = 0
     image_idx = 0
     line_idx = 0
-    Log.warning("Collect data...")
+    Log.info("Collect data...")
     for i, dataset_entry in enumerate(tqdm(loader, desc="Load dataset")):
         images, grid_tensor, fileinfo, _, params = dataset_entry
 
@@ -103,9 +103,9 @@ def collect_dataframes(columns, args):
                                               ignore_index=True, axis=0)
                     line_idx += 1
             image_idx += 1
-    Log.warning(total_data)
+    Log.info(total_data)
     Log.scalars(tag="specs", epoch=0, dict=total_data)
-    Log.info("...Done")
+    Log.debug("...Done")
 
     return per_line_data, total_data
 

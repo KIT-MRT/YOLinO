@@ -168,7 +168,7 @@ class DatasetTransformer:
         for transform in transforms_to_compose:
             text += "\n" + " ".ljust(Log.ljust_space + 20)
             text += str(transform)
-        Log.info("Augment with %s" % text)
+        Log.debug("Augment with %s" % text)
         return Compose(transforms_to_compose)
 
 
@@ -330,7 +330,7 @@ class RandomCropWithLabels(torch.nn.Module):
         min_crop_w = int(image.shape[2] * self.crop_portion)
         crop_w = int(min_crop_w * crop_h / min_crop_h)
 
-        # Log.info("Crop square is %dx%d" % (crop_h, crop_w))
+        # Log.debug("Crop square is %dx%d" % (crop_h, crop_w))
         if crop_h > image.shape[1] or crop_w > image.shape[2]:
             raise ValueError(
                 "Random crop specs %d > %d (height), %d > %d (width) (args provided crop of %s, resulting in %dx%d; )" % (
@@ -339,7 +339,7 @@ class RandomCropWithLabels(torch.nn.Module):
         i = max(i, 1)
         j = max(j, 1)
 
-        # Log.info("Crop image of %s to %dx%d at (%d,%d)" % (str(image.shape), th, tw, i, j))
+        # Log.debug("Crop image of %s to %dx%d at (%d,%d)" % (str(image.shape), th, tw, i, j))
         cropped_image = F.crop(image, i, j, th, tw)
 
         removals = 0

@@ -54,11 +54,11 @@ def evaluate(args, only_viz=False):
     from yolino.dataset.dataset_factory import DatasetFactory
     # ------ Evaluate -----
     if not only_viz:
-        Log.warning("\n------------------ EVALUATE -------------------")
+        Log.print("\n------------------ EVALUATE -------------------")
     yaml_data = []
     for augment in [False]:
         for split in ["train", "val"]:
-            Log.info("Evaluate %s on %s" % ("With" if augment else "Without", split))
+            Log.debug("Evaluate %s on %s" % ("With" if augment else "Without", split))
             single_yaml_data = {"augment": augment, "split": split}
             single_yaml_data["files"] = {}
 
@@ -75,7 +75,7 @@ def evaluate(args, only_viz=False):
                 _, grid_tensor, filenames, duplicates, params = i
 
                 for entry in range(len(filenames)):
-                    Log.info("%s has %s" % (filenames[entry], duplicates["total_duplicates_in_image"][entry]))
+                    Log.debug("%s has %s" % (filenames[entry], duplicates["total_duplicates_in_image"][entry]))
                     single_yaml_data["files"][filenames[entry]] = {k: duplicates[k][entry].numpy().tolist() for k in
                                                                    duplicates.keys() if k != "cells"}
                     if len(duplicates["cells"]) > 0 and len(duplicates["cells"]) > entry:
@@ -85,13 +85,13 @@ def evaluate(args, only_viz=False):
                         single_yaml_data["files"][filenames[entry]]["bad_boys"] = list()
 
                     num_correct_lines = torch.sum(~torch.isnan(grid_tensor[entry, :, :, 0]))
-                    Log.info("%s has %d correct lines" % (filenames[entry], num_correct_lines.item()))
+                    Log.debug("%s has %d correct lines" % (filenames[entry], num_correct_lines.item()))
                     single_yaml_data["files"][filenames[entry]]["correct"] = num_correct_lines.item()
 
                     total_num_duplicates += duplicates["total_duplicates_in_image"][entry].item()
                     total_num_lines += num_correct_lines.item()
 
-            Log.info("%s augment on %s we've got" % ("With" if augment else "Without", split))
+            Log.debug("%s augment on %s we've got" % ("With" if augment else "Without", split))
             single_yaml_data["total_duplicates"] = total_num_duplicates
             single_yaml_data["total_correct"] = total_num_lines
             yaml_data.append(single_yaml_data)
@@ -104,12 +104,12 @@ def evaluate(args, only_viz=False):
 
     # ------ Write yaml -----
     if not only_viz:
-        Log.warning("\n------------------ WRITE EVAL YAML -------------------")
+        Log.print("\n------------------ WRITE EVAL YAML -------------------")
         path = args.paths.generate_specs_eval_file_name(dataset=args.dataset, split="train",
                                                         anchors=args.anchors, anchor_vars=args.anchor_vars,
                                                         num_predictors=args.num_predictors,
                                                         cell_size=args.cell_size, img_size=args.img_size)
-        Log.warning("Write yaml specs to file://%s" % path)
+        Log.info("Write yaml specs to file://%s" % path)
         # for entry in yaml_data:
         with open(path, "w") as f:
             yaml.dump(yaml_data, f)

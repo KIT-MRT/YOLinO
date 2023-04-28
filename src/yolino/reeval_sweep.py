@@ -110,7 +110,7 @@ if __name__ == "__main__":
     args.paths.create_dir(args.paths.experiment_dir)
     yaml_path = os.path.join(args.paths.experiment_dir, "latest_params.yaml")
     with open(yaml_path, "w") as f:
-        Log.warning(f"Dump params to file://{yaml_path}")
+        Log.info(f"Dump params to file://{yaml_path}")
         dirname = os.path.dirname(yaml_path)
         if not os.path.exists(dirname):
             os.makedirs(dirname)
@@ -120,16 +120,16 @@ if __name__ == "__main__":
 
     yaml_path = os.path.join(args.paths.experiment_dir, "latest_interesting_params.yaml")
     with open(yaml_path, "w") as f:
-        Log.warning(f"Dump params to file://{yaml_path}")
+        Log.info(f"Dump params to file://{yaml_path}")
         for k, v in sorted(args.__dict__.items()):
             if k in experiment_param_keys.keys():
                 Log.debug("%s: %s" % (k, v))
                 yaml.safe_dump({k: str(v)}, f)
 
-    Log.info("----- SETUP DONE -----\n")
+    Log.debug("----- SETUP DONE -----\n")
     Log.upload_params(args)
 
-    Log.warning(f"\n------------ {name} --------------")
+    Log.info(f"\n------------ {name} --------------")
 
     args.paths = Paths(args.dvc, args.split, explicit_model)
     if not os.path.exists(args.paths.model):
@@ -166,7 +166,7 @@ if __name__ == "__main__":
                 Log.error([k for k in history.keys() if not "gradients" in k and not "parameters" in k])
                 exit(0)
 
-            Log.warning(f"{k}: {np.nanmean(scores[kk]):.4f} [{history[k.replace('_dupl', '')][best_epoch]:.4f}]")
+            Log.info(f"{k}: {np.nanmean(scores[kk]):.4f} [{history[k.replace('_dupl', '')][best_epoch]:.4f}]")
             yaml_data[name].update({k: float(np.nanmean(scores[kk]))})
             continue
         v = history[k][best_epoch]

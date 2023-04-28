@@ -59,7 +59,7 @@ def get_hungarian_match_gpu(cost_matrix, eps=1):
     Log.warning("Apply auction lap")
     from yolino.tools.auction_lap import auction_lap
     _, curr_ass, _ = auction_lap(cost_matrix * -1, eps=eps)
-    Log.warning("Done")
+    Log.info("Done")
     Log.time(key="hungarian_gpu", value=timeit.default_timer() - start)
     return torch.tensor(range(len(cost_matrix)), device=cost_matrix.device), curr_ass
 

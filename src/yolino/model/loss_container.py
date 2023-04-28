@@ -112,6 +112,6 @@ class LossContainer:
             data[os.path.join(f"loss_{str(t)}", "sum")] = self.sum(epoch, i)
 
         Log.scalars(tag=tag, epoch=self.current_epoch, dict=data)
-        Log.warning('%s sum losses (sum over images): %s' % (tag.capitalize(), self.sum(epoch)), level=1)
-        Log.warning('%s mean losses (mean over images): %s' % (tag.capitalize(), self.mean(epoch)), level=1)
-        Log.warning("\n", level=1)
+        Log.print('%s sum losses (sum over images): %s' % (tag.capitalize(), self.sum(epoch)), level=1)
+        Log.print('%s mean losses (mean over images): %s' % (tag.capitalize(), self.mean(epoch)), level=1)
+        Log.print("\n", level=1)

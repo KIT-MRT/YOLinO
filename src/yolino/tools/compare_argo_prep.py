@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
     if len(args.input) < 2:
         raise ValueError("We need at least two input folders")
-    Log.warning(f"We take {args.input[0]} as iterator.")
+    Log.info(f"We take {args.input[0]} as iterator.")
 
     for folder in args.input:
         if not os.path.exists(folder):
@@ -72,7 +72,7 @@ if __name__ == '__main__':
 
                     if not os.path.exists(checkfile):
                         Log.error(f"Could not validate {checkfile}")
-                        Log.warning("---------------------------")
+                        Log.info("---------------------------")
                         continue
 
                     abs_size = os.stat(absfile).st_size / (1024)
@@ -84,10 +84,10 @@ if __name__ == '__main__':
                     ljust = max(len(absfile), len(checkfile))
 
                     if abs_shape[0] != check_shape[0]:
-                        Log.warning(
+                        Log.info(
                             f"{absfile}".ljust(ljust) + "\t\t" + f"{int(abs_size)} KB" + "\t\t" + f"{abs_shape}")
-                        Log.warning(
+                        Log.info(
                             f"{checkfile}".ljust(ljust) + "\t\t" + f"{int(check_size)} KB" + "\t\t" + f"{check_shape}")
                         Log.error("Shape is different!")
-                        Log.warning("---------------------------")
+                        Log.info("---------------------------")
                         continue

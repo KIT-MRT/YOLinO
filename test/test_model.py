@@ -345,7 +345,7 @@ class TestYoloClassification(unittest.TestCase):
             plt.imshow(output.squeeze(0).reshape([args.grid_shape[0], args.grid_shape[1], 3]) / 256.)
 
             path = "/tmp/reshape_comparison.png"
-            Log.warning("Plot to file://%s" % path)
+            Log.info("Plot to file://%s" % path)
             plt.savefig(path)
 
         compare_view = input.squeeze(0).permute(1, 2, 0)

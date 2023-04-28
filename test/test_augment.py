@@ -212,7 +212,7 @@ class TestAugmentation(unittest.TestCase):
             plt.scatter(target_size[1] - params["crop_r"], target_size[0] - params["crop_b"])
             # plt.show()
             path = "/tmp/augment.png"
-            Log.warning(f"file://{path}")
+            Log.info(f"file://{path}")
             plt.savefig(path)
 
         # cropped in big picture
@@ -233,7 +233,7 @@ class TestAugmentation(unittest.TestCase):
             plt.scatter([0, 0, width, width], [0, height, 0, height], marker="+", color=(0, 0, 0))
             # plt.show()
             path = "/tmp/augment1.png"
-            Log.warning(f"file://{path}")
+            Log.info(f"file://{path}")
             plt.savefig(path)
 
         # cropped only
@@ -252,7 +252,7 @@ class TestAugmentation(unittest.TestCase):
             plt.scatter([0, 0, crop_h, crop_h], [0, crop_w, 0, crop_w], marker="+", color=(0, 0, 0))
             # plt.show()
             path = "/tmp/augment2.png"
-            Log.warning(f"file://{path}")
+            Log.info(f"file://{path}")
             plt.savefig(path)
 
         return segments, params

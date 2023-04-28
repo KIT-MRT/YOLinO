@@ -194,7 +194,7 @@ class TusimpleDataset(DatasetInfo):
             plt.grid()
 
             path = "/tmp/raw_tusimple.png"
-            Log.warning("Plot to file://%s" % path)
+            Log.info("Plot to file://%s" % path)
             plt.savefig(path)
             if self.show:
                 plt.show()

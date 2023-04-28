@@ -40,21 +40,21 @@ def is_ok(run, ignore_running=False, subset_filters={}):
         return False, is_running
 
     if "malconfig" in run.tags:
-        Log.warning(f"Remove {run.id} because malconfig")
+        Log.info(f"Remove {run.id} because malconfig")
         return False, is_running
 
     for key in subset_filters:
         if key == "ID" and run.id in subset_filters["ID"]["value"]:
-            Log.warning(f"Remove {run.id} because of filter: ID")
+            Log.info(f"Remove {run.id} because of filter: ID")
             return False, is_running
 
         if key in run.config:
             filter_vals = np.asarray(subset_filters[key]["value"])
             if subset_filters[key]["equal"] and run.config[key] not in filter_vals:
-                Log.warning(f"Remove {run.id} because of {key}!={filter_vals} (={run.config[key]})")
+                Log.info(f"Remove {run.id} because of {key}!={filter_vals} (={run.config[key]})")
                 return False, is_running
             elif not subset_filters[key]["equal"] and run.config[key] in filter_vals:
-                Log.warning(f"Remove {run.id} because of {key}={run.config[key]} (={filter_vals})")
+                Log.info(f"Remove {run.id} because of {key}={run.config[key]} (={filter_vals})")
                 return False, is_running
 
     return True, is_running
@@ -63,7 +63,7 @@ def is_ok(run, ignore_running=False, subset_filters={}):
 def gather_runs(run_ids=[], sweep_ids=[], use_all_runs=True, ignore_running=False, subset_filters={}, is_argo=True,
                 **kwargs):
     import wandb
-    Log.warning("Connect to wandb...")
+    Log.info("Connect to wandb...")
     api = wandb.Api(timeout=19)
 
     runs = {}
@@ -126,10 +126,10 @@ def finish(output, clear=True, width=1, height=0.7, commit_params={}, extra_axis
         output += ".tex"
 
     # plt.draw()
-    Log.warning("Export to file://%s_.png" % output, level=1)
+    Log.info("Export to file://%s_.png" % output, level=1)
     plt.savefig("%s_.png" % output, bbox_inches='tight')
 
-    Log.warning("Export to file://%s" % output, level=1)
+    Log.info("Export to file://%s" % output, level=1)
 
     # FIXME: nan can not be plotted
     tikzplotlib.save(output, axis_width=str(width) + "\\textwidth", axis_height=str(height) + "\\textwidth",
@@ -288,7 +288,7 @@ def print_table_from_pandas(colalign, def_columns, df_runs, eval_columns, path, 
         Log.error("Did you put all your variables in translation.py?")
         raise KeyError(str(type(er)).replace("<class", "").replace(">", "").replace("'", "") + " with " + str(er))
 
-    Log.warning(f"Write latex file to file://{path}")
+    Log.info(f"Write latex file to file://{path}")
     with open(path, "w") as f:
 
         f.write(f"% {params}\n")

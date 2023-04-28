@@ -135,7 +135,7 @@ class AbstractLoss:
 
         if not self.variable == Variables.CONF and (len(preds) == 0 or len(grid_tensor) == 0):
             msg = "No valid data for loss %s in variable %s" % (type(self), self.variable)
-            Log.info(msg)
+            Log.debug(msg)
             raise ValueError(msg)
 
         return preds, grid_tensor, preds_unmatched, grid_tensor_unmatched
@@ -454,7 +454,7 @@ class LossComposition:
         Log.debug("Loss on e.g.\n%s\n%s" % (preds[nice_idx], reduced_grid_tensor[nice_idx]))
         for i, t in enumerate(self.losses):
             if torch.all(reduced_grid_tensor[:, self.coords.get_position_of(t.variable)].isnan()):
-                Log.info("We skip loss calc for %s as there are no labels" % str(t.variable))
+                Log.debug("We skip loss calc for %s as there are no labels" % str(t.variable))
                 losses.append(0)
                 mean_losses.append(0)
                 weighted_losses = 0

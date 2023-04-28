@@ -107,7 +107,7 @@ class CellMatcher(Matcher):
         matched_gt = torch.ones((num_batch * num_cells, self.args.num_predictors),
                                 dtype=torch.int64, device=preds.device) * self.no_match_index
 
-        Log.warning("Waiting for cell match...")
+        Log.debug("Waiting for cell match...")
         start = timeit.default_timer()
         gt_is_valid = ~torch.isnan(grid_tensor[:, :, :, 0])
         where_valid = torch.where(torch.any(gt_is_valid, dim=2))
@@ -165,7 +165,7 @@ class CellMatcher(Matcher):
         if len(where_valid[0]) > 0:
             Log.debug("Match e.g. on %s with GT %s:\n%s\n%s"
                       % (pred_cell, grid_tensor_cell, matched_gt[idx], matched_preds[idx]))
-            Log.warning("Cell matching took %fs" % (timeit.default_timer() - start))
+            Log.debug("Cell matching took %fs" % (timeit.default_timer() - start))
             Log.time(key="cell_match", value=(timeit.default_timer() - start))
 
         Log.time(key="matching_cell", value=timeit.default_timer() - start)

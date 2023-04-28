@@ -115,7 +115,7 @@ class AnchorTest(unittest.TestCase):
             path = "/tmp/anchors_in_img.png"
             from yolino.utils.logger import Log
             if args.plot:
-                Log.warning("Save to file://%s" % path)
+                Log.info("Save to file://%s" % path)
                 plt.savefig(path)
                 plt.clf()
 
@@ -158,7 +158,7 @@ class AnchorTest(unittest.TestCase):
         anchors = Anchor.get(args, args.linerep).bins
 
         from yolino.utils.logger import Log
-        Log.warning("The generated anchors\n%s" % anchors)
+        Log.info("The generated anchors\n%s" % anchors)
 
         image = np.ones((1 * scale, 1 * scale, 3), dtype=float) * 255
         plot_positions = torch.stack([LineRepresentation.get(args.linerep).to_cart(a) * scale for a in anchors])
@@ -169,7 +169,7 @@ class AnchorTest(unittest.TestCase):
         from yolino.utils.logger import Log
         path = "/tmp/anchor_%s_%s.png" % (linerep, "_".join([str(a) for a in anchor_vars]))
         if args.plot:
-            Log.warning("Save to file://%s" % path)
+            Log.info("Save to file://%s" % path)
             cv2.imwrite(path, image)
 
     def test_anchor_offset(self):

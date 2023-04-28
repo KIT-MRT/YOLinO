@@ -35,7 +35,7 @@ def getCuda(args):
         CUDA = "cuda"
         Log.debug("Cuda is available: " + str(torch.cuda.is_available()))
         if "CUDA_AVAILABLE_DEVICES" in os.environ:
-            Log.warning("You provided CUDA_AVAILABLE_DEVICES=%s" % os.environ["CUDA_AVAILABLE_DEVICES"])
+            Log.info("You provided CUDA_AVAILABLE_DEVICES=%s" % os.environ["CUDA_AVAILABLE_DEVICES"])
             if len(os.environ["CUDA_VISIBLE_DEVICES"]) == 1:
                 CUDA += ":"
                 CUDA += str(os.environ["CUDA_VISIBLE_DEVICES"])
@@ -47,7 +47,7 @@ def getCuda(args):
         CUDA = "cpu"
         os.environ["CUDA_VISIBLE_DEVICES"] = ""
         Log.warning("Let's use the CPU!")
-    Log.warning("We set %s" % CUDA)
+    Log.info("We set %s" % CUDA)
     return CUDA
 
 
