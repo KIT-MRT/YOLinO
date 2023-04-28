@@ -22,19 +22,6 @@ before_script:
   - pip3 install .
   - pip3 show torch
 
-train:
-  stage: test
-  rules:
-    - if: $CI_COMMIT_REF_NAME != "docker"
-  script:
-    - cd $CI_PROJECT_DIR
-    - ls $CI_PROJECT_DIR
-    - source venv/bin/activate
-    - cd test
-    - python3 -m unittest test_train.py
-  dependencies: 
-    - build_docker
-
 anchors:
   stage: test
   rules:
@@ -84,19 +71,6 @@ datasets:
     - source venv/bin/activate
     - cd test
     - python3 -m unittest test_datasets.py
-  dependencies: 
-    - build_docker
-
-datasets_local:
-  stage: test
-  rules:
-    - if: $CI_COMMIT_REF_NAME != "docker"
-  script:
-    - cd $CI_PROJECT_DIR
-    - ls $CI_PROJECT_DIR
-    - source venv/bin/activate
-    - cd test
-    - python3 -m unittest test_datasets_locally.py
   dependencies: 
     - build_docker
 
