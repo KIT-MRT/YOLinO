@@ -176,16 +176,3 @@ Use `--help` on your preferred script (e.g. `train.py`, `predict.py`, ...).
   your dvc folder and add (temporarily!) `id=wandb.util.generate_id()` to the initializing of your wandb connection. Run
   it once and delete that again.
 - If installing the packages with pip does not work with conda, try using explicitly the conda pip/python executables in e.g. `<CONDA_HOME>/envs/<env_name>/bin/pip`
-
-## Run on Horeka
-
-https://www.scc.kit.edu/dienste/horeka.php
-```
-pip install virtualenv virtualenvwrapper
-python3 -m venv ~/.virtualenvs/diss_yolino_venv
-workon diss_yolino_venv
-ml load devel/cuda/11.0
-pip3 install torch===1.7.1+cu110 torchvision===0.8.2+cu110 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
-pip3 install -e . # inside yolino repo
-sbatch run_with_sbatch.sh
-```
