@@ -460,6 +460,11 @@ class Evaluator:
                          os.path.join(self.args.paths.debug_folder,
                                       str(epoch) + "_" + str(self.args.split) + "_debug.png"),
                          self.args.paths.generate_eval_image_file_path("<file>", idx=ImageIdx.PRED)))
+
+
+        if len(scores) == 0:
+            Log.warning("We did not calculate any scores successfully.")
+
         Log.scalars(tag=tag, dict=scores, epoch=epoch)
         Log.eval_summary(scores)
         self.scores = {}

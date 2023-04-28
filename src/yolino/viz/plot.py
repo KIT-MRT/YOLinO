@@ -94,7 +94,7 @@ def draw_cell(cell, image, valid_count=0, total_idx=0, coords: VariableStructure
     points_coords = coords.clone(LINE.POINTS) if coords else None
 
     if len(cell) == 0:
-        Log.warning("Cell was empty")
+        Log.info("Cell was empty")
         return
 
     if image is None:

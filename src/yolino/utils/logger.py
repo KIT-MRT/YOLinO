@@ -339,7 +339,7 @@ class Log():
         Log.timing[key].append(value)
 
     @classmethod
-    def scalars(self, tag, dict, epoch):
+    def scalars(self, tag, dict, epoch, level=1):
         new_dict = {}
         for k, v in dict.items():
 
@@ -353,7 +353,7 @@ class Log():
                 new_dict[str(k) + "/" + tag] = v
 
         if len(new_dict) == 0:
-            Log.warning("No scalar to report for %s epoch %s. Input was %s" % (tag, epoch, dict))
+            Log.info("No scalar to report for %s epoch %s. Input was %s" % (tag, epoch, dict), level=level)
             return
 
         if Logger.TENSORBOARD in Log.__loggers__:
