@@ -62,7 +62,7 @@ def get_param_vals(level=None, dataset=str(Dataset.CULANE)):
     params["best_mean_loss"] = True
     params["batch_size"] = 4
     params["root"] = "../"
-    params["dvc"] = "../tmp/"
+    params["dvc"] = "../dvc/"
     params["split"] = "train"
     # params["activation"] = "sigmoid"
     params["retrain"] = True
