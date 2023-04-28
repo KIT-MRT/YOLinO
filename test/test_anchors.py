@@ -50,12 +50,13 @@ class AnchorTest(unittest.TestCase):
                                            "anchors": str(AnchorDistribution.EQUAL),
                                            "linerep": str(linerep),
                                            "anchor_vars": anchor_var,
+                                           "offset": False,
                                            # "plot": True
                                            },
                           # level=Level.DEBUG
                           )
         dataset, _ = DatasetFactory.get(Dataset.TUSIMPLE, only_available=False, split="train", args=args,
-                                        shuffle=True, augment=True)
+                                        shuffle=False, augment=True)
         # avoid ugly debug with data loader
         image, grid_tensor, fileinfo, _, params = dataset.__getitem__(0)
         dataset.params_per_file.update({fileinfo: params})
