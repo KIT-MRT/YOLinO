@@ -79,7 +79,7 @@ if __name__ == "__main__":
 
     # API interaction
     api = wandb.Api(timeout=19)
-    run_data = api.run(f"annkit/argo_po_8p_dn19/{args.run}")
+    run_data = api.run(os.path.join("argo_po_8p_dn19", args.run))
     if "malconfig" in run_data.tags:
         Log.malconfig("Original run is malconfigured.")
         exit(-1)

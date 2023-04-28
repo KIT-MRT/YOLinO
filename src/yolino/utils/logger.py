@@ -180,7 +180,7 @@ class Log():
     def init_wandb(cls, args, task_type):
 
         Log.info("Setup wandb logging for %s" % (cls.__project_name__))
-        Log.__wandb_run__ = wandb.init(project=cls.__project_name__, entity="annkit",
+        Log.__wandb_run__ = wandb.init(project=cls.__project_name__,
                                        tags=[version, *args.tags],
                                        config=args,
                                        job_type=str(task_type), resume="auto" if args.resume_log else "never")

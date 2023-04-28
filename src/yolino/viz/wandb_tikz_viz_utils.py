@@ -73,9 +73,9 @@ def gather_runs(run_ids=[], sweep_ids=[], use_all_runs=True, ignore_running=Fals
     set_has_running = False
     for i, sweep_id in enumerate(sweep_ids):
         if is_argo:
-            sweep = api.sweep(f"annkit/argo_po_8p_dn19/{sweep_id}")
+            sweep = api.sweep(f"argo_po_8p_dn19/{sweep_id}")
         else:
-            sweep = api.sweep(f"annkit/tus_po_8p_dn19/{sweep_id}")
+            sweep = api.sweep(f"tus_po_8p_dn19/{sweep_id}")
 
         if use_all_runs:
             for v in tqdm(sweep.runs, desc=f"Sweep {sweep_id}"):
@@ -104,9 +104,9 @@ def gather_runs(run_ids=[], sweep_ids=[], use_all_runs=True, ignore_running=Fals
     for run_id in tqdm(run_ids, desc="Runs"):
         try:
             if is_argo:
-                run_object = api.run(f"annkit/argo_po_8p_dn19/{run_id}")
+                run_object = api.run(f"argo_po_8p_dn19/{run_id}")
             else:
-                run_object = api.run(f"annkit/tus_po_8p_dn19/{run_id}")
+                run_object = api.run(f"tus_po_8p_dn19/{run_id}")
         except wandb.errors.CommError as ex:
             Log.error(ex)
             continue

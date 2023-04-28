@@ -28,13 +28,14 @@ from yolino.viz.translation import experiment_param_keys
 def run():
     import wandb
     api = wandb.Api()
-    prefix = "annkit/trash"  # argo_po_8p_dn19"
+    prefix = "argo_po_8p_dn19"
+
     run_names = ["default", "oth7kag4", "7p637hyk", "qw0nc08x", "lam9onr9", "od4ik720", "fcxc8nu9"]
     if len(run_names) <= 1:
         raise ValueError("We need at least 2 runs!")
     run_configs = {}
 
-    default_path = "/home/meyer/01_coding/diss_yolino/argo_po_8p_dn19/default_params.yaml"
+    default_path = "default_params.yaml"
     for run_name in run_names:
         if run_name == "default":
             with open(default_path, "r") as f:
