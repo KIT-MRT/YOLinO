@@ -332,7 +332,7 @@ class GridTest(unittest.TestCase):
         self.dumpdata("argo2")
 
         args = general_setup(self._testMethodName, GridTest.params_file, ignore_cmd_args=True, setup_logging=False,
-                             default_config="tmp/default_params.yaml")
+                             default_config="dvc/default_params.yaml")
         # args.plot = True
 
         coords = VariableStructure(num_classes=0, num_conf=0, line_representation_enum=self.args.linerep)
