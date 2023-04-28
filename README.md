@@ -56,16 +56,7 @@ git clone https://github.com/KIT-MRT/YOLinO.git
 conda create --name yolino pip python==3.8
 # Alternative: mkvirtualenv yolino --python=/usr/bin/python3
 
-# You should be working in a virtual env now
-
-cd yolino
-
-# If you want a specifiy branch do
-git checkout <branch-name>
-
-# Make sure you did not source any mrt or ros stuff; should be empty for most cases!
-echo $CMAKE_PREFIX_PATH
-echo $PYTHONPATH
+# --- You should be working in a virtual env now ---
 
 # Install requirements
 pip install -e .
@@ -80,11 +71,7 @@ conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cudatoolkit
 
 ### Get weights
 
-Download the darknet weights at https://pjreddie.com/media/files/yolov3.weights.
-
-### Dataset Paths
-
-The code expects the dataset files to be accessible at the environment variable fitting the dataset e.g. `$DATASET_TUSIMPLE` and `$DATASET_CULANE`, respectively.
+Download the darknet weights at https://pjreddie.com/media/files/yolov3.weights. Provide the path with `--darknet_weights` whenever you want to use the weights in training. 
 
 ### Folder Setup
 
@@ -123,6 +110,20 @@ specified. It is recommended to use only weights and biases. File logging slows 
 - List of requirements can be found in `setup.cfg` and will be automatically retrieved by `pip install -e yolino` (see
   above)
 - If the tests fail, make sure you have git lfs setup and all files in test/test_data are fetched properly
+
+### Dataset Paths
+
+The code expects the dataset files to be accessible at the environment variable fitting the dataset e.g. `$DATASET_TUSIMPLE` and `$DATASET_CULANE`, respectively. The suffix is determined by the `Dataset` enum in `utils/enums.py`, which is used by the argparser and for assigning the dataset classes. 
+
+#### Argoverse 2 
+If you would like to use the argoverse datareader, be aware that you have to prepare the dataset first. 
+Set your environment properly with `$DATASET_ARGO2_IMG` targeting the original dataset folder and `$DATASET_ARGO2` pointing to an empty folder, where you would like your labels to be put. 
+Execute the dataset preparation with `--loading_workers` set to a suitable thread count. The script will generate a `.npy` file for every label containing the projected polylines in image coordinates. 
+```bash 
+python ../yolino/src/yolino/tools/prepare_argoverse2.py --dataset argo2 --input $DATASET_ARGO2_IMG --loading_workers 2
+```
+If you would like to give it a try first set `--max_n 3` in order to only prepare e.g. 3 images. If you wish to not process all images in the sequences choose a subsampling rate with e.g. `-sdr 20` processing only every 20th image.
+When using the argoverse data after preparation (e.g. for training) use `-sdr 1` as it regards the generated label folder containing only every 20th label. 
 
 ### Code execution examples
 
