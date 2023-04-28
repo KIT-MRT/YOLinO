@@ -46,7 +46,7 @@ from yolino.utils.logger import Level, Log
 @unittest.skipIf(sys.version_info.major < 3, "not supported in python2")
 class GridTest(unittest.TestCase):
     params_file = "tmp_params.yaml"
-    dump_path = "tmp"
+    dump_path = "dvc"
 
     params = {}
     params["rotation_range"] = 0.1
@@ -70,7 +70,7 @@ class GridTest(unittest.TestCase):
         tmp = GridTest.params
         tmp["dataset"] = dataset
         tmp["log_dir"] = log_dir + "_po_8p_dn19"
-        tmp["dvc"] = "tmp"
+        tmp["dvc"] = "dvc"
 
         with open(GridTest.params_file, "w") as f:
             yaml.dump(tmp, f)
@@ -180,10 +180,10 @@ class GridTest(unittest.TestCase):
         self.assertTrue((uv_lines[0][0] == [0, 0, center_cell[0], center_cell[1], 1, 0, 1]).all(),
                         msg="%s should be [0,0,%s,%s,1,1,1]" % (uv_lines[0][0], 0.5 * cell_size[0], 0.5 * cell_size[1]))
 
-        plot_style_grid(uv_lines, os.path.join("tmp", "debug_grid_image_with_grid.png"), self.image,
+        plot_style_grid(uv_lines, os.path.join("dvc", "debug_grid_image_with_grid.png"), self.image,
                         show_grid=True, cell_size=self.grid.get_cell_size(), coords=self.coords)
 
-        img, ok = plot(uv_lines, os.path.join("tmp", "debug_grid_image.png"), self.image, colorstyle=ColorStyle.UNIFORM,
+        img, ok = plot(uv_lines, os.path.join("dvc", "debug_grid_image.png"), self.image, colorstyle=ColorStyle.UNIFORM,
                        show_grid=False, coords=self.coords)
         npimg = np.array(img)
         print(npimg.shape)

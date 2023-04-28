@@ -68,7 +68,7 @@ class DatasetTestEnum(unittest.TestCase):
         tmp = DatasetTestEnum.params
         tmp["dataset"] = dataset
         tmp["log_dir"] = log_dir + "_po_8p_dn19"
-        tmp["dvc"] = "tmp"
+        tmp["dvc"] = "dvc"
 
         with open(DatasetTestEnum.path, "w") as f:
             yaml.dump(tmp, f)

@@ -39,7 +39,7 @@ class TestPlot(TestCase):
 
     def test_plot_cell_class(self):
 
-        output_path = os.path.join("tmp", "debug_class_image.png")
+        output_path = os.path.join("dvc", "debug_class_image.png")
         if os.path.isfile(output_path):
             os.remove(output_path)
 

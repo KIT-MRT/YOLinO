@@ -29,7 +29,7 @@ from yolino.utils.system import get_system_specs
 
 
 def get_tmp():
-    return os.path.abspath("../test/tmp")
+    return os.path.abspath("../test/dvc")
 
 
 def get_param_path():
