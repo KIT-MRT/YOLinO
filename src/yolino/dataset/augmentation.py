@@ -204,7 +204,7 @@ class FixedScale(torch.nn.Module):
         super().__init__()
         self.target_size = target_size
         h, w = target_size
-        self.resize = Resize((h, w))
+        self.resize = Resize((h, w), antialias=None)
         self.use_label = True
 
     def __call__(self, image, label, params):
