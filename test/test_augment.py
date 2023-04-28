@@ -40,31 +40,12 @@ class TestAugmentation(unittest.TestCase):
         self.target_size = torch.tensor([40, 40])
         self.crop_transform = RandomCropWithLabels(crop_portion=self.crop_portion)
 
+    @unittest.skipIf(not os.path.isdir(os.environ["DATASET_ARGO2"]) or not os.path.isdir(os.environ["DATASET_ARGO2_IMG"]),
+                     "No data to evaluate on")
     def test_normalization(self):
 
         args = test_setup(name=self._testMethodName, dataset=str(Dataset.ARGOVERSE2))
-
-        if os.path.isdir("/mrtstorage/datasets"):
-            os.environ["DATASET_CULANE"] = "/mrtstorage/datasets/public/CULane"
-            os.environ["DATASET_TUSIMPLE"] = "/mrtstorage/datasets/public/tusimple_lane_detection"
-            os.environ["DATASET_ARGO2"] = "/mrtstorage/users/meyer/02_data/argoverse20"
-            os.environ["DATASET_ARGO2_IMG"] = "/mrtstorage/datasets/public/argoverse20"
-        else:
-            local_dir = "/home/meyer/02_data/"
-            Log.warning("Testing local!")
-            os.environ["DATASET_CULANE"] = os.path.join(local_dir, "CULane")
-            os.environ["DATASET_TUSIMPLE"] = os.path.join(local_dir, "tusimple")
-            os.environ["DATASET_ARGO2"] = "/home/meyer/02_data/argoverse20_processed"
-            os.environ["DATASET_ARGO2_IMG"] = "/home/meyer/02_data/argoverse20"
-            args.ignore_missing = True
-
-        if not os.path.isdir(os.environ["DATASET_CULANE"]):
-            raise FileNotFoundError(
-                "Neither '/mrtstorage/datasets/public/CULane' nor '/home/meyer/02_data/CULane' could be found")
-
-        if not os.path.isdir(os.environ["DATASET_TUSIMPLE"]):
-            raise FileNotFoundError(
-                "Neither '/mrtstorage/datasets/public/tusimple' nor '/home/meyer/02_data/tusimple' could be found")
+        args.ignore_missing = True
 
         args.max_n = 1
         # args.plot = True
