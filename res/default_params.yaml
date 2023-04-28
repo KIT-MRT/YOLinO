@@ -4,7 +4,6 @@ activations: linear,sigmoid
 adjacency_threshold: 768 # 0.75 * 32 * 32
 anchor_vars: midpoint,direction
 anchors: none
-argo_style: border
 association_metric: euclidean
 augment: crop,rotation,jitter,erasing
 batch_size: 64
