@@ -166,6 +166,9 @@ When using the argoverse data after preparation (e.g. for training) use `-sdr 1`
 
 Use weights and biases: https://docs.wandb.ai/guides/sweeps
 
+### Parameter Usage 
+Use `--help` on your preferred script (e.g. `train.py`, `predict.py`, ...).
+
 ## Troubleshooting
 
 - If the tests fail, make sure you have git lfs setup and all files in test/test_data are fetched properly
@@ -185,12 +188,4 @@ ml load devel/cuda/11.0
 pip3 install torch===1.7.1+cu110 torchvision===0.8.2+cu110 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
 pip3 install -e . # inside yolino repo
 sbatch run_with_sbatch.sh
-```
-
-## CI and Docker (outdated)
-The docker for CI jobs is generated every time the master is build and either the Dockerfile or the gitlab-ci.yaml script is changed. For a branch named 'docker' it is always run.
-If you like to generate the docker file locally use the following commands to build and push
-```
-docker build -t gitlab.mrt.uni-karlsruhe.de:21443/mrt/private/meyer/publications/diss/yolino .
-docker push gitlab.mrt.uni-karlsruhe.de:21443/mrt/private/meyer/publications/diss/yolino
 ```
